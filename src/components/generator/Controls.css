@@ -293,7 +293,7 @@ input[type="range"]::-webkit-slider-thumb:active {
 }
 
 .btn-icon::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -324,21 +324,21 @@ input[type="range"]::-webkit-slider-thumb:active {
 
 /* Cores específicas para redes sociais */
 .btn-icon.whatsapp:hover {
-  border-color: #25D366;
-  color: #25D366;
+  border-color: #25d366;
+  color: #25d366;
 }
 
 .btn-icon.whatsapp:hover::before {
-  background: #25D366;
+  background: #25d366;
 }
 
 .btn-icon.facebook:hover {
-  border-color: #1877F2;
-  color: #1877F2;
+  border-color: #1877f2;
+  color: #1877f2;
 }
 
 .btn-icon.facebook:hover::before {
-  background: #1877F2;
+  background: #1877f2;
 }
 
 /* Color Pickers */
@@ -378,7 +378,7 @@ input[type="color"] {
 }
 
 input[type="color"]::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -3px;
   right: -3px;
@@ -387,13 +387,9 @@ input[type="color"]::before {
   border-radius: 50%;
   padding: 3px;
   background: linear-gradient(135deg, var(--primary), var(--accent));
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-  mask: 
-    linear-gradient(#fff 0 0) content-box, 
-    linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: exclude;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -425,7 +421,7 @@ input[type="color"]:hover::before {
 }
 
 .file-upload::before {
-  content: '📁';
+  content: "📁";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -437,7 +433,12 @@ input[type="color"]:hover::before {
 
 .file-upload:hover {
   border-color: var(--primary);
-  background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 2%, var(--secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--primary) 2%,
+    var(--secondary) 100%
+  );
   color: var(--primary);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
