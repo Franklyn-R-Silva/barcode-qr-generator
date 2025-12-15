@@ -6,28 +6,75 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
-  animation: slideUpFade 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: slideUpFade 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .toast-content {
-  background-color: #333; /* Fundo escuro para contraste */
+  background: rgba(30, 30, 30, 0.95);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   color: #fff;
-  padding: 0.75rem 1.25rem;
-  border-radius: 50px; /* Borda bem arredondada (pill shape) */
+  padding: 1rem 1.5rem;
+  border-radius: 50px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2),
-    0 4px 6px -2px rgba(0, 0, 0, 0.1);
-  min-width: 280px;
+  gap: 0.875rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3),
+    0 8px 10px -6px rgba(0, 0, 0, 0.2), 0 0 30px rgba(74, 222, 128, 0.2);
+  min-width: 300px;
   max-width: 90vw;
   justify-content: space-between;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Efeito de brilho animado */
+.toast-content::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(74, 222, 128, 0.1),
+    transparent
+  );
+  transform: rotate(45deg);
+  animation: shimmer 2s infinite;
+}
+
+.dark .toast-content {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(129, 140, 248, 0.3);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(129, 140, 248, 0.2);
 }
 
 .toast-icon {
-  color: #4ade80; /* Verde sucesso */
+  color: #4ade80;
   flex-shrink: 0;
+  animation: iconPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: drop-shadow(0 2px 8px rgba(74, 222, 128, 0.5));
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes iconPop {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
 }
 
 .toast-message {
@@ -45,25 +92,44 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 6px;
   border-radius: 50%;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .toast-close-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
   color: #fff;
+  transform: scale(1.1) rotate(90deg);
+}
+
+.toast-close-btn:active {
+  transform: scale(0.9) rotate(90deg);
 }
 
 /* Animação de entrada */
 @keyframes slideUpFade {
-  from {
+  0% {
     opacity: 0;
-    transform: translate(-50%, 100%);
+    transform: translate(-50%, 120%) scale(0.8);
   }
-  to {
+  50% {
+    transform: translate(-50%, -10px) scale(1.02);
+  }
+  100% {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: rotate(45deg) translateX(-100%);
+  }
+  100% {
+    transform: rotate(45deg) translateX(100%);
   }
 }
 

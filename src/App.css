@@ -10,39 +10,65 @@
   /* Cores Base (Light Mode) */
   --primary: #4361ee; /* Azul vibrante */
   --primary-hover: #3a56d4;
+  --primary-light: #818cf8;
   --secondary: #eef2ff; /* Azul bem clarinho para fundos secundários */
+  --accent: #06b6d4; /* Cyan para destaques */
+  --success: #10b981;
+  --warning: #f59e0b;
 
   --bg-app: #f8fafc; /* Fundo da página */
   --bg-panel: #ffffff; /* Fundo dos cards/painéis */
+  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --bg-gradient-light: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 
   --text-main: #1e293b; /* Texto principal (quase preto) */
   --text-muted: #64748b; /* Texto secundário (cinza) */
 
   --border: #e2e8f0; /* Cor das bordas */
 
-  /* Sombras suaves */
+  /* Sombras em camadas */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 20px rgba(67, 97, 238, 0.3);
 
   /* Arredondamento padrão */
   --radius: 16px;
+  --radius-sm: 8px;
+  --radius-lg: 24px;
 }
 
 /* Cores Base (Dark Mode) */
 .dark {
-  --primary: #4361ee; /* Mantemos o azul destaque */
-  --primary-hover: #5b75f0;
+  --primary: #818cf8; /* Azul mais claro para dark mode */
+  --primary-hover: #6366f1;
+  --primary-light: #a5b4fc;
   --secondary: #1e293b; /* Fundo secundário escuro */
+  --accent: #22d3ee;
+  --success: #34d399;
+  --warning: #fbbf24;
 
   --bg-app: #0f172a; /* Fundo da página bem escuro (Slate 900) */
   --bg-panel: #1e293b; /* Fundo dos cards (Slate 800) */
+  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --bg-gradient-light: linear-gradient(135deg, #1e293b 0%, #334155 100%);
 
   --text-main: #f1f5f9; /* Texto claro */
   --text-muted: #94a3b8; /* Cinza claro */
 
   --border: #334155; /* Bordas mais escuras */
 
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5),
+    0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6),
+    0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 30px rgba(129, 140, 248, 0.4);
 }
 
 /* =========================================
@@ -130,4 +156,100 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* =========================================
+   6. Animações Globais
+   ========================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Aplicar animação aos elementos principais */
+.main-content {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Transições suaves para todos os elementos interativos */
+* {
+  transition-property: background-color, border-color, color, fill, stroke,
+    opacity, box-shadow, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* =========================================
+   7. Estados de Foco (Acessibilidade)
+   ========================================= */
+/* Estilo de foco visível para navegação por teclado */
+*:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
+}
+
+/* Remove outline padrão para mouse mas mantém para teclado */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* =========================================
+   8. Utilitários de Acessibilidade
+   ========================================= */
+/* Desabilita animações para usuários que preferem movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

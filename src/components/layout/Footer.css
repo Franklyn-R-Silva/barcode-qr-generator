@@ -1,26 +1,71 @@
 .main-footer {
   text-align: center;
-  padding: 2rem;
-  margin-top: auto; /* Empurra para o final se a tela for grande */
-  border-top: 1px solid var(--border);
-  background-color: var(--bg-panel);
+  padding: 2.5rem;
+  margin-top: auto;
+  border-top: 2px solid var(--border);
+  background: linear-gradient(to top, var(--bg-panel), var(--bg-app));
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.main-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  animation: shimmer 3s infinite;
+}
+
+.main-footer p {
+  margin: 0 0 0.75rem 0;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.main-footer:hover p {
+  color: var(--text-main);
 }
 
 .footer-links {
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .footer-links a {
   color: var(--primary);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.footer-links a::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
 }
 
 .footer-links a:hover {
-  text-decoration: underline;
+  color: var(--primary-hover);
+  background: var(--secondary);
+  transform: translateY(-2px);
+}
+
+.footer-links a:hover::before {
+  width: 80%;
 }

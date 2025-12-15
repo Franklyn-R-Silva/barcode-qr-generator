@@ -5,15 +5,30 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: var(
-    --bg-panel
-  ); /* Usa as variáveis globais definidas no App.css */
+  background: linear-gradient(
+    135deg,
+    var(--bg-panel) 0%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  box-shadow: var(--shadow-lg);
+  transition: all 0.3s ease;
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
+}
+
+/* Dark mode glassmorphism */
+.dark .main-header {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 41, 59, 0.95) 0%,
+    rgba(30, 41, 59, 0.8) 100%
+  );
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Área da Marca (Logo + Texto) */
@@ -25,7 +40,14 @@
 
 .brand-icon {
   color: var(--primary);
-  filter: drop-shadow(0 2px 4px rgba(67, 97, 238, 0.3));
+  filter: drop-shadow(0 2px 8px rgba(67, 97, 238, 0.4));
+  animation: pulse 3s ease-in-out infinite;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.brand:hover .brand-icon {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 4px 12px rgba(67, 97, 238, 0.6));
 }
 
 .brand-text {
@@ -51,27 +73,58 @@
 /* Botão de Tema */
 .theme-toggle {
   background: var(--bg-app);
-  border: 1px solid var(--border);
-  width: 40px;
-  height: 40px;
+  border: 2px solid var(--border);
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.3rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: var(--primary);
+  opacity: 0.2;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.theme-toggle:hover::before {
+  width: 100px;
+  height: 100px;
 }
 
 .theme-toggle:hover {
   background-color: var(--secondary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: var(--shadow-lg);
   border-color: var(--primary);
 }
 
 .theme-toggle:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.95);
+}
+
+.theme-toggle .icon {
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle:hover .icon {
+  transform: rotate(20deg) scale(1.1);
 }
 
 /* Responsividade para celulares */

@@ -4,27 +4,33 @@ import "./Header.css"; // Vamos criar um CSS específico para facilitar a manute
 
 const Header = ({ theme, toggleTheme }) => {
   return (
-    <header className="main-header">
+    <header className="main-header" role="banner">
       <div className="brand">
-        <AiOutlineQrcode className="brand-icon" size={32} />
+        <AiOutlineQrcode className="brand-icon" size={36} aria-hidden="true" />
         <div className="brand-text">
           <h1>QR Generator Pro</h1>
-          <span className="subtitle">Crie, Personalize e Compartilhe</span>
+          <span className="subtitle">✨ Crie, Personalize e Compartilhe</span>
         </div>
       </div>
 
       <button
         onClick={toggleTheme}
         className="theme-toggle"
-        aria-label="Alternar tema"
+        aria-label={
+          theme === "light" ? "Ativar modo escuro" : "Ativar modo claro"
+        }
         title={
           theme === "light" ? "Mudar para Modo Escuro" : "Mudar para Modo Claro"
         }
       >
         {theme === "light" ? (
-          <span className="icon">🌙</span>
+          <span className="icon" role="img" aria-label="Lua">
+            🌙
+          </span>
         ) : (
-          <span className="icon">☀️</span>
+          <span className="icon" role="img" aria-label="Sol">
+            ☀️
+          </span>
         )}
       </button>
     </header>

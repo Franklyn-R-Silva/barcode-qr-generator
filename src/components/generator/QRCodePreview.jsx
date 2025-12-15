@@ -59,8 +59,16 @@ const QRCodePreview = ({ config, showToast }) => {
   };
 
   return (
-    <section className="preview-section">
-      <div className="preview-card" ref={qrRef}>
+    <section
+      className="preview-section"
+      aria-label="Pré-visualização do código"
+    >
+      <div
+        className="preview-card"
+        ref={qrRef}
+        role="img"
+        aria-label="QR Code gerado"
+      >
         <QRCode
           value={config.text || "https://seusite.com"}
           size={config.size}
@@ -77,12 +85,24 @@ const QRCodePreview = ({ config, showToast }) => {
         />
       </div>
 
-      <div className="action-buttons-grid">
-        <button onClick={handleCopyQRCode} className="btn btn-secondary">
-          <AiOutlineCopy /> Copiar Imagem
+      <div
+        className="action-buttons-grid"
+        role="group"
+        aria-label="Ações do QR Code"
+      >
+        <button
+          onClick={handleCopyQRCode}
+          className="btn btn-secondary"
+          aria-label="Copiar QR Code para área de transferência"
+        >
+          <AiOutlineCopy aria-hidden="true" /> Copiar Imagem
         </button>
-        <button onClick={handleDownload} className="btn btn-primary">
-          <AiOutlineDownload /> Baixar PNG
+        <button
+          onClick={handleDownload}
+          className="btn btn-primary"
+          aria-label="Baixar QR Code como PNG"
+        >
+          <AiOutlineDownload aria-hidden="true" /> Baixar PNG
         </button>
       </div>
     </section>

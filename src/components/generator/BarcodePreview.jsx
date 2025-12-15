@@ -88,10 +88,18 @@ const BarcodePreview = ({ config, showToast }) => {
   }, [config.text, config.barcodeFormat]);
 
   return (
-    <section className="preview-section">
-      <div className="preview-card barcode-card" ref={barcodeRef}>
+    <section
+      className="preview-section"
+      aria-label="Pré-visualização do código de barras"
+    >
+      <div
+        className="preview-card barcode-card"
+        ref={barcodeRef}
+        role="img"
+        aria-label="Código de barras gerado"
+      >
         {error ? (
-          <div className="error-message">
+          <div className="error-message" role="alert">
             <p>❌ Erro ao gerar código de barras</p>
             <small>{error}</small>
           </div>
@@ -117,20 +125,26 @@ const BarcodePreview = ({ config, showToast }) => {
         )}
       </div>
 
-      <div className="action-buttons-grid">
+      <div
+        className="action-buttons-grid"
+        role="group"
+        aria-label="Ações do código de barras"
+      >
         <button
           onClick={handleCopyBarcode}
           className="btn btn-secondary"
           disabled={!!error}
+          aria-label="Copiar código de barras para área de transferência"
         >
-          <AiOutlineCopy /> Copiar Imagem
+          <AiOutlineCopy aria-hidden="true" /> Copiar Imagem
         </button>
         <button
           onClick={handleDownload}
           className="btn btn-primary"
           disabled={!!error}
+          aria-label="Baixar código de barras como PNG"
         >
-          <AiOutlineDownload /> Baixar PNG
+          <AiOutlineDownload aria-hidden="true" /> Baixar PNG
         </button>
       </div>
     </section>
