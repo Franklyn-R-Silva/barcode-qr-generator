@@ -5,6 +5,7 @@
 ### 🎯 Novos Recursos
 
 1. **Suporte a Códigos de Barras**
+
    - Mais de 25 formatos diferentes
    - Code Family (39, 93, 128 A/B/C)
    - GS1-128, ITF, ITF-14
@@ -13,6 +14,7 @@
    - MSI, Pharmacode, Codabar
 
 2. **Seletor de Tipo de Gerador**
+
    - Interface visual para alternar entre QR Code e Código de Barras
    - Configurações específicas para cada tipo
    - Valores de exemplo automáticos por formato
@@ -27,6 +29,7 @@
 ## 🏗️ Arquitetura Reorganizada
 
 ### Antes
+
 ```
 src/
 ├── components/
@@ -40,6 +43,7 @@ src/
 ```
 
 ### Depois
+
 ```
 src/
 ├── components/
@@ -67,20 +71,24 @@ src/
 ## 🔧 Melhorias Técnicas
 
 ### 1. Separação de Responsabilidades
+
 - **Layout**: Componentes estruturais (Header, Footer)
 - **Common**: Componentes reutilizáveis (Toast)
 - **Generator**: Lógica de geração de códigos
 
 ### 2. Constantes Centralizadas
+
 - `generatorTypes.js`: Define tipos de geradores
 - `barcodeTypes.js`: Organiza formatos por categoria com exemplos
 
 ### 3. Componentes Especializados
+
 - `QRCodePreview.jsx`: Focado em QR Codes
 - `BarcodePreview.jsx`: Focado em Códigos de Barras
 - Tratamento de erro específico para cada tipo
 
 ### 4. Hook Unificado
+
 - `useGenerator`: Suporta ambos os tipos (QR + Barcode)
 - Conversão automática SVG → Canvas para barcode
 - API consistente para download e cópia
@@ -97,16 +105,19 @@ src/
 ## 🎨 Melhorias de UI/UX
 
 1. **Seletor Visual de Tipo**
+
    - Cards com ícones grandes
    - Estado ativo destacado
    - Gradiente moderno
 
 2. **Organização por Categorias**
+
    - Formatos de barcode agrupados logicamente
    - Títulos de seção claros
    - Dropdowns por categoria
 
 3. **Feedback Visual**
+
    - Mensagens de erro claras
    - Validação em tempo real
    - Tooltips informativos
@@ -129,12 +140,12 @@ src/
 {
   // Tipo de gerador
   generatorType: "qrcode" | "barcode",
-  
+
   // Propriedades comuns
   text: string,
   fgColor: string,
   bgColor: string,
-  
+
   // QR Code específico
   size: number,
   ecLevel: string,
@@ -143,7 +154,7 @@ src/
   logoImage: string,
   logoOpacity: number,
   removeQrCodeBehindLogo: boolean,
-  
+
   // Barcode específico
   barcodeFormat: string,
   barcodeWidth: number,
@@ -157,12 +168,14 @@ src/
 ## 🚀 Como Usar
 
 ### QR Code (modo existente)
+
 1. Selecione "QR Code" no seletor de tipo
 2. Digite o texto ou URL
 3. Personalize cores, estilo, logo, etc.
 4. Baixe ou copie
 
 ### Código de Barras (NOVO)
+
 1. Selecione "Código de Barras" no seletor de tipo
 2. Escolha o formato desejado na categoria correspondente
 3. Digite um valor válido (exemplos são preenchidos automaticamente)

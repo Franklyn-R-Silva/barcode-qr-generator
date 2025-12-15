@@ -5,6 +5,7 @@ Aplicação React moderna e profissional para geração de **QR Codes** e **Cód
 ## ✨ Funcionalidades
 
 ### QR Code
+
 - 🎨 **Personalização completa** de cores (frente e fundo)
 - 🔲 **Estilos de módulos**: Quadrados ou Pontos
 - 👁️ **Estilos de olhos**: Quadrados ou Redondos
@@ -13,30 +14,37 @@ Aplicação React moderna e profissional para geração de **QR Codes** e **Cód
 - 🎨 **Templates prontos** (Padrão, WhatsApp, Dark, Azul Tech)
 
 ### Códigos de Barras
+
 Suporte para mais de **25 formatos** diferentes:
 
 #### Code Family
+
 - Code 39, Code 93
 - Code 128 (Auto, A, B, C)
 
 #### GS1 & ITF
+
 - GS1-128
 - ITF (Interleaved 2 of 5)
 - ITF-14
 
 #### EAN & ISBN
+
 - EAN-13, EAN-8, EAN-5, EAN-2
 - ISBN
 
 #### UPC
+
 - UPC-A, UPC-E
 
 #### Outros Formatos
+
 - MSI (10, 11, 1010, 1110)
 - Pharmacode
 - Codabar
 
 ### Recursos Gerais
+
 - 📥 **Download** em formato PNG
 - 📋 **Copiar para área de transferência**
 - 🌓 **Modo Claro/Escuro**
@@ -103,16 +111,19 @@ O aplicativo estará disponível em `http://localhost:3000`
 ## 🎨 Padrões de Código
 
 ### Estrutura de Componentes
+
 - **Layout**: Componentes de estrutura da página (Header, Footer)
 - **Common**: Componentes reutilizáveis (Toast, Modal, etc.)
 - **Generator**: Componentes específicos de geração de códigos
 
 ### Gerenciamento de Estado
+
 - Estado centralizado no `App.jsx`
 - Props drilling para comunicação entre componentes
 - Hooks customizados para lógica reutilizável
 
 ### Estilos
+
 - Variáveis CSS para temas (claro/escuro)
 - Arquivos CSS co-localizados com componentes
 - Design system consistente
