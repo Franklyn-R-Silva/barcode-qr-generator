@@ -103,6 +103,31 @@
   font-size: 0.9rem;
 }
 
+.error-suggestion {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(67, 97, 238, 0.1);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary);
+}
+
+.error-suggestion p {
+  color: var(--text-primary) !important;
+  font-size: 0.95rem !important;
+  font-weight: 500 !important;
+  margin-bottom: 0.5rem;
+}
+
+.error-suggestion strong {
+  color: var(--primary);
+}
+
+.btn-small {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.85rem !important;
+  gap: 0.3rem;
+}
+
 @keyframes shake {
   0%,
   100% {
