@@ -32,6 +32,10 @@ function App() {
     logoImage: "",
     logoOpacity: 1,
     removeQrCodeBehindLogo: false,
+    logoSize: 25, // Percentual do tamanho do QR Code (25%)
+    logoX: 0, // Offset X da posição da logo
+    logoY: 0, // Offset Y da posição da logo
+    logoSizeMode: "auto", // "auto", "original", "custom"
 
     // Barcode específico
     barcodeFormat: BARCODE_FORMATS.CODE128,

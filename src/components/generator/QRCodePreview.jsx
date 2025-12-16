@@ -11,6 +11,37 @@ const QRCodePreview = ({ config, showToast }) => {
   // Lógica de visualização: Define se os olhos são redondos ou quadrados
   const eyeRadius = config.eyeStyle === "circle" ? [10, 10, 10] : [0, 0, 0];
 
+  // Calcular tamanho da logo baseado no modo selecionado
+  const calculateLogoSize = () => {
+    if (!config.logoImage) return { width: 0, height: 0 };
+    
+    switch (config.logoSizeMode) {
+      case "original":
+        // Usar tamanho original da imagem (limitado ao tamanho do QR)
+        return {
+          width: Math.min(config.size * 0.4, config.size),
+          height: Math.min(config.size * 0.4, config.size)
+        };
+      case "custom":
+        // Usar percentual customizado
+        const percentage = (config.logoSize || 25) / 100;
+        return {
+          width: config.size * percentage,
+          height: config.size * percentage
+        };
+      case "auto":
+      default:
+        // Tamanho automático baseado no percentual
+        const autoPercentage = (config.logoSize || 25) / 100;
+        return {
+          width: config.size * autoPercentage,
+          height: config.size * autoPercentage
+        };
+    }
+  };
+
+  const logoSize = calculateLogoSize();
+
   /**
    * Função auxiliar para pegar o elemento Canvas
    */
@@ -67,11 +98,13 @@ const QRCodePreview = ({ config, showToast }) => {
           ecLevel={config.ecLevel}
           qrStyle={config.qrStyle}
           logoImage={config.logoImage}
-          logoWidth={config.size * 0.25}
-          logoHeight={config.size * 0.25}
+          logoWidth={logoSize.width}
+          logoHeight={logoSize.height}
           logoOpacity={config.logoOpacity}
           removeQrCodeBehindLogo={config.removeQrCodeBehindLogo}
           eyeRadius={eyeRadius}
+          logoPadding={0}
+          logoPaddingStyle="circle"
         />
       </motion.div>
 
