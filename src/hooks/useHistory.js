@@ -89,18 +89,21 @@ export const useHistory = () => {
     }
   }, []);
 
-  const importHistory = useCallback((jsonData) => {
-    try {
-      const success = historyService.importHistory(jsonData);
-      if (success) {
-        loadHistory();
+  const importHistory = useCallback(
+    (jsonData) => {
+      try {
+        const success = historyService.importHistory(jsonData);
+        if (success) {
+          loadHistory();
+        }
+        return success;
+      } catch (error) {
+        console.error("Error importing history:", error);
+        return false;
       }
-      return success;
-    } catch (error) {
-      console.error("Error importing history:", error);
-      return false;
-    }
-  }, [loadHistory]);
+    },
+    [loadHistory]
+  );
 
   return {
     history,

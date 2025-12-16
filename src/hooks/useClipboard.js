@@ -10,12 +10,12 @@ export const useClipboard = () => {
 
   const copy = useCallback(async (text) => {
     const success = await copyToClipboard(text);
-    
+
     if (success) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
-    
+
     return success;
   }, []);
 

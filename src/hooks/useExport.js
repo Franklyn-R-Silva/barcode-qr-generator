@@ -12,13 +12,13 @@ export const useExport = () => {
   const exportImage = useCallback(async (format, canvas, options = {}) => {
     try {
       setExporting(true);
-      
+
       if (!canvas) {
         throw new Error("Canvas element is required");
       }
 
       const result = await exportFactory.export(format, canvas, options);
-      
+
       setLastExport({
         format,
         timestamp: new Date().toISOString(),
@@ -34,16 +34,19 @@ export const useExport = () => {
     }
   }, []);
 
-  const exportMultipleFormats = useCallback(async (formats, canvas, options = {}) => {
-    const results = [];
-    
-    for (const format of formats) {
-      const result = await exportImage(format, canvas, options);
-      results.push({ format, ...result });
-    }
+  const exportMultipleFormats = useCallback(
+    async (formats, canvas, options = {}) => {
+      const results = [];
 
-    return results;
-  }, [exportImage]);
+      for (const format of formats) {
+        const result = await exportImage(format, canvas, options);
+        results.push({ format, ...result });
+      }
+
+      return results;
+    },
+    [exportImage]
+  );
 
   const getAvailableFormats = useCallback(() => {
     return exportFactory.getAvailableFormats();

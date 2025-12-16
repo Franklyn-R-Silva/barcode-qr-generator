@@ -17,7 +17,7 @@ export const useLocalStorage = (key, initialValue) => {
       // Permitir que value seja uma função como o useState
       const valueToStore =
         value instanceof Function ? value(storedValue) : value;
-      
+
       setStoredValue(valueToStore);
       localStorageService.setItem(key, valueToStore);
     } catch (error) {
