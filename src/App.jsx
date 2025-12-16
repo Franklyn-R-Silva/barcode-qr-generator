@@ -76,7 +76,7 @@ function App() {
 
       return () => clearTimeout(timer);
     }
-  }, [config.text, config.generatorType]);
+  }, [config]);
 
   // Alternar tema
   const toggleTheme = () =>

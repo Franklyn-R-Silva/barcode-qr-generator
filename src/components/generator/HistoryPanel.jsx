@@ -30,24 +30,6 @@ const HistoryPanel = ({ onLoadConfig, showToast }) => {
     }
   };
 
-  const saveToHistory = (config) => {
-    try {
-      const newItem = {
-        id: Date.now(),
-        timestamp: new Date().toISOString(),
-        config: { ...config },
-        preview:
-          config.text.substring(0, 50) + (config.text.length > 50 ? "..." : ""),
-      };
-
-      const updatedHistory = [newItem, ...history].slice(0, 20); // Manter apenas 20
-      setHistory(updatedHistory);
-      localStorage.setItem("qrcode_history", JSON.stringify(updatedHistory));
-    } catch (err) {
-      console.error("Erro ao salvar histórico:", err);
-    }
-  };
-
   const deleteItem = (id) => {
     const updated = history.filter((item) => item.id !== id);
     setHistory(updated);
