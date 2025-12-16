@@ -13,6 +13,7 @@ const BarcodePreview = ({ config, showToast }) => {
   const barcodeRef = useRef(null);
   const [error, setError] = useState(null);
   const [validationError, setValidationError] = useState(null);
+  const [normalizedValue, setNormalizedValue] = useState(null);
 
   /**
    * Validar valor antes de renderizar
@@ -22,9 +23,12 @@ const BarcodePreview = ({ config, showToast }) => {
     if (!validation.valid) {
       setValidationError(validation);
       setError(validation.message);
+      setNormalizedValue(null);
     } else {
       setValidationError(null);
       setError(null);
+      // Usar valor normalizado se disponível (ex: UPC-E com zeros adicionados)
+      setNormalizedValue(validation.normalized || config.text);
     }
   }, [config.text, config.barcodeFormat]);
 
@@ -137,7 +141,7 @@ const BarcodePreview = ({ config, showToast }) => {
           </motion.div>
         ) : (
           <Barcode
-            value={config.text || "123456789"}
+            value={normalizedValue || config.text || "123456789"}
             format={config.barcodeFormat}
             width={config.barcodeWidth || 2}
             height={config.barcodeHeight || 100}

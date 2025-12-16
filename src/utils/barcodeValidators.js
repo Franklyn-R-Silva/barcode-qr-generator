@@ -21,9 +21,13 @@ export const validateUPCA = (value) => {
 
 /**
  * Valida UPC-E: 6, 7 ou 8 dígitos numéricos
+ * UPC-E é a versão compactada do UPC-A
+ * Formato: 0 (system digit) + 6 dígitos + check digit
  */
 export const validateUPCE = (value) => {
   const cleaned = value.replace(/[^0-9]/g, "");
+  
+  // Aceita 6 (sem system/check), 7 (com system OU check) ou 8 (completo)
   if (cleaned.length < 6 || cleaned.length > 8) {
     return {
       valid: false,
@@ -31,8 +35,38 @@ export const validateUPCE = (value) => {
       suggestion: "01234565",
     };
   }
+  
+  // Se tiver menos de 8, adicionar zeros para completar
+  if (cleaned.length === 6) {
+    // Adicionar system digit (0) e check digit (calculado)
+    const withSystem = "0" + cleaned;
+    return { 
+      valid: true, 
+      normalized: withSystem + calculateUPCCheckDigit(withSystem)
+    };
+  } else if (cleaned.length === 7) {
+    // Assumir que é system + 6 dígitos, calcular check
+    return { 
+      valid: true, 
+      normalized: cleaned + calculateUPCCheckDigit(cleaned)
+    };
+  }
+  
   return { valid: true };
 };
+
+/**
+ * Calcula o dígito de verificação para UPC
+ */
+function calculateUPCCheckDigit(code) {
+  let sum = 0;
+  for (let i = 0; i < code.length; i++) {
+    const digit = parseInt(code[i]);
+    sum += (i % 2 === 0) ? digit * 3 : digit;
+  }
+  const checkDigit = (10 - (sum % 10)) % 10;
+  return checkDigit.toString();
+}
 
 /**
  * Valida EAN-13: Exatamente 13 dígitos numéricos

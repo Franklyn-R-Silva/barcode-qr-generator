@@ -4,7 +4,7 @@
 
 Aplicação React moderna e profissional para geração de **QR Codes** e **Códigos de Barras** com mais de **25 formatos diferentes**, interface intuitiva, temas claro/escuro e recursos avançados de personalização.
 
-**🌐 Veja o site em funcionamento**: [https://gerador-de-qr-code-reactjs.netlify.app/](https://gerador-de-qr-code-reactjs.netlify.app/)
+**🌐 Veja o site em funcionamento**: [https://barcode-qr-generator.netlify.app/](https://barcode-qr-generator.netlify.app/)
 
 ---
 
@@ -60,10 +60,10 @@ MSI (10, 11, 1010, 1110) • Pharmacode • Codabar
 
 ```bash
 # Clone o repositório
-git clone https://github.com/Franklyn-R-Silva/Gerador-de-QRCode-com-ReactJS.git
+git clone https://github.com/Franklyn-R-Silva/https://github.com/Franklyn-R-Silva/barcode-qr-generator.git
 
 # Entre no diretório
-cd Gerador-de-QRCode-com-ReactJS
+cd barcode-qr-generator
 
 # Instale as dependências
 npm install

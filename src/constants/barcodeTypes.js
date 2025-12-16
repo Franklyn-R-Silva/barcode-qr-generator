@@ -29,7 +29,7 @@ export const BARCODE_FORMATS = {
 
   // UPC Family
   UPCA: "UPC",
-  UPCE: "UPC",
+  UPCE: "UPC", // UPC-E usa mesmo formato mas com validação diferente
 
   // Others
   ISBN: "EAN13", // ISBN usa formato EAN13 com validação especial
