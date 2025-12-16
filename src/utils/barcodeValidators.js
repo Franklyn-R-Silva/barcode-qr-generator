@@ -26,7 +26,7 @@ export const validateUPCA = (value) => {
  */
 export const validateUPCE = (value) => {
   const cleaned = value.replace(/[^0-9]/g, "");
-  
+
   // Aceita 6 (sem system/check), 7 (com system OU check) ou 8 (completo)
   if (cleaned.length < 6 || cleaned.length > 8) {
     return {
@@ -35,23 +35,23 @@ export const validateUPCE = (value) => {
       suggestion: "01234565",
     };
   }
-  
+
   // Se tiver menos de 8, adicionar zeros para completar
   if (cleaned.length === 6) {
     // Adicionar system digit (0) e check digit (calculado)
     const withSystem = "0" + cleaned;
-    return { 
-      valid: true, 
-      normalized: withSystem + calculateUPCCheckDigit(withSystem)
+    return {
+      valid: true,
+      normalized: withSystem + calculateUPCCheckDigit(withSystem),
     };
   } else if (cleaned.length === 7) {
     // Assumir que é system + 6 dígitos, calcular check
-    return { 
-      valid: true, 
-      normalized: cleaned + calculateUPCCheckDigit(cleaned)
+    return {
+      valid: true,
+      normalized: cleaned + calculateUPCCheckDigit(cleaned),
     };
   }
-  
+
   return { valid: true };
 };
 
@@ -62,7 +62,7 @@ function calculateUPCCheckDigit(code) {
   let sum = 0;
   for (let i = 0; i < code.length; i++) {
     const digit = parseInt(code[i]);
-    sum += (i % 2 === 0) ? digit * 3 : digit;
+    sum += i % 2 === 0 ? digit * 3 : digit;
   }
   const checkDigit = (10 - (sum % 10)) % 10;
   return checkDigit.toString();
