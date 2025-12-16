@@ -42,7 +42,11 @@ const BarcodePreview = ({ config, showToast }) => {
   /**
    * Função auxiliar para pegar o elemento SVG
    */
-  const getSVG 
+  const getSVG = () => {
+    return barcodeRef.current?.querySelector("svg");
+  };
+
+  /**
    * Converte SVG para Canvas
    */
   const svgToCanvas = async (svg) => {

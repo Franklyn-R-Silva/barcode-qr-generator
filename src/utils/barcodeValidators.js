@@ -150,7 +150,7 @@ export const validateITF14 = (value) => {
  * Valida CODE39: Letras maiúsculas, números e alguns caracteres especiais
  */
 export const validateCODE39 = (value) => {
-  const valid = /^[0-9A-Z\-. $\/+%]+$/.test(value);
+  const valid = /^[0-9A-Z\-. $/+%]+$/.test(value);
   if (!valid || value.length === 0) {
     return {
       valid: false,
@@ -261,7 +261,7 @@ export const validatePharmacode = (value) => {
  * Valida Codabar: Números e letras A-D com start/stop characters
  */
 export const validateCodabar = (value) => {
-  const valid = /^[A-D][0-9\-\$:\/\.\+]+[A-D]$/i.test(value);
+  const valid = /^[A-D][0-9\-$:/.+]+[A-D]$/i.test(value);
   if (!valid) {
     return {
       valid: false,
