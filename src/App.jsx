@@ -78,6 +78,18 @@ function App() {
   const toggleTheme = () =>
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
+  // Ouvir evento de reset do barcode
+  useEffect(() => {
+    const handleBarcodeReset = (event) => {
+      updateConfig("text", event.detail);
+    };
+
+    window.addEventListener("resetBarcodeText", handleBarcodeReset);
+    return () => {
+      window.removeEventListener("resetBarcodeText", handleBarcodeReset);
+    };
+  }, []);
+
   // Upload de Logo
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];

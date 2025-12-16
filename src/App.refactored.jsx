@@ -7,8 +7,10 @@ import "./styles/globals.css";
 // Contexts (Providers)
 import {
   ThemeProvider,
+  useTheme,
   GeneratorProvider,
   NotificationProvider,
+  useNotification,
 } from "./contexts";
 
 // Layout Components
@@ -77,21 +79,21 @@ export default App;
 
 /**
  * COMPARAÇÃO:
- * 
+ *
  * ANTES (App.jsx antigo):
  * - 150+ linhas
  * - Estado local complexo (theme, notification, config)
  * - Funções de lógica de negócio inline
  * - useEffect para localStorage
  * - Prop drilling (passar props por múltiplos níveis)
- * 
+ *
  * DEPOIS (App.jsx novo):
  * - 50 linhas
  * - Sem estado local (tudo em contexts)
  * - Sem lógica de negócio (tudo em services)
  * - Sem useEffect manual (hooks cuidam disso)
  * - Sem prop drilling (contexts disponíveis em qualquer lugar)
- * 
+ *
  * BENEFÍCIOS:
  * ✅ Código mais limpo e legível
  * ✅ Fácil manutenção
