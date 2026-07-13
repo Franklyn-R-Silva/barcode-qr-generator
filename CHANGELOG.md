@@ -9,13 +9,30 @@ All notable changes to this project are documented here. The format is based on
 
 - `CONTRIBUTING.md` with development setup, branch/commit conventions, and code
   style guidelines.
+- Proper UPC-E support: UPC-E values are now expanded to their 12-digit UPC-A
+  equivalent so they render correctly.
+
+### Changed
+
+- Barcode formats now use a unique `id` decoupled from the JsBarcode render
+  string, so formats that share an encoder (UPC-A/UPC-E, EAN-13/ISBN) keep
+  independent validation and example values.
+- Replaced the five separate barcode-category dropdowns with a single grouped
+  `<select>` (using `<optgroup>`), simplifying format selection.
+- Made the color-picker dark mode follow the app's theme toggle instead of the
+  operating system's `prefers-color-scheme`.
 
 ### Fixed
 
+- **UPC-A and UPC-E were broken**: they shared the JsBarcode `"UPC"` value, so
+  their example values collided and UPC-A received an invalid 8-digit example.
+- EAN-13 no longer shows the ISBN example value (previous key collision).
+- ISBN and UPC-E now run their own validators instead of falling back to
+  EAN-13 / UPC-A.
 - Restored missing theme variables (`--text-primary`, `--text-secondary`,
-  `--bg-primary`, `--bg-secondary`, `--border-color`, `--shadow-md`) that broke
-  text, backgrounds, borders, and shadows in the color picker, barcode error
-  hints, and the logo info box.
+  `--bg-primary`, `--bg-secondary`, `--border-color`, `--shadow-md`) — declared
+  in both light and dark scopes — that broke text, backgrounds, borders, and
+  shadows in the color picker, barcode error hints, and the logo info box.
 - Transparent-background export for QR codes produced a blank image because the
   canvas pixels were read before the code was drawn.
 - The notification toast never auto-dismissed while typing, because its close
