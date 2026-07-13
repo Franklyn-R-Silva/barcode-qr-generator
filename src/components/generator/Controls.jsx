@@ -59,8 +59,11 @@ const Controls = ({
   const isQRCode = config.generatorType === GENERATOR_TYPES.QRCODE;
   const isBarcode = config.generatorType === GENERATOR_TYPES.BARCODE;
 
-  // Preencher com exemplo quando trocar de formato
+  // Preencher com exemplo quando trocar de formato.
+  // Ignora a opção placeholder ("Selecione...") para não gerar um
+  // código de barras com formato vazio.
   const handleFormatChange = (format) => {
+    if (!format) return;
     updateConfig("barcodeFormat", format);
     if (BARCODE_EXAMPLES[format]) {
       updateConfig("text", BARCODE_EXAMPLES[format]);

@@ -24,6 +24,16 @@
   --text-main: #1e293b; /* Texto principal (quase preto) */
   --text-muted: #64748b; /* Texto secundário (cinza) */
 
+  /* Aliases para compatibilidade entre componentes.
+     Resolvidos no ponto de uso, então herdam automaticamente os
+     valores sobrescritos no dark mode. */
+  --text-primary: var(--text-main);
+  --text-secondary: var(--text-muted);
+  --bg-primary: var(--bg-panel);
+  --bg-secondary: var(--secondary);
+  --border-color: var(--border);
+  --shadow-md: var(--shadow);
+
   --border: #e2e8f0; /* Cor das bordas */
 
   /* Sombras em camadas */

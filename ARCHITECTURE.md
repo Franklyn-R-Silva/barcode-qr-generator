@@ -1,171 +1,66 @@
-# 🎯 Gerador de QR Code & Códigos de Barras Pro
+# Architecture
 
-Aplicação React moderna e profissional para geração de **QR Codes** e **Códigos de Barras** com interface intuitiva e recursos avançados de personalização.
+A client-side Create React App (React 18). No backend — QR codes and barcodes are generated, previewed, and exported entirely in the browser.
 
-## ✨ Funcionalidades
+## Entry point & state
 
-### QR Code
+`src/index.js` renders `src/App.jsx`. `App.jsx` owns a single `config` object that covers **both** generators (shared fields plus QR-specific and barcode-specific fields) and updates it through `updateConfig(field, value)`. `config.generatorType` (`"qrcode"` | `"barcode"`, from `constants/generatorTypes.js`) selects which preview component renders. State is passed down via props.
 
-- 🎨 **Personalização completa** de cores (frente e fundo)
-- 🔲 **Estilos de módulos**: Quadrados ou Pontos
-- 👁️ **Estilos de olhos**: Quadrados ou Redondos
-- 🖼️ **Upload de logo** com controle de opacidade
-- 🛡️ **4 níveis de correção de erro** (L, M, Q, H)
-- 🎨 **Templates prontos** (Padrão, WhatsApp, Dark, Azul Tech)
+```
+App.jsx  ── config, updateConfig ──▶  Controls           (all inputs)
+         ── config ────────────────▶  QRCodePreview  or  BarcodePreview
+         ── notification ──────────▶  Toast
+                                       HistoryPanel      (portal at root)
+```
 
-### Códigos de Barras
-
-Suporte para mais de **25 formatos** diferentes:
-
-#### Code Family
-
-- Code 39, Code 93
-- Code 128 (Auto, A, B, C)
-
-#### GS1 & ITF
-
-- GS1-128
-- ITF (Interleaved 2 of 5)
-- ITF-14
-
-#### EAN & ISBN
-
-- EAN-13, EAN-8, EAN-5, EAN-2
-- ISBN
-
-#### UPC
-
-- UPC-A, UPC-E
-
-#### Outros Formatos
-
-- MSI (10, 11, 1010, 1110)
-- Pharmacode
-- Codabar
-
-### Recursos Gerais
-
-- 📥 **Download** em formato PNG
-- 📋 **Copiar para área de transferência**
-- 🌓 **Modo Claro/Escuro**
-- 📱 **Design Responsivo**
-- 🔗 **Compartilhamento social** (WhatsApp, Facebook)
-
-## 🏗️ Arquitetura do Projeto
+## Directory layout
 
 ```
 src/
+├── App.jsx / App.css          # Root component + global styles and theme variables
+├── index.js                   # Entry point
 ├── components/
-│   ├── layout/              # Componentes de layout
-│   │   ├── Header.jsx
-│   │   ├── Header.css
-│   │   ├── Footer.jsx
-│   │   └── Footer.css
-│   ├── common/              # Componentes reutilizáveis
-│   │   ├── Toast.jsx
-│   │   └── Toast.css
-│   └── generator/           # Componentes de geração
-│       ├── QRCodePreview.jsx
-│       ├── BarcodePreview.jsx
-│       ├── Controls.jsx
-│       ├── Controls.css
-│       └── GeneratorArea.css
-├── constants/               # Constantes e configurações
-│   ├── generatorTypes.js    # Tipos de geradores
-│   └── barcodeTypes.js      # Formatos de códigos de barras
-├── hooks/                   # Hooks customizados
-│   └── useQRCode.js         # Hook para manipulação de geradores
-├── App.jsx                  # Componente principal
-├── App.css                  # Estilos globais
-├── index.js                 # Ponto de entrada
-└── index.css                # Reset CSS
+│   ├── layout/                # Header (theme toggle), Footer
+│   ├── common/                # Toast
+│   └── generator/
+│       ├── QRCodePreview.jsx      # QR render + copy (react-qrcode-logo → <canvas>)
+│       ├── BarcodePreview.jsx     # Barcode render + validation (react-barcode → <svg>)
+│       ├── Controls.jsx           # Unified control panel for both generators
+│       ├── ExportOptions.jsx      # PNG / WEBP / PDF / SVG export
+│       ├── ColorPickerAdvanced.jsx
+│       ├── HistoryPanel.jsx       # localStorage-backed history modal
+│       └── HistoryButton.jsx      # History trigger in the header
+├── constants/
+│   ├── generatorTypes.js      # GENERATOR_TYPES / GENERATOR_LABELS
+│   └── barcodeTypes.js        # Formats, UI categories, examples, defaults
+└── utils/
+    └── barcodeValidators.js   # Per-format validation & normalization
 ```
 
-## 🚀 Tecnologias Utilizadas
+## QR vs barcode: two rendering paths
 
-- **React 18** - Biblioteca JavaScript para UI
-- **react-qrcode-logo** - Geração de QR Codes
-- **react-barcode** - Geração de Códigos de Barras
-- **react-icons** - Biblioteca de ícones
-- **CSS3** - Estilização moderna com variáveis CSS
-- **Google Fonts (Outfit)** - Tipografia moderna
+The two generators are asymmetric, and export logic branches on `isBarcode`:
 
-## 📦 Instalação
+- **QR** (`QRCodePreview`) uses `react-qrcode-logo`, which renders to a **`<canvas>`**. Export reads the canvas directly.
+- **Barcode** (`BarcodePreview`) uses `react-barcode` (JsBarcode), which renders to an **`<svg>`**. Export serializes the SVG onto a canvas first before producing PNG/WEBP/PDF; SVG export is available for barcodes only.
 
-```bash
-# Clone o repositório
-git clone https://github.com/Franklyn-R-Silva/Gerador-de-QRCode-com-ReactJS.git
+`ExportOptions` is shared by both and handles all downloads, including an optional transparent-background pass.
 
-# Entre no diretório
-cd Gerador-de-QRCode-com-ReactJS
+## Barcode formats & validation
 
-# Instale as dependências
-npm install
+`constants/barcodeTypes.js` is the single source of truth for the format list (`BARCODE_FORMATS`), UI grouping (`BARCODE_CATEGORIES`), example values (`BARCODE_EXAMPLES`), and defaults. Some UI-distinct formats map to the same JsBarcode string (e.g. both `UPCA` and `UPCE` → `"UPC"`; `ISBN` → `"EAN13"`); the distinction is enforced by validation rather than the underlying library.
 
-# Inicie o servidor de desenvolvimento
-npm start
-```
+`utils/barcodeValidators.js` holds per-format rules. `validateBarcodeValue(format, value)` returns `{ valid, message?, suggestion?, normalized? }`. `BarcodePreview` runs it before rendering, shows an error card (with a "use example" button) when invalid, and passes any `normalized` value (e.g. a UPC-E padded with a computed check digit) to the barcode component.
 
-O aplicativo estará disponível em `http://localhost:3000`
+**To add a barcode format:** add it to `BARCODE_FORMATS`, to a category in `BARCODE_CATEGORIES`, to `BARCODE_EXAMPLES`, and register a validator in `BARCODE_VALIDATORS` for every alias/format string that can reach it.
 
-## 🎨 Padrões de Código
+## Cross-component channels
 
-### Estrutura de Componentes
+Two interactions bypass props (kept intentionally simple):
 
-- **Layout**: Componentes de estrutura da página (Header, Footer)
-- **Common**: Componentes reutilizáveis (Toast, Modal, etc.)
-- **Generator**: Componentes específicos de geração de códigos
+- **History:** `HistoryPanel` assigns `window.addToHistory`, `window.openHistoryPanel`, and `window.getHistoryCount` on mount; `App.jsx` calls `addToHistory` from a debounced effect (2s after `config.text` stops changing), `HistoryButton` polls `getHistoryCount`.
+- **Barcode reset:** `BarcodePreview` dispatches a `resetBarcodeText` `CustomEvent`; `App.jsx` listens and writes the example value back into `config.text`.
 
-### Gerenciamento de Estado
+## Styling & theming
 
-- Estado centralizado no `App.jsx`
-- Props drilling para comunicação entre componentes
-- Hooks customizados para lógica reutilizável
-
-### Estilos
-
-- Variáveis CSS para temas (claro/escuro)
-- Arquivos CSS co-localizados com componentes
-- Design system consistente
-
-## 📝 Scripts Disponíveis
-
-```bash
-npm start          # Inicia o servidor de desenvolvimento
-npm run build      # Cria build de produção
-npm test           # Executa testes
-```
-
-## 🌐 Deploy
-
-O projeto está configurado para deploy automático no **Netlify**.
-
-```bash
-npm run build
-# Os arquivos estarão na pasta build/
-```
-
-## 🤝 Contribuindo
-
-Contribuições são sempre bem-vindas! Sinta-se à vontade para:
-
-1. Fazer um Fork do projeto
-2. Criar uma branch para sua feature (`git checkout -b feature/NovaFeature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/NovaFeature`)
-5. Abrir um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT.
-
-## 👨‍💻 Autor
-
-**Franklyn Silva**
-
-- GitHub: [@Franklyn-R-Silva](https://github.com/Franklyn-R-Silva)
-- LinkedIn: [Franklyn Roberto](https://www.linkedin.com/in/franklyn-roberto-dev/)
-
----
-
-⭐ Se este projeto te ajudou, considere dar uma estrela!
+Plain CSS, co-located per component. Theming is driven by CSS custom properties defined in `App.css` under `:root` (light) and `.dark` (dark); the active theme is toggled by adding a `light`/`dark` class to the root `.app-container`.

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import "./App.css";
 
 // Importando os componentes modulares
@@ -50,10 +50,16 @@ function App() {
   const [theme, setTheme] = useState("light");
   const [notification, setNotification] = useState(null);
 
+  // Guarda o último texto salvo no histórico para evitar duplicatas
+  const lastSavedText = useRef("");
+
   // --- Funções Auxiliares (Lógica de Negócio) ---
 
   // Exibir notificação
   const showToast = (msg) => setNotification(msg);
+
+  // Fechar notificação (memoizado para não reiniciar o timer do Toast a cada render)
+  const closeToast = useCallback(() => setNotification(null), []);
 
   // Atualizar configuração genérica
   const updateConfig = (field, value) => {
@@ -65,14 +71,17 @@ function App() {
     setConfig(historyConfig);
   };
 
-  // Salvar no histórico quando texto mudar
+  // Salvar no histórico quando o texto mudar (após 2s de inatividade).
+  // Só salva se o texto for diferente do último salvo, evitando entradas
+  // duplicadas ao apenas ajustar cores, tamanho ou outras opções.
   useEffect(() => {
     if (config.text && config.text.length > 0) {
       const timer = setTimeout(() => {
-        if (window.addToHistory) {
+        if (config.text !== lastSavedText.current && window.addToHistory) {
           window.addToHistory(config);
+          lastSavedText.current = config.text;
         }
-      }, 2000); // Salva após 2 segundos de inatividade
+      }, 2000);
 
       return () => clearTimeout(timer);
     }
@@ -128,9 +137,7 @@ function App() {
   return (
     <div className={`app-container ${theme}`}>
       {/* Componente de Notificação (Renderizado condicionalmente) */}
-      {notification && (
-        <Toast message={notification} onClose={() => setNotification(null)} />
-      )}
+      {notification && <Toast message={notification} onClose={closeToast} />}
 
       {/* Painel de Histórico (nível raiz para z-index funcionar corretamente) */}
       <HistoryPanel
