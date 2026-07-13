@@ -70,12 +70,12 @@ const ExportOptions = ({
         newCanvas.width = canvas.width;
         newCanvas.height = canvas.height;
 
-        // Não preencher fundo, apenas desenhar o QR Code
+        // Desenhar o QR Code ANTES de ler os pixels
+        ctx.drawImage(canvas, 0, 0);
+
+        // Ler os pixels já desenhados para poder processá-los
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const data = imageData.data;
-
-        // Copiar dados do canvas original
-        ctx.drawImage(canvas, 0, 0);
 
         // Tornar pixels da cor de fundo transparentes
         const bgColor = hexToRgb(config.bgColor || "#ffffff");
