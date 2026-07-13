@@ -1,14 +1,84 @@
 // src/utils/barcodeValidators.js
 
-/**
- * Validadores para diferentes formatos de código de barras
- */
+import { BARCODE_EXAMPLES } from "../constants/barcodeTypes";
 
 /**
- * Valida UPC-A: Exatamente 12 dígitos numéricos
+ * Validators for the different barcode formats.
+ *
+ * Each validator returns `{ valid, message?, suggestion?, normalized? }`.
+ * `normalized`, when present, is the value actually passed to the renderer
+ * (e.g. a UPC-E expanded to its 12-digit UPC-A equivalent).
+ *
+ * Validators are keyed by the format `id` defined in constants/barcodeTypes.js.
+ */
+
+const onlyDigits = (value) => value.replace(/[^0-9]/g, "");
+
+/**
+ * Computes the UPC/EAN check digit for a numeric string (odd positions ×3).
+ */
+function calculateUPCCheckDigit(code) {
+  let sum = 0;
+  for (let i = 0; i < code.length; i++) {
+    const digit = parseInt(code[i], 10);
+    sum += i % 2 === 0 ? digit * 3 : digit;
+  }
+  return ((10 - (sum % 10)) % 10).toString();
+}
+
+/**
+ * Expands a UPC-E value (6, 7 or 8 digits) into its 12-digit UPC-A equivalent,
+ * which is what JsBarcode actually renders (it has no dedicated UPC-E encoder).
+ * Returns the 12-digit UPC-A string, or null if the input length is invalid.
+ */
+function expandUPCEtoUPCA(digits) {
+  let numberSystem = "0";
+  let core;
+
+  if (digits.length === 6) {
+    core = digits;
+  } else if (digits.length === 7 || digits.length === 8) {
+    numberSystem = digits[0] === "1" ? "1" : "0";
+    core = digits.slice(1, 7);
+  } else {
+    return null;
+  }
+
+  const d = core.split("");
+  const last = d[5];
+  let manufacturer;
+  let product;
+
+  switch (last) {
+    case "0":
+    case "1":
+    case "2":
+      manufacturer = d[0] + d[1] + last + "00";
+      product = "00" + d[2] + d[3] + d[4];
+      break;
+    case "3":
+      manufacturer = d[0] + d[1] + d[2] + "00";
+      product = "000" + d[3] + d[4];
+      break;
+    case "4":
+      manufacturer = d[0] + d[1] + d[2] + d[3] + "0";
+      product = "0000" + d[4];
+      break;
+    default: // 5-9
+      manufacturer = d[0] + d[1] + d[2] + d[3] + d[4];
+      product = "0000" + last;
+      break;
+  }
+
+  const upcaNoCheck = numberSystem + manufacturer + product; // 11 digits
+  return upcaNoCheck + calculateUPCCheckDigit(upcaNoCheck);
+}
+
+/**
+ * UPC-A: exactly 12 numeric digits.
  */
 export const validateUPCA = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length !== 12) {
     return {
       valid: false,
@@ -20,14 +90,10 @@ export const validateUPCA = (value) => {
 };
 
 /**
- * Valida UPC-E: 6, 7 ou 8 dígitos numéricos
- * UPC-E é a versão compactada do UPC-A
- * Formato: 0 (system digit) + 6 dígitos + check digit
+ * UPC-E: 6, 7 or 8 digits, expanded to a full UPC-A for rendering.
  */
 export const validateUPCE = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
-
-  // Aceita 6 (sem system/check), 7 (com system OU check) ou 8 (completo)
+  const cleaned = onlyDigits(value);
   if (cleaned.length < 6 || cleaned.length > 8) {
     return {
       valid: false,
@@ -35,44 +101,22 @@ export const validateUPCE = (value) => {
       suggestion: "01234565",
     };
   }
-
-  // Se tiver menos de 8, adicionar zeros para completar
-  if (cleaned.length === 6) {
-    // Adicionar system digit (0) e check digit (calculado)
-    const withSystem = "0" + cleaned;
+  const normalized = expandUPCEtoUPCA(cleaned);
+  if (!normalized) {
     return {
-      valid: true,
-      normalized: withSystem + calculateUPCCheckDigit(withSystem),
-    };
-  } else if (cleaned.length === 7) {
-    // Assumir que é system + 6 dígitos, calcular check
-    return {
-      valid: true,
-      normalized: cleaned + calculateUPCCheckDigit(cleaned),
+      valid: false,
+      message: "Não foi possível converter o UPC-E",
+      suggestion: "01234565",
     };
   }
-
-  return { valid: true };
+  return { valid: true, normalized };
 };
 
 /**
- * Calcula o dígito de verificação para UPC
- */
-function calculateUPCCheckDigit(code) {
-  let sum = 0;
-  for (let i = 0; i < code.length; i++) {
-    const digit = parseInt(code[i]);
-    sum += i % 2 === 0 ? digit * 3 : digit;
-  }
-  const checkDigit = (10 - (sum % 10)) % 10;
-  return checkDigit.toString();
-}
-
-/**
- * Valida EAN-13: Exatamente 13 dígitos numéricos
+ * EAN-13: exactly 13 numeric digits.
  */
 export const validateEAN13 = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length !== 13) {
     return {
       valid: false,
@@ -84,10 +128,10 @@ export const validateEAN13 = (value) => {
 };
 
 /**
- * Valida EAN-8: Exatamente 8 dígitos numéricos
+ * EAN-8: exactly 8 numeric digits.
  */
 export const validateEAN8 = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length !== 8) {
     return {
       valid: false,
@@ -99,10 +143,10 @@ export const validateEAN8 = (value) => {
 };
 
 /**
- * Valida EAN-5: Exatamente 5 dígitos numéricos
+ * EAN-5: exactly 5 numeric digits.
  */
 export const validateEAN5 = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length !== 5) {
     return {
       valid: false,
@@ -114,10 +158,10 @@ export const validateEAN5 = (value) => {
 };
 
 /**
- * Valida EAN-2: Exatamente 2 dígitos numéricos
+ * EAN-2: exactly 2 numeric digits.
  */
 export const validateEAN2 = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length !== 2) {
     return {
       valid: false,
@@ -129,10 +173,10 @@ export const validateEAN2 = (value) => {
 };
 
 /**
- * Valida ISBN: 13 dígitos (ISBN-13) ou 10 dígitos (ISBN-10)
+ * ISBN: 10 or 13 digits (rendered as EAN-13).
  */
 export const validateISBN = (value) => {
-  const cleaned = value.replace(/[^0-9X]/g, "");
+  const cleaned = value.replace(/[^0-9X]/gi, "");
   if (cleaned.length !== 10 && cleaned.length !== 13) {
     return {
       valid: false,
@@ -140,21 +184,22 @@ export const validateISBN = (value) => {
       suggestion: "9781234567897",
     };
   }
+  // JsBarcode renders ISBN through EAN-13, which requires 13 numeric digits.
+  if (cleaned.length !== 13) {
+    return {
+      valid: false,
+      message: "Use o ISBN-13 (13 dígitos) para gerar o código de barras",
+      suggestion: "9781234567897",
+    };
+  }
   return { valid: true };
 };
 
 /**
- * Valida ITF: Deve ter número par de dígitos
+ * ITF: even number of digits, at least 2.
  */
 export const validateITF = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
-  if (cleaned.length % 2 !== 0) {
-    return {
-      valid: false,
-      message: "ITF deve ter número par de dígitos",
-      suggestion: "1234567890",
-    };
-  }
+  const cleaned = onlyDigits(value);
   if (cleaned.length < 2) {
     return {
       valid: false,
@@ -162,14 +207,21 @@ export const validateITF = (value) => {
       suggestion: "1234567890",
     };
   }
+  if (cleaned.length % 2 !== 0) {
+    return {
+      valid: false,
+      message: "ITF deve ter número par de dígitos",
+      suggestion: "1234567890",
+    };
+  }
   return { valid: true };
 };
 
 /**
- * Valida ITF-14: Exatamente 14 dígitos numéricos
+ * ITF-14: exactly 14 numeric digits.
  */
 export const validateITF14 = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length !== 14) {
     return {
       valid: false,
@@ -181,7 +233,7 @@ export const validateITF14 = (value) => {
 };
 
 /**
- * Valida CODE39: Letras maiúsculas, números e alguns caracteres especiais
+ * CODE39: uppercase letters, digits and a few symbols.
  */
 export const validateCODE39 = (value) => {
   const valid = /^[0-9A-Z\-. $/+%]+$/.test(value);
@@ -196,7 +248,7 @@ export const validateCODE39 = (value) => {
 };
 
 /**
- * Valida CODE128: Qualquer caractere ASCII
+ * CODE128 (Auto/B): any non-empty ASCII value.
  */
 export const validateCODE128 = (value) => {
   if (value.length === 0) {
@@ -210,7 +262,7 @@ export const validateCODE128 = (value) => {
 };
 
 /**
- * Valida CODE128A: Apenas caracteres ASCII de controle e letras maiúsculas
+ * CODE128A: uppercase letters, digits and spaces.
  */
 export const validateCODE128A = (value) => {
   const valid = /^[A-Z0-9 ]+$/.test(value);
@@ -225,24 +277,10 @@ export const validateCODE128A = (value) => {
 };
 
 /**
- * Valida CODE128B: Caracteres ASCII imprimíveis
- */
-export const validateCODE128B = (value) => {
-  if (value.length === 0) {
-    return {
-      valid: false,
-      message: "Digite um valor para o código",
-      suggestion: "Example123",
-    };
-  }
-  return { valid: true };
-};
-
-/**
- * Valida CODE128C: Apenas dígitos numéricos (pares)
+ * CODE128C: even number of digits.
  */
 export const validateCODE128C = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length === 0 || cleaned.length % 2 !== 0) {
     return {
       valid: false,
@@ -254,10 +292,10 @@ export const validateCODE128C = (value) => {
 };
 
 /**
- * Valida MSI: Apenas dígitos numéricos
+ * MSI (and variants): numeric only.
  */
 export const validateMSI = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length === 0) {
     return {
       valid: false,
@@ -269,10 +307,10 @@ export const validateMSI = (value) => {
 };
 
 /**
- * Valida Pharmacode: 1 a 6 dígitos numéricos
+ * Pharmacode: integer between 3 and 131070.
  */
 export const validatePharmacode = (value) => {
-  const cleaned = value.replace(/[^0-9]/g, "");
+  const cleaned = onlyDigits(value);
   if (cleaned.length === 0 || cleaned.length > 6) {
     return {
       valid: false,
@@ -292,7 +330,7 @@ export const validatePharmacode = (value) => {
 };
 
 /**
- * Valida Codabar: Números e letras A-D com start/stop characters
+ * Codabar: starts and ends with A-D, digits and a few symbols in between.
  */
 export const validateCodabar = (value) => {
   const valid = /^[A-D][0-9\-$:/.+]+[A-D]$/i.test(value);
@@ -307,7 +345,7 @@ export const validateCodabar = (value) => {
 };
 
 /**
- * Valida GS1-128: Mínimo 2 dígitos
+ * GS1-128: at least 2 characters.
  */
 export const validateGS1_128 = (value) => {
   if (value.length < 2) {
@@ -321,46 +359,38 @@ export const validateGS1_128 = (value) => {
 };
 
 /**
- * Mapa de validadores por formato
+ * Validator map keyed by format id.
  */
 export const BARCODE_VALIDATORS = {
-  UPC: validateUPCA,
-  "UPC-A": validateUPCA,
-  UPCA: validateUPCA,
-  "UPC-E": validateUPCE,
-  UPCE: validateUPCE,
-  EAN13: validateEAN13,
-  "EAN-13": validateEAN13,
-  EAN8: validateEAN8,
-  "EAN-8": validateEAN8,
-  EAN5: validateEAN5,
-  "EAN-5": validateEAN5,
-  EAN2: validateEAN2,
-  "EAN-2": validateEAN2,
-  ISBN: validateISBN,
-  ITF: validateITF,
-  ITF14: validateITF14,
-  "ITF-14": validateITF14,
   CODE39: validateCODE39,
-  CODE93: validateCODE39, // CODE93 tem regras similares ao CODE39
+  CODE93: validateCODE39, // CODE93 shares CODE39's character rules
   CODE128: validateCODE128,
   CODE128A: validateCODE128A,
-  CODE128B: validateCODE128B,
+  CODE128B: validateCODE128,
   CODE128C: validateCODE128C,
+  GS1_128: validateGS1_128,
+  ITF: validateITF,
+  ITF14: validateITF14,
+  EAN13: validateEAN13,
+  EAN8: validateEAN8,
+  EAN5: validateEAN5,
+  EAN2: validateEAN2,
+  ISBN: validateISBN,
+  UPCA: validateUPCA,
+  UPCE: validateUPCE,
   MSI: validateMSI,
   MSI10: validateMSI,
   MSI11: validateMSI,
   MSI1010: validateMSI,
   MSI1110: validateMSI,
-  pharmacode: validatePharmacode,
-  codabar: validateCodabar,
-  "GS1-128": validateGS1_128,
+  PHARMACODE: validatePharmacode,
+  CODABAR: validateCodabar,
 };
 
 /**
- * Valida valor para formato específico
+ * Validates a value for a given format id.
  */
-export const validateBarcodeValue = (format, value) => {
+export const validateBarcodeValue = (formatId, value) => {
   if (!value || value.trim().length === 0) {
     return {
       valid: false,
@@ -369,52 +399,17 @@ export const validateBarcodeValue = (format, value) => {
     };
   }
 
-  const validator = BARCODE_VALIDATORS[format];
+  const validator = BARCODE_VALIDATORS[formatId];
   if (validator) {
     return validator(value);
   }
 
-  // Formato desconhecido - aceita qualquer valor
+  // Unknown format — accept as-is.
   return { valid: true };
 };
 
 /**
- * Obtém exemplo para formato específico
+ * Returns a valid example value for a given format id.
  */
-export const getBarcodeExample = (format) => {
-  const examples = {
-    UPC: "123456789012",
-    "UPC-A": "123456789012",
-    UPCA: "123456789012",
-    "UPC-E": "01234565",
-    UPCE: "01234565",
-    EAN13: "5901234123457",
-    "EAN-13": "5901234123457",
-    EAN8: "96385074",
-    "EAN-8": "96385074",
-    EAN5: "12345",
-    "EAN-5": "12345",
-    EAN2: "12",
-    "EAN-2": "12",
-    ISBN: "9781234567897",
-    ITF: "1234567890",
-    ITF14: "12345678901231",
-    "ITF-14": "12345678901231",
-    CODE39: "EXAMPLE123",
-    CODE93: "EXAMPLE123",
-    CODE128: "Example 1234",
-    CODE128A: "EXAMPLE 123",
-    CODE128B: "Example123",
-    CODE128C: "12345678",
-    MSI: "1234567890",
-    MSI10: "1234567890",
-    MSI11: "1234567890",
-    MSI1010: "1234567890",
-    MSI1110: "1234567890",
-    pharmacode: "1234",
-    codabar: "A1234567890B",
-    "GS1-128": "00123456789012345675",
-  };
-
-  return examples[format] || "123456789";
-};
+export const getBarcodeExample = (formatId) =>
+  BARCODE_EXAMPLES[formatId] || "123456789";

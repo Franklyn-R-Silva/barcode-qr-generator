@@ -70,6 +70,16 @@
   --text-main: #f1f5f9; /* Texto claro */
   --text-muted: #94a3b8; /* Cinza claro */
 
+  /* Os aliases precisam ser redeclarados aqui: um alias definido só no
+     :root como var(--base) é resolvido uma única vez no :root e não
+     acompanha a sobrescrita do dark mode. */
+  --text-primary: var(--text-main);
+  --text-secondary: var(--text-muted);
+  --bg-primary: var(--bg-panel);
+  --bg-secondary: var(--secondary);
+  --border-color: var(--border);
+  --shadow-md: var(--shadow);
+
   --border: #334155; /* Bordas mais escuras */
 
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);

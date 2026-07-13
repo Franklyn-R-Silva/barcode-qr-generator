@@ -14,6 +14,7 @@ import { GENERATOR_TYPES } from "../../constants/generatorTypes";
 import {
   BARCODE_CATEGORIES,
   BARCODE_EXAMPLES,
+  DEFAULT_BARCODE_FORMAT,
 } from "../../constants/barcodeTypes";
 import ColorPickerAdvanced from "./ColorPickerAdvanced";
 import "./Controls.css";
@@ -91,12 +92,13 @@ const Controls = ({
             className={`type-btn ${isBarcode ? "active" : ""}`}
             onClick={() => {
               updateConfig("generatorType", GENERATOR_TYPES.BARCODE);
+              const format = config.barcodeFormat || DEFAULT_BARCODE_FORMAT;
               if (!config.barcodeFormat) {
-                updateConfig("barcodeFormat", "CODE128");
+                updateConfig("barcodeFormat", format);
               }
-              // Adicionar valor de exemplo se estiver vazio
+              // Preenche um valor de exemplo se o campo estiver vazio
               if (!config.text || config.text === "https://seusite.com") {
-                updateConfig("text", BARCODE_EXAMPLES["CODE128"]);
+                updateConfig("text", BARCODE_EXAMPLES[format]);
               }
             }}
           >
@@ -192,27 +194,22 @@ const Controls = ({
           <div className="group-header">
             <AiOutlineBarcode /> <span>Formato do Código de Barras</span>
           </div>
-          {BARCODE_CATEGORIES.map((category) => (
-            <div key={category.name} className="barcode-category">
-              <h4 className="category-title">{category.name}</h4>
-              <select
-                value={
-                  category.formats.find((f) => f.value === config.barcodeFormat)
-                    ? config.barcodeFormat
-                    : ""
-                }
-                onChange={(e) => handleFormatChange(e.target.value)}
-                className="barcode-format-select"
-              >
-                <option value="">Selecione...</option>
+          <select
+            value={config.barcodeFormat}
+            onChange={(e) => handleFormatChange(e.target.value)}
+            className="barcode-format-select"
+            aria-label="Formato do código de barras"
+          >
+            {BARCODE_CATEGORIES.map((category) => (
+              <optgroup key={category.name} label={category.name}>
                 {category.formats.map((format) => (
-                  <option key={format.value} value={format.value}>
+                  <option key={format.id} value={format.id}>
                     {format.label}
                   </option>
                 ))}
-              </select>
-            </div>
-          ))}
+              </optgroup>
+            ))}
+          </select>
         </div>
       )}
 

@@ -253,15 +253,9 @@
   }
 }
 
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  .color-picker-popover {
-    background: #2a2a2a;
-    border-color: #3a3a3a;
-  }
-
-  .color-value {
-    background: rgba(42, 42, 42, 0.95);
-    color: #fff;
-  }
+/* Dark mode — follows the app's `.dark` theme class (not the OS preference).
+   The popover background/border already come from theme variables; here we just
+   deepen the shadow so it reads well on dark backgrounds. */
+.dark .color-picker-popover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
 }

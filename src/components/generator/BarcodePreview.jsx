@@ -7,6 +7,7 @@ import {
   validateBarcodeValue,
   getBarcodeExample,
 } from "../../utils/barcodeValidators";
+import { JSBARCODE_FORMAT } from "../../constants/barcodeTypes";
 import "./GeneratorArea.css";
 
 const BarcodePreview = ({ config, showToast }) => {
@@ -142,7 +143,7 @@ const BarcodePreview = ({ config, showToast }) => {
         ) : (
           <Barcode
             value={normalizedValue || config.text || "123456789"}
-            format={config.barcodeFormat}
+            format={JSBARCODE_FORMAT[config.barcodeFormat] || config.barcodeFormat}
             width={config.barcodeWidth || 2}
             height={config.barcodeHeight || 100}
             displayValue={config.barcodeDisplayValue !== false}

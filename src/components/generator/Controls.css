@@ -129,20 +129,6 @@
   display: none;
 }
 
-/* NOVO: Categoria de Barcode */
-.barcode-category {
-  margin-bottom: 1rem;
-}
-
-.category-title {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 .barcode-format-select {
   width: 100%;
   padding: 0.6rem;

@@ -11,7 +11,7 @@ import Controls from "./components/generator/Controls";
 import HistoryPanel from "./components/generator/HistoryPanel";
 import HistoryButton from "./components/generator/HistoryButton";
 import { GENERATOR_TYPES } from "./constants/generatorTypes";
-import { BARCODE_FORMATS } from "./constants/barcodeTypes";
+import { DEFAULT_BARCODE_FORMAT } from "./constants/barcodeTypes";
 
 function App() {
   // 1. Estado Unificado das Configurações
@@ -38,7 +38,7 @@ function App() {
     logoSizeMode: "auto", // "auto", "original", "custom"
 
     // Barcode específico
-    barcodeFormat: BARCODE_FORMATS.CODE128,
+    barcodeFormat: DEFAULT_BARCODE_FORMAT,
     barcodeWidth: 2,
     barcodeHeight: 100,
     barcodeDisplayValue: true,
