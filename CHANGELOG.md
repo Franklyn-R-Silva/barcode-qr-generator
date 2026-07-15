@@ -7,6 +7,20 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Scanner mode**: read QR Codes and 1D barcodes with the device camera or from
+  an uploaded image, powered by `html5-qrcode`. Added a `ScannerPanel` component
+  and a `scanner` value to `GENERATOR_TYPES`.
+- **NF-e / NFC-e reader**: `utils/nfeParser.js` extracts the 44-digit access key
+  from a barcode, a `chNFe` parameter, or an NFC-e SEFAZ URL, validates its
+  modulo-11 check digit, and decodes UF, emission month, issuer CNPJ, model,
+  series, and number. Scanned fiscal documents show a structured details card with
+  copy / open-link / SEFAZ-lookup / re-generate actions.
+- **Always-visible `ModeSelector`** (QR Code / Barcode / Scan) at the top of the
+  content area, replacing the two-button selector previously inside `Controls`.
+- **GitHub Pages deployment** via `.github/workflows/deploy.yml`, served from the
+  custom domain `qrcode.devfrs.com` (`public/CNAME`, `homepage` in `package.json`).
+- SEO/PWA metadata: descriptive `<title>`, Open Graph/Twitter tags, canonical URL,
+  `robots.txt` + `sitemap.xml`, and a branded `manifest.json`.
 - `CONTRIBUTING.md` with development setup, branch/commit conventions, and code
   style guidelines.
 - Proper UPC-E support: UPC-E values are now expanded to their 12-digit UPC-A
@@ -14,6 +28,8 @@ All notable changes to this project are documented here. The format is based on
 
 ### Changed
 
+- **Rebranded** the app to "QR & Barcode Studio" across the header, footer, page
+  title, and manifest; the footer now links to `qrcode.devfrs.com`.
 - Barcode formats now use a unique `id` decoupled from the JsBarcode render
   string, so formats that share an encoder (UPC-A/UPC-E, EAN-13/ISBN) keep
   independent validation and example values.
@@ -24,6 +40,16 @@ All notable changes to this project are documented here. The format is based on
 
 ### Fixed
 
+- History panel dark-mode styles were keyed on the OS `prefers-color-scheme`
+  instead of the app's `.dark` theme class, so they ignored the in-app toggle.
+- Replaced hardcoded pastel hover backgrounds (`#fef2f2`, `#f0fdf4`, `#fee2e2`) on
+  the history/preview buttons with translucent tints that work in dark mode.
+- Export-format buttons "disappeared" on hover in dark mode (hover background
+  matched the dropdown surface); they now use a translucent primary tint.
+- The preview modal could render behind the history panel; its overlay now stacks
+  above the panel.
+- Error toasts no longer show a green success check icon and glow — the toast now
+  reflects error vs. success styling based on the message.
 - **UPC-A and UPC-E were broken**: they shared the JsBarcode `"UPC"` value, so
   their example values collided and UPC-A received an invalid 8-digit example.
 - EAN-13 no longer shows the ISBN example value (previous key collision).
@@ -44,6 +70,8 @@ All notable changes to this project are documented here. The format is based on
 
 ### Removed
 
+- **Netlify**: removed `netlify.toml` and all Netlify references; deployment now
+  runs entirely on GitHub Pages.
 - Dead parallel architecture that was never wired into the running app
   (`App.refactored.jsx`, `contexts/`, `services/`, `hooks/`, `styles/`,
   and the unused `AnimatedGenerator` and `LoadingSpinner` components).

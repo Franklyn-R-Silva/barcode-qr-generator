@@ -7,14 +7,12 @@ import {
   AiOutlinePicture,
   AiOutlineLink,
   AiOutlineSafety,
-  AiOutlineQrcode,
   AiOutlineBarcode,
 } from "react-icons/ai";
 import { GENERATOR_TYPES } from "../../constants/generatorTypes";
 import {
   BARCODE_CATEGORIES,
   BARCODE_EXAMPLES,
-  DEFAULT_BARCODE_FORMAT,
 } from "../../constants/barcodeTypes";
 import ColorPickerAdvanced from "./ColorPickerAdvanced";
 import "./Controls.css";
@@ -73,41 +71,6 @@ const Controls = ({
 
   return (
     <section className="controls-section">
-      {/* NOVO: Seletor de Tipo de Gerador */}
-      <div className="control-group type-selector">
-        <div className="group-header">
-          <span>🎯 Tipo de Código</span>
-        </div>
-        <div className="type-buttons">
-          <button
-            className={`type-btn ${isQRCode ? "active" : ""}`}
-            onClick={() =>
-              updateConfig("generatorType", GENERATOR_TYPES.QRCODE)
-            }
-          >
-            <AiOutlineQrcode size={24} />
-            <span>QR Code</span>
-          </button>
-          <button
-            className={`type-btn ${isBarcode ? "active" : ""}`}
-            onClick={() => {
-              updateConfig("generatorType", GENERATOR_TYPES.BARCODE);
-              const format = config.barcodeFormat || DEFAULT_BARCODE_FORMAT;
-              if (!config.barcodeFormat) {
-                updateConfig("barcodeFormat", format);
-              }
-              // Preenche um valor de exemplo se o campo estiver vazio
-              if (!config.text || config.text === "https://seusite.com") {
-                updateConfig("text", BARCODE_EXAMPLES[format]);
-              }
-            }}
-          >
-            <AiOutlineBarcode size={24} />
-            <span>Código de Barras</span>
-          </button>
-        </div>
-      </div>
-
       {/* Modelos Prontos - APENAS para QR Code */}
       {isQRCode && (
         <div className="control-group">

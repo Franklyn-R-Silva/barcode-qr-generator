@@ -1,16 +1,15 @@
 <div align="center">
 
-# QR Code & Barcode Generator Pro
+# QR & Barcode Studio
 
-A modern, fully client-side React app for generating **QR Codes** and **barcodes** (25+ formats) — with live preview, light/dark themes, logo embedding, multi-format export, and a local generation history. No backend, no sign-up.
+A modern, fully client-side React app to **generate**, **customize**, and **scan** QR Codes and barcodes (25+ formats) — plus a dedicated reader that decodes Brazilian **NF-e / NFC-e** access keys. Live preview, light/dark themes, logo embedding, multi-format export, and a local history. No backend, no sign-up.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
-[![Netlify Status](https://img.shields.io/badge/deploy-Netlify-00C7B7?logo=netlify&logoColor=white)](https://barcode-qr-generator.netlify.app/)
+[![Deploy: GitHub Pages](https://img.shields.io/badge/deploy-GitHub%20Pages-222?logo=github&logoColor=white)](https://qrcode.devfrs.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
-[![Wakatime](https://wakatime.com/badge/user/268de5b9-4dbd-4873-9ede-a165e5745754/project/9ef7b6c4-80ab-4866-be52-b446eedd73d3.svg)](https://wakatime.com/badge/user/268de5b9-4dbd-4873-9ede-a165e5745754/project/9ef7b6c4-80ab-4866-be52-b446eedd73d3)
 
-**[🌐 Live Demo](https://barcode-qr-generator.netlify.app/)**
+**[🌐 Live App — qrcode.devfrs.com](https://qrcode.devfrs.com)**
 
 ![Preview](foto.png)
 
@@ -23,6 +22,7 @@ A modern, fully client-side React app for generating **QR Codes** and **barcodes
 - [Features](#features)
 - [Getting Started](#getting-started)
 - [Available Scripts](#available-scripts)
+- [Deployment](#deployment)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Contributing](#contributing)
@@ -50,6 +50,21 @@ A modern, fully client-side React app for generating **QR Codes** and **barcodes
 
 Every format has dedicated input validation with example values and inline error hints.
 
+### Scanner & NF-e reader
+
+- Read QR Codes and 1D barcodes (Code 128, Code 39, EAN, UPC, ITF, Codabar) using
+  the **device camera** or by **uploading an image**
+- Automatic recognition of Brazilian electronic invoices (**NF-e / NFC-e**, and
+  CT-e / MDF-e) from either the DANFE barcode or the NFC-e QR Code URL
+- Decodes the 44-digit access key into its fields — issuing state, emission month,
+  issuer CNPJ, document model, series, and number — and validates its check digit
+  (modulo 11)
+- One tap to copy the content, open a scanned link, jump to the official SEFAZ
+  lookup portal, or turn the scanned value back into a QR Code / barcode
+
+> Camera scanning requires a secure context (HTTPS or `localhost`) and the user's
+> camera permission. Image upload works everywhere.
+
 ### General
 
 - Export to **PNG**, **WEBP**, **PDF**, and **SVG** (SVG for barcodes), with an optional transparent background
@@ -57,7 +72,7 @@ Every format has dedicated input validation with example values and inline error
 - Light / dark theme
 - Local generation history (stored in `localStorage`)
 - Social sharing (WhatsApp, Facebook)
-- Responsive, mobile-first layout
+- Responsive, mobile-first layout · installable PWA
 
 ## Getting Started
 
@@ -80,32 +95,48 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Create an optimized production build |
 | `npm test`      | Run the test suite (Jest + RTL)      |
 
+## Deployment
+
+The app is hosted on **GitHub Pages** under the custom domain
+**[qrcode.devfrs.com](https://qrcode.devfrs.com)** (DNS proxied through Cloudflare).
+
+Deployment is automated: every push to `main` triggers the
+[`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) GitHub Actions
+workflow, which builds the app and publishes the `build/` output to GitHub Pages.
+The custom domain is pinned by `public/CNAME`, which Create React App copies into
+the build output.
+
+To point the app at a different domain, update `public/CNAME` and the `homepage`
+field in `package.json`.
+
 ## Architecture
 
 Create React App (React 18), running entirely in the browser. A single `config`
-state object in `App.jsx` drives both generators and flows down to the preview
-and control components.
+state object in `App.jsx` drives both generators and the scanner, and flows down
+to the preview, control, and scanner components.
 
 ```
 src/
 ├── components/
 │   ├── layout/      # Header, Footer
 │   ├── common/      # Toast
-│   └── generator/   # QRCodePreview, BarcodePreview, Controls,
-│                    # ExportOptions, ColorPickerAdvanced, History*
-├── constants/       # Generator types & barcode format definitions
-└── utils/           # Barcode validators
+│   ├── generator/   # QRCodePreview, BarcodePreview, Controls, ModeSelector,
+│   │                # ExportOptions, ColorPickerAdvanced, History*
+│   └── scanner/     # ScannerPanel (camera + image reader, NF-e details)
+├── constants/       # Generator/mode types & barcode format definitions
+└── utils/           # Barcode validators, NF-e access-key parser
 ```
 
-QR codes render to a `<canvas>` (via `react-qrcode-logo`) and barcodes to an
-`<svg>` (via `react-barcode`/JsBarcode); export logic adapts to each. See
-[ARCHITECTURE.md](./ARCHITECTURE.md) for the full picture.
+QR codes render to a `<canvas>` (via `react-qrcode-logo`), barcodes to an `<svg>`
+(via `react-barcode`/JsBarcode), and the scanner uses `html5-qrcode`; export logic
+adapts to each path. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full picture.
 
 ## Tech Stack
 
 - **React 18** (Create React App)
 - **react-qrcode-logo** — QR rendering
 - **react-barcode** / **JsBarcode** — barcode rendering
+- **html5-qrcode** — camera & image scanning
 - **framer-motion** — animations
 - **react-colorful** — color picker
 - **jsPDF** — PDF export

@@ -6,7 +6,15 @@ const Footer = () => {
     <footer className="main-footer">
       <p>
         Desenvolvido por <strong>Franklyn Silva</strong> &copy;{" "}
-        {new Date().getFullYear()}
+        {new Date().getFullYear()} &middot;{" "}
+        <a
+          href="https://qrcode.devfrs.com"
+          target="_blank"
+          rel="noreferrer"
+          className="footer-brand-link"
+        >
+          qrcode.devfrs.com
+        </a>
       </p>
       <div className="footer-links">
         <a

@@ -63,6 +63,26 @@
   z-index: 1;
 }
 
+/* Variante de erro: glow e ícone vermelhos em vez do verde de sucesso */
+.toast-content.error {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3),
+    0 8px 10px -6px rgba(0, 0, 0, 0.2), 0 0 30px rgba(248, 113, 113, 0.25);
+}
+
+.toast-content.error .toast-icon {
+  color: #f87171;
+  filter: drop-shadow(0 2px 8px rgba(248, 113, 113, 0.5));
+}
+
+.toast-content.error::before {
+  background: linear-gradient(
+    45deg,
+    transparent,
+    rgba(248, 113, 113, 0.1),
+    transparent
+  );
+}
+
 @keyframes iconPop {
   0% {
     transform: scale(0) rotate(-180deg);

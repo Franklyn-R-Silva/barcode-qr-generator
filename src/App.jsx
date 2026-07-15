@@ -8,6 +8,8 @@ import Toast from "./components/common/Toast";
 import QRCodePreview from "./components/generator/QRCodePreview";
 import BarcodePreview from "./components/generator/BarcodePreview";
 import Controls from "./components/generator/Controls";
+import ModeSelector from "./components/generator/ModeSelector";
+import ScannerPanel from "./components/scanner/ScannerPanel";
 import HistoryPanel from "./components/generator/HistoryPanel";
 import HistoryButton from "./components/generator/HistoryButton";
 import { GENERATOR_TYPES } from "./constants/generatorTypes";
@@ -91,6 +93,19 @@ function App() {
   const toggleTheme = () =>
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
 
+  // Enviar conteúdo escaneado para um dos geradores
+  const handleGenerateFromScan = (targetType, text) => {
+    setConfig((prev) => ({
+      ...prev,
+      text: text || "",
+      generatorType:
+        targetType === GENERATOR_TYPES.BARCODE
+          ? GENERATOR_TYPES.BARCODE
+          : GENERATOR_TYPES.QRCODE,
+    }));
+    showToast("Conteúdo enviado para o gerador!");
+  };
+
   // Ouvir evento de reset do barcode
   useEffect(() => {
     const handleBarcodeReset = (event) => {
@@ -151,21 +166,34 @@ function App() {
       </Header>
 
       <main className="main-content">
-        {/* Esquerda: Visualização do Código */}
-        {config.generatorType === GENERATOR_TYPES.QRCODE ? (
-          <QRCodePreview config={config} showToast={showToast} />
-        ) : (
-          <BarcodePreview config={config} showToast={showToast} />
-        )}
+        {/* Barra de seleção de modo (sempre visível, largura total) */}
+        <ModeSelector config={config} updateConfig={updateConfig} />
 
-        {/* Direita: Controles de Edição */}
-        <Controls
-          config={config}
-          updateConfig={updateConfig}
-          handleLogoUpload={handleLogoUpload}
-          socialLinks={socialLinks}
-          handleCopyText={handleCopyText}
-        />
+        {config.generatorType === GENERATOR_TYPES.SCANNER ? (
+          /* Modo Leitor */
+          <ScannerPanel
+            showToast={showToast}
+            onGenerate={handleGenerateFromScan}
+          />
+        ) : (
+          <>
+            {/* Esquerda: Visualização do Código */}
+            {config.generatorType === GENERATOR_TYPES.QRCODE ? (
+              <QRCodePreview config={config} showToast={showToast} />
+            ) : (
+              <BarcodePreview config={config} showToast={showToast} />
+            )}
+
+            {/* Direita: Controles de Edição */}
+            <Controls
+              config={config}
+              updateConfig={updateConfig}
+              handleLogoUpload={handleLogoUpload}
+              socialLinks={socialLinks}
+              handleCopyText={handleCopyText}
+            />
+          </>
+        )}
       </main>
 
       <Footer />
