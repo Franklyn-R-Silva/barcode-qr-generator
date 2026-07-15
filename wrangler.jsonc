@@ -2,7 +2,7 @@
   // Cloudflare Workers static-assets deployment for the CRA build output.
   // `npx wrangler deploy` uploads ./build as static assets (no server code).
   // Docs: https://developers.cloudflare.com/workers/static-assets/
-  "name": "qrcode-devfrs",
+  "name": "barcode-qr-generator",
   "compatibility_date": "2026-07-15",
   "assets": {
     "directory": "./build",
