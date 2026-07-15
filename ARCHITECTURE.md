@@ -100,11 +100,11 @@ Plain CSS, co-located per component. Theming is driven by CSS custom properties 
 
 ## Deployment
 
-Built with `react-scripts build` and served as static files on **GitHub Pages**
-under the custom domain `qrcode.devfrs.com`. `public/CNAME` pins the domain and is
-copied into `build/` by Create React App. The `homepage` field in `package.json`
-sets the asset base path (root, since the app is served from the domain apex).
+Built with `react-scripts build` and served as static files on **Cloudflare Pages**
+under the custom domain `qrcode.devfrs.com`. There is no server-side component.
 
-CI/CD is handled by `.github/workflows/deploy.yml`: on every push to `main` it runs
-`npm ci`, `npm run build`, and publishes the artifact with the official
-`actions/deploy-pages` action. There is no Netlify or server-side component.
+Cloudflare Pages is connected to the GitHub repository and rebuilds on every push
+to `main` using build command `npm run build`, output directory `build`, and
+Node 18 (pinned via `.nvmrc`). The custom domain and DNS are managed in the
+Cloudflare dashboard, so no `homepage` field or `CNAME` file is required — assets
+load from the domain root.

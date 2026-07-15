@@ -6,7 +6,7 @@ A modern, fully client-side React app to **generate**, **customize**, and **scan
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
-[![Deploy: GitHub Pages](https://img.shields.io/badge/deploy-GitHub%20Pages-222?logo=github&logoColor=white)](https://qrcode.devfrs.com)
+[![Deploy: Cloudflare Pages](https://img.shields.io/badge/deploy-Cloudflare%20Pages-F38020?logo=cloudflare&logoColor=white)](https://qrcode.devfrs.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
 **[🌐 Live App — qrcode.devfrs.com](https://qrcode.devfrs.com)**
@@ -97,17 +97,23 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ## Deployment
 
-The app is hosted on **GitHub Pages** under the custom domain
-**[qrcode.devfrs.com](https://qrcode.devfrs.com)** (DNS proxied through Cloudflare).
+The app is hosted on **Cloudflare Pages** under the custom domain
+**[qrcode.devfrs.com](https://qrcode.devfrs.com)**. It is a fully static build —
+there is no server-side component.
 
-Deployment is automated: every push to `main` triggers the
-[`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) GitHub Actions
-workflow, which builds the app and publishes the `build/` output to GitHub Pages.
-The custom domain is pinned by `public/CNAME`, which Create React App copies into
-the build output.
+Cloudflare Pages build settings (connect the GitHub repo and Cloudflare rebuilds
+on every push to `main`):
 
-To point the app at a different domain, update `public/CNAME` and the `homepage`
-field in `package.json`.
+| Setting                | Value           |
+| ---------------------- | --------------- |
+| Framework preset       | Create React App (or "None" / static) |
+| Build command          | `npm run build` |
+| Build output directory | `build`         |
+| Node version           | `18` (pinned via `.nvmrc`) |
+
+The custom domain is added under **Cloudflare Pages → Custom domains**; DNS is
+managed in the same Cloudflare account. No `homepage`/`CNAME` file is needed —
+assets are served from the domain root.
 
 ## Architecture
 

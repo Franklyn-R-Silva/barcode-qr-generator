@@ -17,8 +17,8 @@ All notable changes to this project are documented here. The format is based on
   copy / open-link / SEFAZ-lookup / re-generate actions.
 - **Always-visible `ModeSelector`** (QR Code / Barcode / Scan) at the top of the
   content area, replacing the two-button selector previously inside `Controls`.
-- **GitHub Pages deployment** via `.github/workflows/deploy.yml`, served from the
-  custom domain `qrcode.devfrs.com` (`public/CNAME`, `homepage` in `package.json`).
+- **Cloudflare Pages deployment** as a static build (`npm run build` → `build/`,
+  Node 18 pinned via `.nvmrc`), served from the custom domain `qrcode.devfrs.com`.
 - SEO/PWA metadata: descriptive `<title>`, Open Graph/Twitter tags, canonical URL,
   `robots.txt` + `sitemap.xml`, and a branded `manifest.json`.
 - `CONTRIBUTING.md` with development setup, branch/commit conventions, and code
