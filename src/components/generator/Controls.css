@@ -69,10 +69,21 @@
   color: white;
 }
 
+/* Barra de modo ocupa a largura toda no grid de 2 colunas do main */
+.mode-selector {
+  grid-column: 1 / -1;
+}
+
 .type-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+}
+
+@media (max-width: 560px) {
+  .type-buttons {
+    grid-template-columns: 1fr;
+  }
 }
 
 .type-btn {

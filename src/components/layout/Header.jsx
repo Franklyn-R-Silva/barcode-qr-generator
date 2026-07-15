@@ -8,8 +8,8 @@ const Header = ({ theme, toggleTheme, children }) => {
       <div className="brand">
         <AiOutlineQrcode className="brand-icon" size={36} aria-hidden="true" />
         <div className="brand-text">
-          <h1>QR Generator Pro</h1>
-          <span className="subtitle">✨ Crie, Personalize e Compartilhe</span>
+          <h1>QR &amp; Barcode Studio</h1>
+          <span className="subtitle">✨ Gere, Escaneie e Compartilhe</span>
         </div>
       </div>
 

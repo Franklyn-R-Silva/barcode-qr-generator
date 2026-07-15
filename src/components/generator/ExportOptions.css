@@ -86,7 +86,9 @@
 
 .format-btn:hover {
   border-color: var(--primary);
-  background: var(--secondary);
+  /* Tinta translúcida de primary — legível tanto no claro quanto no escuro
+     (--secondary no dark é igual ao fundo do dropdown e "sumia"). */
+  background: rgba(67, 97, 238, 0.12);
   transform: translateY(-2px);
 }
 

@@ -1,0 +1,209 @@
+/* src/components/scanner/ScannerPanel.css */
+
+.scanner-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  grid-column: 1 / -1; /* ocupa a largura toda no grid de 2 colunas */
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.scanner-card {
+  position: relative;
+  background: var(--bg-panel);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Região onde o vídeo da câmera é injetado */
+.scanner-reader {
+  width: 100%;
+}
+
+.scanner-reader:not(.active) {
+  display: none;
+}
+
+/* O html5-qrcode injeta um <video>; garante que preencha o card */
+.scanner-reader video {
+  width: 100% !important;
+  border-radius: 16px;
+  display: block;
+}
+
+.scanner-reader img {
+  max-width: 100%;
+}
+
+.scanner-placeholder {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  color: var(--text-muted);
+}
+
+.scanner-placeholder-icon {
+  font-size: 4rem;
+  color: var(--primary);
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+.scanner-placeholder-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0.25rem 0;
+}
+
+.scanner-placeholder-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.scanner-error {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.scanner-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.scanner-file-btn {
+  cursor: pointer;
+}
+
+/* ---- Resultado ---- */
+.scan-result {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+.scan-result-header {
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.scan-result-text {
+  word-break: break-all;
+  background: var(--bg-app);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.mono {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+/* NF-e */
+.nfe-badge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.nfe-badge strong {
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+.nfe-dv {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+
+.nfe-dv.ok {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+
+.nfe-dv.warn {
+  background: rgba(245, 158, 11, 0.18);
+  color: var(--warning);
+}
+
+.nfe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+}
+
+.nfe-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.nfe-grid dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.nfe-grid dd {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  word-break: break-word;
+}
+
+.scan-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+.scan-result-actions .btn-icon {
+  flex: 1 1 auto;
+  min-width: 120px;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .scanner-actions {
+    grid-template-columns: 1fr;
+  }
+}

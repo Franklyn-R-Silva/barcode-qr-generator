@@ -171,7 +171,7 @@
 }
 
 .btn-icon-small.btn-delete:hover {
-  background: #fef2f2;
+  background: rgba(239, 68, 68, 0.15);
   border-color: #ef4444;
   color: #ef4444;
   transform: scale(1.15) rotate(-5deg);
@@ -179,7 +179,7 @@
 }
 
 .btn-icon-small.btn-load:hover {
-  background: #f0fdf4;
+  background: rgba(16, 185, 129, 0.15);
   border-color: #10b981;
   color: #10b981;
   transform: scale(1.15) rotate(180deg);
@@ -320,7 +320,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem 0.75rem;
-  background: var(--primary-light);
+  background: rgba(99, 102, 241, 0.15);
   border-radius: 20px;
   width: fit-content;
 }
@@ -366,12 +366,14 @@
   background: rgba(0, 0, 0, 0.7);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
-  z-index: 1002;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
   animation: fadeIn 0.3s ease-out;
+  /* Aberto a partir do painel de histórico (z-index 10000);
+     precisa ficar acima dele. */
+  z-index: 10001;
 }
 
 .preview-modal {
@@ -417,7 +419,7 @@
 }
 
 .preview-close:hover {
-  background: #fee2e2;
+  background: rgba(239, 68, 68, 0.15);
   border-color: #ef4444;
   color: #ef4444;
   transform: rotate(90deg) scale(1.1);
@@ -587,14 +589,13 @@
   }
 }
 
-/* Dark Mode Adjustments */
-@media (prefers-color-scheme: dark) {
-  .history-panel,
-  .preview-modal {
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
-  }
+/* Dark Mode Adjustments — keyed on the app's `.dark` theme class,
+   not the OS preference (the app toggles theme in-app). */
+.dark .history-panel,
+.dark .preview-modal {
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+}
 
-  .history-item:hover {
-    box-shadow: 0 8px 24px rgba(103, 115, 240, 0.25);
-  }
+.dark .history-item:hover {
+  box-shadow: 0 8px 24px rgba(103, 115, 240, 0.25);
 }

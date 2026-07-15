@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-React (Create React App) single-page app for generating QR Codes and 1D barcodes (25+ formats) entirely in the browser. No backend. Deployed to Netlify. The UI is in Portuguese (pt-BR) — match this when adding user-facing strings. Project documentation (README, ARCHITECTURE, CHANGELOG, this file) is in English.
+React (Create React App) single-page app for generating **and scanning** QR Codes and 1D barcodes (25+ formats) entirely in the browser. No backend. Deployed to **GitHub Pages** under the custom domain `qrcode.devfrs.com` (`public/CNAME` + `.github/workflows/deploy.yml`; `homepage` in `package.json`). The UI is in Portuguese (pt-BR) — match this when adding user-facing strings. Project documentation (README, ARCHITECTURE, CHANGELOG, this file) is in English.
 
 ## Commands
 
@@ -20,7 +20,7 @@ Node 18 is required (`engines` in package.json; `netlify.toml` pins `node_versio
 
 ## Architecture
 
-Entry: `src/index.js` → `src/App.jsx`. `App.jsx` holds one unified `config` state object covering **both** generators (generatorType, shared text/colors, plus QR-specific and barcode-specific fields) and updates it via `updateConfig(field, value)`. State is prop-drilled to `Controls` and the preview components. `config.generatorType` (`GENERATOR_TYPES.QRCODE` | `.BARCODE`, from `src/constants/generatorTypes.js`, values `"qrcode"`/`"barcode"`) selects which preview renders.
+Entry: `src/index.js` → `src/App.jsx`. `App.jsx` holds one unified `config` state object covering both generators (generatorType, shared text/colors, plus QR-specific and barcode-specific fields) and updates it via `updateConfig(field, value)`. State is prop-drilled to `Controls`, `ModeSelector`, and the preview/scanner components. `config.generatorType` (`GENERATOR_TYPES.QRCODE` | `.BARCODE` | `.SCANNER`, from `src/constants/generatorTypes.js`, values `"qrcode"`/`"barcode"`/`"scanner"`) selects which mode renders. `ModeSelector` is always rendered at the top of `<main>` (spans the grid) so the user can switch modes; in scanner mode `App.jsx` renders `ScannerPanel` in place of the preview + `Controls` pair.
 
 ```
 src/
@@ -28,11 +28,16 @@ src/
   components/
     layout/               Header (theme toggle), Footer
     common/               Toast
-    generator/            QRCodePreview, BarcodePreview, Controls, ExportOptions,
-                          ColorPickerAdvanced, HistoryPanel, HistoryButton
+    generator/            QRCodePreview, BarcodePreview, Controls, ModeSelector,
+                          ExportOptions, ColorPickerAdvanced, HistoryPanel, HistoryButton
+    scanner/              ScannerPanel (html5-qrcode camera/image reader + NF-e details)
   constants/              generatorTypes.js, barcodeTypes.js
-  utils/                  barcodeValidators.js
+  utils/                  barcodeValidators.js, nfeParser.js
 ```
+
+## Scanner & NF-e (`components/scanner/ScannerPanel.jsx`, `utils/nfeParser.js`)
+
+`ScannerPanel` uses `html5-qrcode` to read QR + 1D barcodes from the camera (`facingMode: "environment"`) or an uploaded image; a single lazily-created `Html5Qrcode` instance targets `#qr-reader-region`, stops on first read, and is released on unmount. `utils/nfeParser.js` is pure: `parseNFe(text)` extracts a 44-digit NF-e/NFC-e access key (from a raw barcode, `chNFe=` param, or SEFAZ URL), validates the modulo-11 check digit, and decodes UF/emission/CNPJ/model/series/number. `ScannerPanel.onGenerate(targetType, text)` (wired to `App.handleGenerateFromScan`) sends a scanned value back into a generator.
 
 ## QR vs Barcode rendering differences
 
