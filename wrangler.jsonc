@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers static-assets deployment for the CRA build output.
+  // `npx wrangler deploy` uploads ./build as static assets (no server code).
+  // Docs: https://developers.cloudflare.com/workers/static-assets/
+  "name": "qrcode-devfrs",
+  "compatibility_date": "2026-07-15",
+  "assets": {
+    "directory": "./build",
+    // Single-page app: unknown paths fall back to index.html.
+    "not_found_handling": "single-page-application"
+  }
+}

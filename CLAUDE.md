@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-React (Create React App) single-page app for generating **and scanning** QR Codes and 1D barcodes (25+ formats) entirely in the browser. No backend. Deployed as a static build to **Cloudflare Pages** under the custom domain `qrcode.devfrs.com` (build command `npm run build`, output `build/`, Node 18 pinned via `.nvmrc`). The UI is in Portuguese (pt-BR) — match this when adding user-facing strings. Project documentation (README, ARCHITECTURE, CHANGELOG, this file) is in English.
+React (Create React App) single-page app for generating **and scanning** QR Codes and 1D barcodes (25+ formats) entirely in the browser. No backend. Deployed to **Cloudflare** under the custom domain `qrcode.devfrs.com`: `npm run build` produces `build/`, published as Workers static assets via `wrangler.jsonc` (`npx wrangler deploy`), Node 20 pinned via `.nvmrc` (Wrangler 4 needs Node ≥ 20). The UI is in Portuguese (pt-BR) — match this when adding user-facing strings. Project documentation (README, ARCHITECTURE, CHANGELOG, this file) is in English.
 
 ## Commands
 

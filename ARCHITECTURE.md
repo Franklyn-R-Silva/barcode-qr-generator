@@ -103,8 +103,9 @@ Plain CSS, co-located per component. Theming is driven by CSS custom properties 
 Built with `react-scripts build` and served as static files on **Cloudflare Pages**
 under the custom domain `qrcode.devfrs.com`. There is no server-side component.
 
-Cloudflare Pages is connected to the GitHub repository and rebuilds on every push
-to `main` using build command `npm run build`, output directory `build`, and
-Node 18 (pinned via `.nvmrc`). The custom domain and DNS are managed in the
-Cloudflare dashboard, so no `homepage` field or `CNAME` file is required — assets
-load from the domain root.
+Cloudflare is connected to the GitHub repository and rebuilds on every push to
+`main` using build command `npm run build` (Node 20, pinned via `.nvmrc`). The
+`build/` output is published as Cloudflare Workers static assets via `wrangler.jsonc`
+(`assets.directory: ./build`, SPA fallback), deployed with `npx wrangler deploy`.
+The custom domain and DNS are managed in the Cloudflare dashboard, so no `homepage`
+field or `CNAME` file is required — assets load from the domain root.

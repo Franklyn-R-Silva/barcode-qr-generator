@@ -101,19 +101,20 @@ The app is hosted on **Cloudflare Pages** under the custom domain
 **[qrcode.devfrs.com](https://qrcode.devfrs.com)**. It is a fully static build —
 there is no server-side component.
 
-Cloudflare Pages build settings (connect the GitHub repo and Cloudflare rebuilds
-on every push to `main`):
+Cloudflare rebuilds on every push to `main`. The static `build/` output is
+uploaded as Cloudflare Workers static assets via `wrangler.jsonc` (the deploy step
+runs `npx wrangler deploy`).
 
 | Setting                | Value           |
 | ---------------------- | --------------- |
-| Framework preset       | Create React App (or "None" / static) |
 | Build command          | `npm run build` |
-| Build output directory | `build`         |
-| Node version           | `18` (pinned via `.nvmrc`) |
+| Deploy command         | `npx wrangler deploy` |
+| Build output directory | `build` (also set in `wrangler.jsonc` → `assets.directory`) |
+| Node version           | `20` (pinned via `.nvmrc`; Wrangler 4 requires Node ≥ 20) |
 
-The custom domain is added under **Cloudflare Pages → Custom domains**; DNS is
-managed in the same Cloudflare account. No `homepage`/`CNAME` file is needed —
-assets are served from the domain root.
+`wrangler.jsonc` configures a static-assets-only Worker (no server code) with SPA
+fallback. The custom domain and DNS are managed in the Cloudflare dashboard, so no
+`homepage` field or `CNAME` file is required — assets load from the domain root.
 
 ## Architecture
 
