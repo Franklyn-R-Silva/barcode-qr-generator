@@ -1,6 +1,7 @@
 // src/utils/barcodeValidators.js
 
 import { BARCODE_EXAMPLES } from "../constants/barcodeTypes";
+import { extractAccessKey } from "./nfeParser";
 
 /**
  * Validators for the different barcode formats.
@@ -345,6 +346,88 @@ export const validateCodabar = (value) => {
 };
 
 /**
+ * Converte a linha digitável de um boleto bancário (47 dígitos) no código de
+ * barras de 44 dígitos que é efetivamente codificado (ITF).
+ */
+function bankLinhaToBarcode(l) {
+  const banco = l.slice(0, 3);
+  const moeda = l.slice(3, 4);
+  const campoLivreA = l.slice(4, 9); // 5
+  const campoLivreB = l.slice(10, 20); // 10
+  const campoLivreC = l.slice(21, 31); // 10
+  const dvGeral = l.slice(32, 33);
+  const fatorValor = l.slice(33, 47); // fator(4) + valor(10)
+  return banco + moeda + dvGeral + fatorValor + campoLivreA + campoLivreB + campoLivreC;
+}
+
+/**
+ * Converte a linha digitável de um boleto de arrecadação (48 dígitos, 4 blocos
+ * de 11 dígitos + DV) no código de barras de 44 dígitos.
+ */
+function arrecadacaoLinhaToBarcode(l) {
+  return l.slice(0, 11) + l.slice(12, 23) + l.slice(24, 35) + l.slice(36, 47);
+}
+
+/**
+ * Boleto bancário: aceita o código de barras (44 dígitos) ou a linha digitável
+ * (47 dígitos), convertendo esta última para os 44 dígitos codificados (ITF).
+ */
+export const validateBoleto = (value) => {
+  const d = onlyDigits(value);
+  if (d.length === 44) return { valid: true };
+  if (d.length === 47) return { valid: true, normalized: bankLinhaToBarcode(d) };
+  return {
+    valid: false,
+    message:
+      "Boleto bancário: informe a linha digitável (47 dígitos) ou o código de barras (44 dígitos)",
+    suggestion: BARCODE_EXAMPLES.BOLETO,
+  };
+};
+
+/**
+ * Boleto de arrecadação / tributos: código de barras (44 dígitos, começando com
+ * 8) ou linha digitável (48 dígitos), convertida para os 44 dígitos.
+ */
+export const validateBoletoArrecadacao = (value) => {
+  const d = onlyDigits(value);
+  if (d.length === 44) {
+    if (d[0] !== "8") {
+      return {
+        valid: false,
+        message: "Boleto de arrecadação: o código de barras deve começar com 8",
+        suggestion: BARCODE_EXAMPLES.BOLETO_ARRECADACAO,
+      };
+    }
+    return { valid: true };
+  }
+  if (d.length === 48) {
+    return { valid: true, normalized: arrecadacaoLinhaToBarcode(d) };
+  }
+  return {
+    valid: false,
+    message:
+      "Arrecadação: informe a linha digitável (48 dígitos) ou o código de barras (44 dígitos)",
+    suggestion: BARCODE_EXAMPLES.BOLETO_ARRECADACAO,
+  };
+};
+
+/**
+ * NF-e / DANFE: extrai a chave de acesso de 44 dígitos (de uma chave pura, de
+ * uma URL da SEFAZ ou de um texto) e a codifica em Code-128C.
+ */
+export const validateNFe = (value) => {
+  const key = extractAccessKey(value) || onlyDigits(value);
+  if (key.length !== 44) {
+    return {
+      valid: false,
+      message: "NF-e / DANFE: a chave de acesso deve ter 44 dígitos",
+      suggestion: BARCODE_EXAMPLES.NFE,
+    };
+  }
+  return { valid: true, normalized: key };
+};
+
+/**
  * GS1-128: at least 2 characters.
  */
 export const validateGS1_128 = (value) => {
@@ -385,6 +468,9 @@ export const BARCODE_VALIDATORS = {
   MSI1110: validateMSI,
   PHARMACODE: validatePharmacode,
   CODABAR: validateCodabar,
+  BOLETO: validateBoleto,
+  BOLETO_ARRECADACAO: validateBoletoArrecadacao,
+  NFE: validateNFe,
 };
 
 /**

@@ -7,6 +7,11 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Brazilian document barcodes**: new "Boletos & Notas Fiscais" category with
+  Boleto Bancário and Boleto de Arrecadação (ITF, 44 digits) and NF-e / DANFE
+  (Code-128C, 44 digits). Validators accept either the 44-digit barcode or the
+  digitable line (47 digits bank / 48 digits arrecadação) and convert it; the
+  NF-e option extracts the access key from a raw key or a SEFAZ URL.
 - **Scanner mode**: read QR Codes and 1D barcodes with the device camera or from
   an uploaded image, powered by `html5-qrcode`. Added a `ScannerPanel` component
   and a `scanner` value to `GENERATOR_TYPES`.

@@ -45,17 +45,23 @@ const TIPOS_EMISSAO = {
 export function extractAccessKey(text) {
   if (!text) return null;
 
+  const str = String(text);
+
   // 1) Parâmetro explícito chNFe=... (algumas URLs usam este formato).
-  const chMatch = String(text).match(/chNFe=?(\d{44})/i);
+  const chMatch = str.match(/chNFe=?(\d{44})/i);
   if (chMatch) return chMatch[1];
 
-  // 2) Primeira sequência de exatamente 44 dígitos consecutivos.
-  //    (?<!\d) e (?!\d) evitam capturar parte de um número maior.
-  const seqMatch = String(text).match(/(?<!\d)(\d{44})(?!\d)/);
-  if (seqMatch) return seqMatch[1];
+  // 2) Uma sequência maximal de exatamente 44 dígitos (delimitada por
+  //    não-dígitos, como em `?p=<chave>|...`). Evita lookbehind por
+  //    compatibilidade com navegadores antigos (ex.: Safari < 16.4).
+  const runs = str.match(/\d+/g);
+  if (runs) {
+    const key = runs.find((run) => run.length === 44);
+    if (key) return key;
+  }
 
   // 3) Fallback: remove tudo que não é dígito; se sobrarem 44, é a chave.
-  const digitsOnly = String(text).replace(/\D/g, "");
+  const digitsOnly = str.replace(/\D/g, "");
   if (digitsOnly.length === 44) return digitsOnly;
 
   return null;

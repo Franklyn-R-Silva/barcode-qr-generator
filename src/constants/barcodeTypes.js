@@ -40,12 +40,24 @@ export const JSBARCODE_FORMAT = {
   MSI1110: "MSI1110",
   PHARMACODE: "pharmacode",
   CODABAR: "codabar",
+  // Documentos brasileiros (a chave de 44 dígitos é o que é codificado):
+  BOLETO: "ITF", // boleto bancário — Interleaved 2 of 5
+  BOLETO_ARRECADACAO: "ITF", // arrecadação/tributos — Interleaved 2 of 5
+  NFE: "CODE128C", // NF-e / DANFE — Code-128C
 };
 
 /**
  * Barcode formats grouped by category for the UI selector.
  */
 export const BARCODE_CATEGORIES = [
+  {
+    name: "Boletos & Notas Fiscais (Brasil)",
+    formats: [
+      { id: "BOLETO", label: "Boleto Bancário (ITF)" },
+      { id: "BOLETO_ARRECADACAO", label: "Boleto de Arrecadação / Tributos (ITF)" },
+      { id: "NFE", label: "NF-e / DANFE (Code-128C)" },
+    ],
+  },
   {
     name: "Code Family",
     formats: [
@@ -136,4 +148,9 @@ export const BARCODE_EXAMPLES = {
   MSI1110: "1234567890",
   PHARMACODE: "1234",
   CODABAR: "A1234567890B",
+  // Código de barras (44 dígitos). Os validadores também aceitam a
+  // linha digitável (47 díg. bancário / 48 díg. arrecadação) e convertem.
+  BOLETO: "23791234567890123456789012345678901234567890",
+  BOLETO_ARRECADACAO: "81234567890123456789012345678901234567890123",
+  NFE: "35240114200166000187650010000001231000001230",
 };
