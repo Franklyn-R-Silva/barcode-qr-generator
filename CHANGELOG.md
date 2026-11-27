@@ -7,6 +7,12 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **More gradient options**: horizontal, vertical, diagonal or radial; an
+  optional middle colour; gradient on the background and on the frame. The
+  contrast warning checks every colour pair.
+- **More frame options**: band on top, speech bubble, label pill and ticket;
+  own frame and text colours; a second label on the other side; text size
+  and weight; circle text on the top and bottom arcs.
 - **English interface**: a PT / EN button next to the theme toggle switches
   the language, remembered in `localStorage` (first visit follows the browser
   language). The code is now English throughout, strings included; Portuguese

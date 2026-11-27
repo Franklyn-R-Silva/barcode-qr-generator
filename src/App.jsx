@@ -64,7 +64,20 @@ function App() {
     bgImageMode: "behind", // behind | modules (photo fills the dark modules)
     moduleImageDarken: 0.35, // veil of the code colour over the photo in the modules
     frame: false,
-    frameStyle: "band", // band | arc | circle | square
+    frameStyle: "band", // band | top | arc | bubble | pill | ticket | circle | square
+    frameText2: "", // optional label on the other side
+    frameFontScale: 1,
+    frameBold: true,
+    frameColorsOn: false,
+    frameColor: "#111827",
+    frameTextColor: "#ffffff",
+    frameGradient: false,
+    circleText: "around", // around | arcs
+    gradientDir: "d", // h | v | d | r
+    gradient3On: false,
+    fgColor3: "#7c3aed",
+    bgGradientOn: false,
+    bgColor2: "#eff6ff",
     frameText: t("Scan me"),
 
     // Barcode only

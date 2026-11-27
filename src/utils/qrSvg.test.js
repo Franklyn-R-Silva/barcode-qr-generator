@@ -77,3 +77,37 @@ test("photo inside the modules is clipped to them and darkened", () => {
   expect(behind).not.toContain("url(#mc)");
   expect(behind.indexOf(photo)).toBeLessThan(behind.indexOf("<g transform"));
 });
+
+test("gradient direction, radial, three colours, background and frame gradients", () => {
+  const g = (extra) => qrSvg({ ...base, gradientOn: true, fgColor2: "#2563eb", ...extra }, "x").svg;
+  expect(g({ gradientDir: "h" })).toMatch(/<linearGradient id="g"[^>]*x2="\d+" y2="0"/);
+  expect(g({ gradientDir: "v" })).toMatch(/<linearGradient id="g"[^>]*x2="0"/);
+  expect(g({ gradientDir: "r" })).toContain('<radialGradient id="g"');
+  expect(g({ gradient3On: true, fgColor3: "#7c3aed" }).match(/<stop /g)).toHaveLength(3);
+  const bgGrad = qrSvg({ ...base, bgGradientOn: true, bgColor2: "#eff6ff" }, "x").svg;
+  expect(bgGrad).toContain('fill="url(#bgg)"');
+  const frameGrad = g({ frame: true, frameGradient: true, frameText: "Oi" });
+  expect(frameGrad).toContain('<linearGradient id="fgr"');
+  expect(frameGrad).toContain('fill="url(#fgr)"');
+});
+
+test("new frame formats, own colours, second label and text settings", () => {
+  const f = (frameStyle, extra = {}) =>
+    qrSvg({ ...base, frame: true, frameStyle, frameText: "Escaneie", frameText2: "Cardápio", ...extra }, "x");
+  for (const style of ["top", "bubble", "pill", "ticket", "band", "arc"]) {
+    const { svg } = f(style);
+    expect(svg).toContain("Escaneie");
+    expect(svg).toContain("Cardápio");
+  }
+  expect(f("ticket").svg).toContain('mask="url(#tm)"');
+  expect(f("bubble").svg).toMatch(/l\d+ -\d+l\d+ \d+z/); // the pointer
+  const arcs = f("circle", { circleText: "arcs" }).svg;
+  expect(arcs).toContain('href="#fpt"');
+  expect(arcs).toContain('href="#fpb"');
+  const own = f("band", { frameColorsOn: true, frameColor: "#123456", frameTextColor: "#fedcba", frameBold: false }).svg;
+  expect(own).toContain('fill="#123456"');
+  expect(own).toContain('fill="#fedcba"');
+  expect(own).toContain('font-weight="400"');
+  const big = f("band", { frameFontScale: 1.3 });
+  expect(big.height).toBeGreaterThan(f("band").height);
+});

@@ -42,11 +42,12 @@ A free, fully client-side web app to **generate**, **customize**, and **scan** Q
 
 - Content types: **link, text, Pix, WhatsApp, Wi-Fi, e-mail, phone, SMS and contact (vCard)**, each with its own form
 - **Pix**: static QR Code in the Banco Central BR Code format (key, name, city, optional amount and description), plus the "copia e cola" text
-- Optional frame with a label such as "Escaneie-me": a band underneath, a U-shaped arc, or text running round a circle or a square
+- Frames with one or two labels: band (below or on top), U-shaped arc, speech bubble, label pill, ticket, circle and square, with their own colours, text size and weight
 - **Artistic QR**: a photo behind the code, with lightening and module-size controls
 - **Logo** with size, rounded corners (up to a circle), border, opacity and cleared modules, plus a meter showing how much of the code it covers against what the chosen error correction can recover
 - **Live read test**: after every change the app reads its own code back and says whether it scans
-- Module styles (squares, rounded, dots), eye styles (square, rounded, circles), gradient, eye colour and adjustable margin
+- Module styles (squares, rounded, dots), eye styles (square, rounded, circles), eye colour and adjustable margin
+- Gradients (horizontal, vertical, diagonal, radial, up to three colours) on the code, the background and the frame
 - **Import from an image**: read an existing QR Code from a photo or screenshot and recreate it
 
 - Full color customization (foreground and background)
