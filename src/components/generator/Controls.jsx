@@ -288,7 +288,11 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
   const warning =
     scanWarning(config.fgColor, config.bgColor) ||
     (isQRCode && config.gradientOn && scanWarning(config.fgColor2, config.bgColor)) ||
-    (isQRCode && config.eyeColorOn && scanWarning(config.eyeColor, config.bgColor));
+    (isQRCode && config.gradientOn && config.gradient3On && scanWarning(config.fgColor3, config.bgColor)) ||
+    (isQRCode && config.eyeColorOn && scanWarning(config.eyeColor, config.bgColor)) ||
+    // A background gradient must still contrast with the code at its far end.
+    (isQRCode && config.bgGradientOn &&
+      (scanWarning(config.fgColor, config.bgColor2) || (config.gradientOn && scanWarning(config.fgColor2, config.bgColor2))));
 
   const applyTemplate = (tpl) => {
     updateConfig("fgColor", tpl.fg);
@@ -328,12 +332,26 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
               {t("Gradient on the code")}
             </label>
             {config.gradientOn && (
-              <ColorPickerAdvanced
-                label={t("Second color")}
-                color={config.fgColor2}
-                presets={FG_PRESETS}
-                onChange={(color) => updateConfig("fgColor2", color)}
-              />
+              <>
+                <ColorPickerAdvanced
+                  label={t("Second color")}
+                  color={config.fgColor2}
+                  presets={FG_PRESETS}
+                  onChange={(color) => updateConfig("fgColor2", color)}
+                />
+                <label className="check">
+                  <input type="checkbox" checked={!!config.gradient3On} onChange={(e) => updateConfig("gradient3On", e.target.checked)} />
+                  {t("Add a middle color")}
+                </label>
+                {config.gradient3On && (
+                  <ColorPickerAdvanced
+                    label={t("Middle color")}
+                    color={config.fgColor3}
+                    presets={FG_PRESETS}
+                    onChange={(color) => updateConfig("fgColor3", color)}
+                  />
+                )}
+              </>
             )}
           </div>
           <div className="stack">
@@ -350,6 +368,36 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
               />
             )}
           </div>
+          <div className="stack">
+            <label className="check">
+              <input type="checkbox" checked={!!config.bgGradientOn} onChange={(e) => updateConfig("bgGradientOn", e.target.checked)} />
+              {t("Gradient on the background")}
+            </label>
+            {config.bgGradientOn && (
+              <ColorPickerAdvanced
+                label={t("Second background color")}
+                color={config.bgColor2}
+                presets={BG_PRESETS}
+                onChange={(color) => updateConfig("bgColor2", color)}
+              />
+            )}
+          </div>
+        </div>
+      )}
+      {isQRCode && (config.gradientOn || config.bgGradientOn) && (
+        <div className="stack-top">
+          <Segmented
+            legend={t("Gradient direction")}
+            name="gradient-dir"
+            value={config.gradientDir || "d"}
+            onChange={(v) => updateConfig("gradientDir", v)}
+            options={[
+              { value: "h", label: t("Horizontal") },
+              { value: "v", label: t("Vertical") },
+              { value: "d", label: t("Diagonal") },
+              { value: "r", label: t("Radial") },
+            ]}
+          />
         </div>
       )}
       {warning && (
@@ -462,6 +510,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
       <div className="panel-section">
         <h2 className="section-title">{t("Frame")}</h2>
         <Segmented
+          size="grid"
           legend={t("Frame shape")}
           hideLegend
           name="frame"
@@ -473,7 +522,11 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
           options={[
             { value: "off", label: t("None") },
             { value: "band", label: t("Band") },
+            { value: "top", label: t("Band on top") },
             { value: "arc", label: t("U shape") },
+            { value: "bubble", label: t("Speech bubble") },
+            { value: "pill", label: t("Label") },
+            { value: "ticket", label: t("Ticket") },
             { value: "circle", label: t("Circle") },
             { value: "square", label: t("Square") },
           ]}
@@ -490,11 +543,78 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
               value={config.frameText || ""}
               onChange={(e) => updateConfig("frameText", e.target.value)}
             />
+            {config.frameStyle === "circle" && (
+              <div className="stack-top">
+                <Segmented
+                  legend={t("Text on the circle")}
+                  name="circle-text"
+                  value={config.circleText || "around"}
+                  onChange={(v) => updateConfig("circleText", v)}
+                  options={[
+                    { value: "around", label: t("All the way round") },
+                    { value: "arcs", label: t("Top and bottom") },
+                  ]}
+                />
+              </div>
+            )}
+            {!(config.frameStyle === "square" || (config.frameStyle === "circle" && config.circleText !== "arcs")) && (
+              <div className="stack-top">
+                <label className="field-label" htmlFor="frame-text-2">
+                  {t("Second text (optional)")}
+                </label>
+                <input
+                  id="frame-text-2"
+                  className="input"
+                  maxLength={60}
+                  value={config.frameText2 || ""}
+                  onChange={(e) => updateConfig("frameText2", e.target.value)}
+                />
+              </div>
+            )}
             <p className="field-hint">
-              {config.frameStyle === "circle" || config.frameStyle === "square"
+              {config.frameStyle === "square" || (config.frameStyle === "circle" && config.circleText !== "arcs")
                 ? t("The text repeats until it goes all the way round the code.")
-                : t("Long texts wrap to two lines or shrink to fit.")}
+                : t("The second text goes on the other side. Long texts wrap to two lines or shrink to fit.")}
             </p>
+            <div className="stack stack-top">
+              <RangeField
+                label={t("Text size")}
+                value={Math.round((config.frameFontScale ?? 1) * 100)}
+                unit="%"
+                min={60}
+                max={140}
+                step={10}
+                onChange={(v) => updateConfig("frameFontScale", v / 100)}
+              />
+              <label className="check">
+                <input type="checkbox" checked={config.frameBold !== false} onChange={(e) => updateConfig("frameBold", e.target.checked)} />
+                {t("Bold text")}
+              </label>
+              <label className="check">
+                <input type="checkbox" checked={!!config.frameColorsOn} onChange={(e) => updateConfig("frameColorsOn", e.target.checked)} />
+                {t("Own colors for the frame")}
+              </label>
+              {config.frameColorsOn && (
+                <div className="two-col">
+                  <ColorPickerAdvanced
+                    label={t("Frame color")}
+                    color={config.frameColor}
+                    presets={FG_PRESETS}
+                    onChange={(color) => updateConfig("frameColor", color)}
+                  />
+                  <ColorPickerAdvanced
+                    label={t("Text color")}
+                    color={config.frameTextColor}
+                    presets={BG_PRESETS}
+                    onChange={(color) => updateConfig("frameTextColor", color)}
+                  />
+                </div>
+              )}
+              <label className="check">
+                <input type="checkbox" checked={!!config.frameGradient} onChange={(e) => updateConfig("frameGradient", e.target.checked)} />
+                {t("Gradient on the frame (code colors)")}
+              </label>
+            </div>
           </div>
         )}
       </div>
