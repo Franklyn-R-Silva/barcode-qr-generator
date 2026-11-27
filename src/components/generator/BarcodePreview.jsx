@@ -7,16 +7,18 @@ import {
   getBarcodeExample,
 } from "../../utils/barcodeValidators";
 import { JSBARCODE_FORMAT, BARCODE_CATEGORIES } from "../../constants/barcodeTypes";
+import { useT } from "../../i18n";
 import "./GeneratorArea.css";
 
 const BarcodePreview = ({ config, updateConfig, showToast }) => {
+  const t = useT();
   const barcodeRef = useRef(null);
   const [error, setError] = useState(null);
   const [validationError, setValidationError] = useState(null);
   const [normalizedValue, setNormalizedValue] = useState(null);
 
   /**
-   * Validar valor antes de renderizar
+   * Validate the value before rendering
    */
   useEffect(() => {
     const validation = validateBarcodeValue(config.barcodeFormat, config.text);
@@ -27,52 +29,53 @@ const BarcodePreview = ({ config, updateConfig, showToast }) => {
     } else {
       setValidationError(null);
       setError(null);
-      // Usar valor normalizado se disponível (ex: UPC-E com zeros adicionados)
+      // Use the normalised value when there is one (e.g. UPC-E with added zeros)
       setNormalizedValue(validation.normalized || config.text);
     }
   }, [config.text, config.barcodeFormat]);
 
   /**
-   * Resetar para exemplo válido
+   * Reset to a valid example
    */
   const handleReset = () => {
-    const example = getBarcodeExample(config.barcodeFormat);
-    // Usar evento customizado para atualizar o texto no componente pai
+    const example = t(getBarcodeExample(config.barcodeFormat));
+    // A custom event updates the text in the parent component
     window.dispatchEvent(
       new CustomEvent("resetBarcodeText", { detail: example })
     );
     setError(null);
     setValidationError(null);
-    if (showToast) showToast("Valor trocado pelo exemplo.");
+    if (showToast) showToast(t("Value replaced with the example."));
   };
 
   // The rendered <svg>, serialised: every export format is produced from it.
   const getSvg = () => new XMLSerializer().serializeToString(barcodeRef.current.querySelector("svg"));
 
-  const formatLabel =
+  const formatLabel = t(
     BARCODE_CATEGORIES.flatMap((c) => c.formats).find((f) => f.id === config.barcodeFormat)
-      ?.label || config.barcodeFormat;
+      ?.label || config.barcodeFormat
+  );
 
   return (
-    <section className="panel preview-area preview-panel" aria-label="Pré-visualização do código de barras">
+    <section className="panel preview-area preview-panel" aria-label={t("Barcode preview")}>
       <div className={`preview-stage ${config.transparentBg ? "is-transparent" : ""}`}>
         <div
           className="preview-code barcode-code"
           ref={barcodeRef}
           role={error ? undefined : "img"}
-          aria-label={error ? undefined : `Código de barras ${formatLabel}: ${normalizedValue || config.text}`}
+          aria-label={error ? undefined : t("Barcode {format}: {value}", { format: formatLabel, value: normalizedValue || config.text })}
         >
           {error ? (
             <div className="alert alert-danger barcode-error" role="alert">
               <AiOutlineCloseCircle aria-hidden="true" />
               <div>
                 <p>
-                  <strong>Não deu para gerar este código.</strong>
+                  <strong>{t("Could not generate this code.")}</strong>
                 </p>
-                <p>{error}</p>
+                <p>{t(error)}</p>
                 {validationError?.suggestion && (
                   <button type="button" onClick={handleReset} className="btn btn-secondary barcode-reset">
-                    <AiOutlineReload aria-hidden="true" /> Usar o exemplo
+                    <AiOutlineReload aria-hidden="true" /> {t("Use the example")}
                   </button>
                 )}
               </div>
@@ -90,9 +93,8 @@ const BarcodePreview = ({ config, updateConfig, showToast }) => {
               margin={config.barcodeMargin || 10}
               valid={(valid) => {
                 if (!valid) {
-                  setError(
-                    "Valor inválido para este formato. Confira o formato escolhido e o valor digitado."
-                  );
+                  // Stored in English, translated where it is shown.
+                  setError("Invalid value for this format. Check the chosen format and the value you typed.");
                 }
               }}
             />

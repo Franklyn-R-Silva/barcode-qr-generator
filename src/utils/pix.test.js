@@ -22,7 +22,7 @@ test("amount, accents, description and keys are normalised", () => {
   expect(pixAmount("10")).toBe("10.00");
   expect(pixAmount("")).toBe("");
   expect(normalizePixKey("cpf", "123.456.789-09")).toBe("12345678909");
-  expect(() => normalizePixKey("cpf", "123")).toThrow(/11 dígitos/);
+  expect(() => normalizePixKey("cpf", "123")).toThrow(/11 digits/);
   expect(() => pixAmount("-1")).toThrow();
-  expect(() => pixPayload({ keyType: "email", key: "a@b.co", name: "", city: "X" })).toThrow(/nome/);
+  expect(() => pixPayload({ keyType: "email", key: "a@b.co", name: "", city: "X" })).toThrow(/name of the recipient/);
 });

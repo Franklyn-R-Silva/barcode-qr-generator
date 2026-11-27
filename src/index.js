@@ -2,11 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
-// Como movemos o reset e variáveis globais para o App.css,
-// o index.css tornou-se opcional. Se estiver vazio, pode remover a linha abaixo.
+// The reset and global variables moved to App.css,
+// so index.css is optional. If it is empty, the line below can go.
 // import './index.css';
 
-// Se você não usa reportWebVitals, pode remover também para limpar o código.
+// If you do not use reportWebVitals, that can go too, to tidy the code.
 // import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -17,5 +17,5 @@ root.render(
   </React.StrictMode>
 );
 
-// Se quiser medir performance:
+// To measure performance:
 // reportWebVitals();

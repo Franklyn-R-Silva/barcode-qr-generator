@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-React (Create React App) single-page app for generating **and scanning** QR Codes and 1D barcodes (25+ formats) entirely in the browser. No backend. Deployed to **Cloudflare** under the custom domain `qrcode.devfrs.com`: `npm run build` produces `build/`, published as Workers static assets via `wrangler.jsonc` (`npx wrangler deploy`), Node 20 pinned via `.nvmrc` (Wrangler 4 needs Node ≥ 20). The UI is in Portuguese (pt-BR) — match this when adding user-facing strings. Project documentation (README, ARCHITECTURE, CHANGELOG, this file) is in English.
+React (Create React App) single-page app for generating **and scanning** QR Codes and 1D barcodes (25+ formats) entirely in the browser. No backend. Deployed to **Cloudflare** under the custom domain `qrcode.devfrs.com`: `npm run build` produces `build/`, published as Workers static assets via `wrangler.jsonc` (`npx wrangler deploy`), Node 20 pinned via `.nvmrc` (Wrangler 4 needs Node ≥ 20). The UI is in Portuguese (pt-BR) and English, with a toggle in the header (see "UI text (i18n)" below). Project documentation (README, ARCHITECTURE, CHANGELOG, this file) is in English.
 
 ## Commands
 
@@ -26,15 +26,21 @@ Entry: `src/index.js` → `src/App.jsx`. `App.jsx` holds one unified `config` st
 src/
   App.jsx / App.css       Root component + global styles / theme variables
   components/
-    layout/               Header (theme toggle), Footer
+    layout/               Header (theme and language toggles), Footer
     common/               Toast, Segmented (radio-based segmented control)
     generator/            QRCodePreview, BarcodePreview, Controls, ModeSelector,
                           ExportOptions, ColorPickerAdvanced, HistoryPanel, HistoryButton
     scanner/              ScannerPanel (html5-qrcode camera/image reader + NF-e details)
   constants/              generatorTypes.js, barcodeTypes.js
+  i18n.js                 LangContext, useT(), translate()
+  locales/pt.js           Portuguese text keyed by the English source
   utils/                  barcodeValidators.js, nfeParser.js, contrast.js, qrSvg.js, qrContent.js, pix.js,
                           readQr.js, image.js (+ tests)
 ```
+
+## UI text (i18n)
+
+The code is in English, including every user-facing string. Write it in English and wrap it in `t()` from `useT()` (`src/i18n.js`): `t("Download {format}", { format })`. In `App.jsx` (which provides `LangContext`) use `translate(lang, text, vars)`. Add the Portuguese to `src/locales/pt.js` as `"English text": "Texto em português"`; a missing entry falls back to English. Utils and constants return English (validator messages, Pix errors, `CONTENT_TYPES`, `BARCODE_CATEGORIES`, NF-e model names; contrast warnings are `{ message, ratio }`), and the component translates them where they are shown. `src/i18n.test.js` scans the code for `t("…")` calls and these util strings and fails when a text has no Portuguese entry, when an entry is no longer used, or when placeholders differ. The language is `localStorage` `"lang"` (`"pt"`/`"en"`), else `navigator.language`; `App.jsx` keeps `<html lang>` in sync. `public/index.html` (SEO metadata) stays in Portuguese.
 
 ## Scanner & NF-e (`components/scanner/ScannerPanel.jsx`, `utils/nfeParser.js`)
 
@@ -43,16 +49,16 @@ src/
 ## QR and barcode rendering
 
 These two paths are asymmetric and export logic branches on `isBarcode`:
-- **QR** (`QRCodePreview.jsx`) is drawn by `utils/qrSvg.js`: `qrcode-generator` builds the matrix (bytes converted with the same `utf16to8` react-qrcode-logo used, so codes are unchanged) and the function returns an SVG string with the module style, eyes, logo, transparency and the optional "Escaneie-me" frame. The preview is an `<img>` of that SVG; it throws when the text does not fit, and the preview shows an error.
+- **QR** (`QRCodePreview.jsx`) is drawn by `utils/qrSvg.js`: `qrcode-generator` builds the matrix (bytes converted with the same `utf16to8` react-qrcode-logo used, so codes are unchanged) and the function returns an SVG string with the module style, eyes, logo, transparency and the optional "Scan me" / "Escaneie-me" frame. The preview is an `<img>` of that SVG; it throws when the text does not fit, and the preview shows an error.
 - **Barcode** (`BarcodePreview.jsx`) uses `react-barcode` (JsBarcode), which renders an inline **`<svg>`**; `getSvg` serialises it.
 
-`utils/qrSvg.js` also exports `logoCoverage(config, text)` (share of data modules under the logo plate vs `EC_CAPACITY` of the level) used by the meter in `Controls`. `utils/readQr.js` reads QR Codes from files with one hidden, serialised `Html5Qrcode` instance: `QRCodePreview` reads its own SVG back (debounced) to show "leitura testada / não leu", and `ContentInput` uses it to import a QR from an image. Uploaded images go through `utils/image.js` (`loadImage`, max 512px logo PNG / 800px photo JPEG) so data URLs stay small enough for the preview and the localStorage history.
+`utils/qrSvg.js` also exports `logoCoverage(config, text)` (share of data modules under the logo plate vs `EC_CAPACITY` of the level) used by the meter in `Controls`. `utils/readQr.js` reads QR Codes from files with one hidden, serialised `Html5Qrcode` instance: `QRCodePreview` reads its own SVG back (debounced) to show "scan tested / did not scan", and `ContentInput` uses it to import a QR from an image. Uploaded images go through `utils/image.js` (`loadImage`, max 512px logo PNG / 800px photo JPEG) so data URLs stay small enough for the preview and the localStorage history.
 
 `ExportOptions.jsx` is shared by both: it receives `getSvg()` and produces every format from that string (SVG as is; PNG / WEBP / PDF and the clipboard copy by drawing it onto a canvas at `devicePixelRatio`). Transparency is `config.transparentBg` (the SVG simply has no background), so the preview shows it on a checkerboard.
 
 ## QR content types & Pix (`utils/qrContent.js`, `utils/pix.js`)
 
-`CONTENT_TYPES` declares each QR type (Link, Texto, Pix, WhatsApp, Wi-Fi, E-mail, Telefone, SMS, Contato) as a list of fields; `ContentInput` renders the form from it and `encodeContent(type, fields)` turns the values into `config.text` (`{ text, error }`). `config.contentType` and `config.fields` travel with the config (and the history); entries without a type load as `text`. `pix.js` builds the static BR Code (EMV) with CRC-16/CCITT-FALSE; its test reproduces the Banco Central manual example exactly, so keep it green before touching the payload.
+`CONTENT_TYPES` declares each QR type (Link, Text, Pix, WhatsApp, Wi-Fi, Email, Phone, SMS, Contact) as a list of fields; `ContentInput` renders the form from it and `encodeContent(type, fields)` turns the values into `config.text` (`{ text, error }`). `config.contentType` and `config.fields` travel with the config (and the history); entries without a type load as `text`. `pix.js` builds the static BR Code (EMV) with CRC-16/CCITT-FALSE; its test reproduces the Banco Central manual example exactly, so keep it green before touching the payload.
 
 ## Barcode formats & validation
 

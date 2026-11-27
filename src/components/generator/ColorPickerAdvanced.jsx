@@ -1,14 +1,16 @@
 // src/components/generator/ColorPickerAdvanced.jsx
 import React, { useEffect, useId, useRef, useState } from "react";
 import { HexColorPicker, HexColorInput } from "react-colorful";
+import { useT } from "../../i18n";
 import "./ColorPickerAdvanced.css";
 
 const ColorPickerAdvanced = ({ label, color, onChange, presets = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
   const rootRef = useRef(null);
   const id = useId();
+  const t = useT();
 
-  // Fecha ao clicar fora ou apertar Esc.
+  // Closes on a click outside or on Esc.
   useEffect(() => {
     if (!isOpen) return undefined;
     const onPointer = (e) => {
@@ -55,11 +57,11 @@ const ColorPickerAdvanced = ({ label, color, onChange, presets = [] }) => {
               color={color}
               onChange={onChange}
               prefixed
-              aria-label={`${label} em hexadecimal`}
+              aria-label={t("{label} in hexadecimal", { label })}
             />
           </label>
           {presets.length > 0 && (
-            <div className="color-presets" role="group" aria-label="Cores sugeridas">
+            <div className="color-presets" role="group" aria-label={t("Suggested colors")}>
               {presets.map((preset) => (
                 <button
                   key={preset}

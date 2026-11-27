@@ -7,7 +7,7 @@ related_targets: []
 
 # Surface: the app (src/App.jsx, all three modes)
 
-Mode: Operate. Audience: the general Brazilian public, phone or desktop, one short task per visit (make or read one code, export, leave). Constraints: client-side only, pt-BR copy, the exported code must scan.
+Mode: Operate. Audience: the general Brazilian public, phone or desktop, one short task per visit (make or read one code, export, leave). Constraints: client-side only, pt-BR copy by default with an English toggle, the exported code must scan.
 
 Chosen direction: the category standard (standing exit), taken deliberately by the user on 2026-11-27. Craft bar: QRCode Monkey and QR Code Generator (qr-code-generator.com), executed at full fidelity, no irony, no smuggled quirk.
 

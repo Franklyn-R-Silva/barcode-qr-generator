@@ -18,7 +18,7 @@ export const loadImage = (file, max, type = "image/png") =>
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error("Imagem inválida"));
+      reject(new Error("Invalid image"));
     };
     img.src = url;
   });

@@ -3,11 +3,13 @@ import { AiOutlineCloseCircle, AiOutlineCheckCircle, AiOutlineWarning } from "re
 import ExportOptions from "./ExportOptions";
 import { qrSvg, svgDataUrl } from "../../utils/qrSvg";
 import { readQrSvg } from "../../utils/readQr";
+import { useT } from "../../i18n";
 import "./GeneratorArea.css";
 
 const EXAMPLE = "https://qrcode.devfrs.com";
 
 const QRCodePreview = ({ config, updateConfig, showToast }) => {
+  const t = useT();
   const isExample = !config.text;
 
   const qr = useMemo(() => {
@@ -40,7 +42,7 @@ const QRCodePreview = ({ config, updateConfig, showToast }) => {
   }, [qr, config.text]);
 
   return (
-    <section className="panel preview-area preview-panel" aria-label="Pré-visualização do QR Code">
+    <section className="panel preview-area preview-panel" aria-label={t("QR Code preview")}>
       <div className={`preview-stage ${config.transparentBg ? "is-transparent" : ""}`}>
         {qr ? (
           <img
@@ -48,14 +50,14 @@ const QRCodePreview = ({ config, updateConfig, showToast }) => {
             src={svgDataUrl(qr.svg)}
             width={qr.width}
             height={qr.height}
-            alt={isExample ? "QR Code de exemplo" : `QR Code com o conteúdo: ${config.text}`}
+            alt={isExample ? t("Example QR Code") : t("QR Code with the content: {text}", { text: config.text })}
           />
         ) : (
           <p className="alert alert-danger preview-error" role="alert">
             <AiOutlineCloseCircle aria-hidden="true" />
             <span>
-              <strong>Conteúdo grande demais para um QR Code.</strong> Encurte o
-              texto ou use a correção de erro L.
+              <strong>{t("Content too large for a QR Code.")}</strong>{" "}
+              {t("Shorten the text or use error correction L.")}
             </span>
           </p>
         )}
@@ -63,22 +65,22 @@ const QRCodePreview = ({ config, updateConfig, showToast }) => {
 
       <p className="preview-meta">
         {isExample ? (
-          "Exemplo: preencha o conteúdo para criar o seu."
+          t("Example: fill in the content to create yours.")
         ) : (
           <>
-            {config.size} px <span aria-hidden="true">·</span> correção {config.ecLevel}
+            {config.size} px <span aria-hidden="true">·</span> {t("error correction {level}", { level: config.ecLevel })}
             {qr && (
               <span className={`read-test read-${readable === null ? "pending" : readable ? "ok" : "fail"}`} role="status">
                 <span aria-hidden="true"> · </span>
                 {readable === null ? (
-                  "testando leitura…"
+                  t("testing scan…")
                 ) : readable ? (
                   <>
-                    <AiOutlineCheckCircle aria-hidden="true" /> leitura testada
+                    <AiOutlineCheckCircle aria-hidden="true" /> {t("scan tested")}
                   </>
                 ) : (
                   <>
-                    <AiOutlineWarning aria-hidden="true" /> não leu
+                    <AiOutlineWarning aria-hidden="true" /> {t("did not scan")}
                   </>
                 )}
               </span>
@@ -88,8 +90,7 @@ const QRCodePreview = ({ config, updateConfig, showToast }) => {
       </p>
       {readable === false && !isExample && (
         <p className="read-advice" role="alert">
-          O leitor não conseguiu ler este código. Use correção H, diminua a logo,
-          clareie a foto ou aumente o contraste.
+          {t("The reader could not read this code. Use correction H, shrink the logo, lighten the photo or raise the contrast.")}
         </p>
       )}
 

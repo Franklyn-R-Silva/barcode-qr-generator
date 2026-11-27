@@ -1,4 +1,4 @@
-import React, { useId } from "react";
+import React, { useContext, useId } from "react";
 import {
   AiOutlineCopy,
   AiOutlineWhatsApp,
@@ -27,16 +27,17 @@ import { readQrFile } from "../../utils/readQr";
 import { CONTENT_TYPES, DEFAULT_FIELDS, encodeContent } from "../../utils/qrContent";
 import Segmented from "../common/Segmented";
 import ColorPickerAdvanced from "./ColorPickerAdvanced";
+import { LangContext, useT } from "../../i18n";
 import "./Controls.css";
 
 const TEMPLATES = [
-  { name: "Padrão", fg: "#000000", bg: "#ffffff", style: "squares", eye: "square" },
+  { name: "Default", fg: "#000000", bg: "#ffffff", style: "squares", eye: "square" },
   { name: "WhatsApp", fg: "#128C7E", bg: "#E5FFFC", style: "dots", eye: "circle" },
   { name: "Dark", fg: "#E0E0E0", bg: "#1E1E1E", style: "squares", eye: "square" },
-  { name: "Azul Tech", fg: "#2563EB", bg: "#EFF6FF", style: "dots", eye: "square" },
+  { name: "Blue Tech", fg: "#2563EB", bg: "#EFF6FF", style: "dots", eye: "square" },
 ];
 
-// Cores escuras para o código e claras para o fundo: as combinações que leem bem.
+// Dark colours for the code and light ones for the background: the pairs that scan well.
 const FG_PRESETS = ["#000000", "#1f2937", "#1d4ed8", "#047857", "#b91c1c", "#6d28d9", "#9a3412", "#0f766e"];
 const BG_PRESETS = ["#ffffff", "#f9fafb", "#eff6ff", "#ecfdf5", "#fef2f2", "#f5f3ff", "#fff7ed", "#f0fdfa"];
 
@@ -76,16 +77,17 @@ const TYPE_ICONS = {
   vcard: <AiOutlineIdcard aria-hidden="true" />,
 };
 
-const TYPE_OPTIONS = CONTENT_TYPES.map((t) => ({ value: t.id, label: t.label, icon: TYPE_ICONS[t.id] }));
+const TYPE_OPTIONS = CONTENT_TYPES.map((c) => ({ value: c.id, label: c.label, icon: TYPE_ICONS[c.id] }));
 
 /** One field of a content-type form, rendered from its spec in utils/qrContent. */
 const FormField = ({ field, value, onChange }) => {
   const id = useId();
+  const t = useT();
   if (field.type === "checkbox") {
     return (
       <label className="check">
         <input type="checkbox" checked={!!value} onChange={(e) => onChange(e.target.checked)} />
-        {field.label}
+        {t(field.label)}
       </label>
     );
   }
@@ -93,19 +95,19 @@ const FormField = ({ field, value, onChange }) => {
     id,
     value: value ?? "",
     onChange: (e) => onChange(e.target.value),
-    placeholder: field.placeholder,
+    placeholder: field.placeholder && t(field.placeholder),
     maxLength: field.maxLength,
   };
   return (
     <div className={field.type === "textarea" ? "form-wide" : undefined}>
       <label className="field-label" htmlFor={id}>
-        {field.label}
+        {t(field.label)}
       </label>
       {field.type === "select" ? (
         <select className="select" {...common}>
           {field.options.map(([v, label]) => (
             <option key={v} value={v}>
-              {label}
+              {t(label)}
             </option>
           ))}
         </select>
@@ -126,13 +128,14 @@ const FormField = ({ field, value, onChange }) => {
 };
 
 /**
- * O que vai no código: tipo de conteúdo e formulário (QR) ou formato e valor
- * (código de barras). Fica separado dos ajustes para vir antes da prévia no celular.
+ * What goes in the code: content type and form (QR) or format and value
+ * (barcode). Kept apart from the settings so it comes before the preview on phones.
  */
 export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText, showToast }) => {
+  const t = useT();
   const isQRCode = config.generatorType === GENERATOR_TYPES.QRCODE;
   const type = isQRCode ? config.contentType || "text" : "text";
-  const spec = CONTENT_TYPES.find((t) => t.id === type);
+  const spec = CONTENT_TYPES.find((c) => c.id === type);
   const fields = { ...DEFAULT_FIELDS, ...config.fields };
   const { error } = type === "text" ? {} : encodeContent(type, fields);
 
@@ -147,7 +150,7 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
     if (next !== "text") updateConfig("text", encodeContent(next, config.fields).text);
   };
 
-  // Lê um QR de uma foto ou print e traz o conteúdo para editar e recriar.
+  // Reads a QR from a photo or screenshot and brings the content in to edit and recreate.
   const importFromImage = async (e) => {
     const file = e.target.files[0];
     e.target.value = "";
@@ -156,17 +159,17 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
       const text = await readQrFile(file);
       updateConfig("contentType", "text");
       updateConfig("text", text);
-      showToast?.("QR lido: o conteúdo está no campo Texto.");
+      showToast?.(t("QR read: the content is in the Text field."));
     } catch {
-      showToast?.("Erro: nenhum QR Code encontrado nessa imagem.");
+      showToast?.(t("Error: no QR Code found in that image."));
     }
   };
 
-  // Preenche com o exemplo do formato escolhido.
+  // Fills in the example of the chosen format.
   const handleFormatChange = (format) => {
     if (!format) return;
     updateConfig("barcodeFormat", format);
-    if (BARCODE_EXAMPLES[format]) updateConfig("text", BARCODE_EXAMPLES[format]);
+    if (BARCODE_EXAMPLES[format]) updateConfig("text", t(BARCODE_EXAMPLES[format]));
   };
 
   const visibleFields = (spec?.fields || []).filter(
@@ -174,11 +177,11 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
   );
 
   return (
-    <section className="panel content-area" aria-label="Conteúdo do código">
+    <section className="panel content-area" aria-label={t("Code content")}>
       {!isQRCode && (
         <div className="panel-section">
           <label className="field-label" htmlFor="barcode-format">
-            Formato
+            {t("Format")}
           </label>
           <select
             id="barcode-format"
@@ -187,10 +190,10 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
             onChange={(e) => handleFormatChange(e.target.value)}
           >
             {BARCODE_CATEGORIES.map((category) => (
-              <optgroup key={category.name} label={category.name}>
+              <optgroup key={category.name} label={t(category.name)}>
                 {category.formats.map((format) => (
                   <option key={format.id} value={format.id}>
-                    {format.label}
+                    {t(format.label)}
                   </option>
                 ))}
               </optgroup>
@@ -204,33 +207,33 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
           <div className="type-picker">
             <Segmented
               size="grid"
-              legend="Tipo de conteúdo"
+              legend={t("Content type")}
               hideLegend
               name="content-type"
               value={type}
               onChange={setType}
-              options={TYPE_OPTIONS}
+              options={TYPE_OPTIONS.map((o) => ({ ...o, label: t(o.label) }))}
             />
           </div>
         )}
         {type === "text" ? (
           <>
             <label className="field-label" htmlFor="code-text">
-              {isQRCode ? "Texto" : "Valor do código"}
+              {isQRCode ? t("Text") : t("Code value")}
             </label>
             <textarea
               id="code-text"
               className="input"
               rows={3}
               spellCheck={false}
-              placeholder={isQRCode ? "Qualquer texto, até cerca de 2.900 caracteres" : "Digite os números ou o texto do código"}
+              placeholder={isQRCode ? t("Any text, up to about 2,900 characters") : t("Type the numbers or the text of the code")}
               value={config.text}
               onChange={(e) => updateConfig("text", e.target.value)}
             />
             <p className={`field-hint ${isQRCode ? "live-hint" : ""}`}>
               {isQRCode
-                ? "O QR Code muda enquanto você digita."
-                : `Exemplo válido: ${BARCODE_EXAMPLES[config.barcodeFormat] ?? "—"}`}
+                ? t("The QR Code changes as you type.")
+                : t("Valid example: {example}", { example: t(BARCODE_EXAMPLES[config.barcodeFormat] ?? "—") })}
             </p>
           </>
         ) : (
@@ -244,29 +247,29 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
         {error && (
           <p className="alert alert-warning controls-alert" role="status">
             <AiOutlineWarning aria-hidden="true" />
-            <span>{error}</span>
+            <span>{t(error)}</span>
           </p>
         )}
         {type === "pix" && !error && config.text && (
-          <p className="field-hint">Antes de divulgar, faça um teste: leia o QR no app do seu banco e confira nome e valor.</p>
+          <p className="field-hint">{t("Before sharing it, test it: scan the QR in your bank app and check the name and amount.")}</p>
         )}
 
         <div className="share-row">
           <button type="button" onClick={handleCopyText} className="btn btn-link">
-            <AiOutlineCopy aria-hidden="true" /> {type === "pix" ? "Copiar Pix copia e cola" : "Copiar texto"}
+            <AiOutlineCopy aria-hidden="true" /> {type === "pix" ? t("Copy Pix copy-and-paste code") : t("Copy text")}
           </button>
           {isQRCode && (
-            <label className="btn btn-link import-btn" title="Lê um QR Code de uma foto ou print e traz o conteúdo para recriar">
-              <AiOutlineScan aria-hidden="true" /> Importar de imagem
+            <label className="btn btn-link import-btn" title={t("Reads a QR Code from a photo or screenshot and brings the content in to recreate it")}>
+              <AiOutlineScan aria-hidden="true" /> {t("Import from image")}
               <input type="file" accept="image/*" className="visually-hidden" onChange={importFromImage} />
             </label>
           )}
           {isQRCode && (type === "link" || type === "text") && (
             <>
-              <a href={socialLinks.whatsapp} target="_blank" rel="noreferrer" className="btn btn-link" aria-label="Enviar no WhatsApp">
+              <a href={socialLinks.whatsapp} target="_blank" rel="noreferrer" className="btn btn-link" aria-label={t("Send on WhatsApp")}>
                 <AiOutlineWhatsApp aria-hidden="true" /> WhatsApp
               </a>
-              <a href={socialLinks.facebook} target="_blank" rel="noreferrer" className="btn btn-link" aria-label="Compartilhar no Facebook">
+              <a href={socialLinks.facebook} target="_blank" rel="noreferrer" className="btn btn-link" aria-label={t("Share on Facebook")}>
                 <AiOutlineShareAlt aria-hidden="true" /> Facebook
               </a>
             </>
@@ -277,39 +280,41 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
   );
 };
 
-/** Ajustes de aparência do QR Code ou do código de barras. */
+/** Appearance settings of the QR Code or the barcode. */
 const Controls = ({ config, updateConfig, handleImageUpload }) => {
+  const t = useT();
+  const lang = useContext(LangContext);
   const isQRCode = config.generatorType === GENERATOR_TYPES.QRCODE;
   const warning =
     scanWarning(config.fgColor, config.bgColor) ||
     (isQRCode && config.gradientOn && scanWarning(config.fgColor2, config.bgColor)) ||
     (isQRCode && config.eyeColorOn && scanWarning(config.eyeColor, config.bgColor));
 
-  const applyTemplate = (t) => {
-    updateConfig("fgColor", t.fg);
-    updateConfig("bgColor", t.bg);
-    updateConfig("qrStyle", t.style);
-    updateConfig("eyeStyle", t.eye);
+  const applyTemplate = (tpl) => {
+    updateConfig("fgColor", tpl.fg);
+    updateConfig("bgColor", tpl.bg);
+    updateConfig("qrStyle", tpl.style);
+    updateConfig("eyeStyle", tpl.eye);
   };
 
-  const isTemplateOn = (t) =>
-    config.fgColor.toLowerCase() === t.fg.toLowerCase() &&
-    config.bgColor.toLowerCase() === t.bg.toLowerCase() &&
-    config.qrStyle === t.style &&
-    config.eyeStyle === t.eye;
+  const isTemplateOn = (tpl) =>
+    config.fgColor.toLowerCase() === tpl.fg.toLowerCase() &&
+    config.bgColor.toLowerCase() === tpl.bg.toLowerCase() &&
+    config.qrStyle === tpl.style &&
+    config.eyeStyle === tpl.eye;
 
   const colors = (
     <div className="panel-section">
-      <h2 className="section-title">Cores</h2>
+      <h2 className="section-title">{t("Colors")}</h2>
       <div className="two-col">
         <ColorPickerAdvanced
-          label={isQRCode ? "Cor do código" : "Cor das barras"}
+          label={isQRCode ? t("Code color") : t("Bar color")}
           color={config.fgColor}
           presets={FG_PRESETS}
           onChange={(color) => updateConfig("fgColor", color)}
         />
         <ColorPickerAdvanced
-          label="Cor do fundo"
+          label={t("Background color")}
           color={config.bgColor}
           presets={BG_PRESETS}
           onChange={(color) => updateConfig("bgColor", color)}
@@ -320,11 +325,11 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
           <div className="stack">
             <label className="check">
               <input type="checkbox" checked={!!config.gradientOn} onChange={(e) => updateConfig("gradientOn", e.target.checked)} />
-              Degradê no código
+              {t("Gradient on the code")}
             </label>
             {config.gradientOn && (
               <ColorPickerAdvanced
-                label="Segunda cor"
+                label={t("Second color")}
                 color={config.fgColor2}
                 presets={FG_PRESETS}
                 onChange={(color) => updateConfig("fgColor2", color)}
@@ -334,11 +339,11 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
           <div className="stack">
             <label className="check">
               <input type="checkbox" checked={!!config.eyeColorOn} onChange={(e) => updateConfig("eyeColorOn", e.target.checked)} />
-              Cor diferente nos olhos
+              {t("Different color for the eyes")}
             </label>
             {config.eyeColorOn && (
               <ColorPickerAdvanced
-                label="Cor dos olhos"
+                label={t("Eye color")}
                 color={config.eyeColor}
                 presets={FG_PRESETS}
                 onChange={(color) => updateConfig("eyeColor", color)}
@@ -350,7 +355,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
       {warning && (
         <p className="alert alert-warning controls-alert" role="status">
           <AiOutlineWarning aria-hidden="true" />
-          <span>{warning}</span>
+          <span>{t(warning.message, { ratio: lang === "pt" ? warning.ratio?.replace(".", ",") : warning.ratio })}</span>
         </p>
       )}
     </div>
@@ -358,12 +363,12 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
 
   if (!isQRCode) {
     return (
-      <section className="panel settings-area" aria-label="Aparência do código de barras">
+      <section className="panel settings-area" aria-label={t("Barcode appearance")}>
         <div className="panel-section">
-          <h2 className="section-title">Dimensões</h2>
+          <h2 className="section-title">{t("Dimensions")}</h2>
           <div className="stack">
             <RangeField
-              label="Altura"
+              label={t("Height")}
               value={config.barcodeHeight || 100}
               unit=" px"
               min={50}
@@ -372,7 +377,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
               onChange={(v) => updateConfig("barcodeHeight", v)}
             />
             <RangeField
-              label="Largura da barra"
+              label={t("Bar width")}
               value={config.barcodeWidth || 2}
               unit=" px"
               min={1}
@@ -381,7 +386,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
               onChange={(v) => updateConfig("barcodeWidth", v)}
             />
             <RangeField
-              label="Tamanho do texto"
+              label={t("Text size")}
               value={config.barcodeFontSize || 20}
               unit=" px"
               min={10}
@@ -395,7 +400,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
                 checked={config.barcodeDisplayValue !== false}
                 onChange={(e) => updateConfig("barcodeDisplayValue", e.target.checked)}
               />
-              Mostrar o valor embaixo das barras
+              {t("Show the value under the bars")}
             </label>
           </div>
         </div>
@@ -408,7 +413,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
     <div className="logo-row">
       <label className="btn btn-secondary file-btn">
         <AiOutlineUpload aria-hidden="true" />
-        {config[field] ? "Trocar imagem" : label}
+        {config[field] ? t("Change image") : label}
         <input type="file" accept="image/*" className="visually-hidden" onChange={handleImageUpload(field)} />
       </label>
       {config[field] && (
@@ -417,8 +422,8 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
           <button
             type="button"
             className="icon-btn danger"
-            aria-label="Remover imagem"
-            title="Remover imagem"
+            aria-label={t("Remove image")}
+            title={t("Remove image")}
             onClick={() => updateConfig(field, "")}
           >
             <AiOutlineDelete aria-hidden="true" />
@@ -429,24 +434,24 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
   );
 
   return (
-    <section className="panel settings-area" aria-label="Aparência do QR Code">
+    <section className="panel settings-area" aria-label={t("QR Code appearance")}>
       <div className="panel-section">
-        <h2 className="section-title">Modelos prontos</h2>
+        <h2 className="section-title">{t("Ready-made templates")}</h2>
         <div className="templates">
-          {TEMPLATES.map((t) => (
+          {TEMPLATES.map((tpl) => (
             <button
-              key={t.name}
+              key={tpl.name}
               type="button"
               className="template-btn"
-              aria-pressed={isTemplateOn(t)}
-              onClick={() => applyTemplate(t)}
+              aria-pressed={isTemplateOn(tpl)}
+              onClick={() => applyTemplate(tpl)}
             >
-              <span className="template-swatch" style={{ background: t.bg, color: t.fg }} aria-hidden="true">
+              <span className="template-swatch" style={{ background: tpl.bg, color: tpl.fg }} aria-hidden="true">
                 <svg viewBox="0 0 12 12">
                   <path d="M1 1h4v4H1zM7 1h4v4H7zM1 7h4v4H1zM7 7h2v2H7zM9 9h2v2H9z" fill="currentColor" />
                 </svg>
               </span>
-              <span>{t.name}</span>
+              <span>{t(tpl.name)}</span>
             </button>
           ))}
         </div>
@@ -455,9 +460,9 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
       {colors}
 
       <div className="panel-section">
-        <h2 className="section-title">Moldura</h2>
+        <h2 className="section-title">{t("Frame")}</h2>
         <Segmented
-          legend="Formato da moldura"
+          legend={t("Frame shape")}
           hideLegend
           name="frame"
           value={config.frame ? config.frameStyle || "band" : "off"}
@@ -466,17 +471,17 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
             if (v !== "off") updateConfig("frameStyle", v);
           }}
           options={[
-            { value: "off", label: "Sem" },
-            { value: "band", label: "Faixa" },
-            { value: "arc", label: "Em U" },
-            { value: "circle", label: "Círculo" },
-            { value: "square", label: "Quadrado" },
+            { value: "off", label: t("None") },
+            { value: "band", label: t("Band") },
+            { value: "arc", label: t("U shape") },
+            { value: "circle", label: t("Circle") },
+            { value: "square", label: t("Square") },
           ]}
         />
         {config.frame && (
           <div className="stack-top">
             <label className="field-label" htmlFor="frame-text">
-              Texto da moldura
+              {t("Frame text")}
             </label>
             <input
               id="frame-text"
@@ -487,42 +492,42 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
             />
             <p className="field-hint">
               {config.frameStyle === "circle" || config.frameStyle === "square"
-                ? "O texto se repete até dar a volta no código."
-                : "Textos longos quebram em duas linhas ou diminuem para caber."}
+                ? t("The text repeats until it goes all the way round the code.")
+                : t("Long texts wrap to two lines or shrink to fit.")}
             </p>
           </div>
         )}
       </div>
 
       <div className="panel-section">
-        <h2 className="section-title">Estilo</h2>
+        <h2 className="section-title">{t("Style")}</h2>
         <div className="two-col">
           <Segmented
-            legend="Módulos"
+            legend={t("Modules")}
             name="qr-style"
             value={config.qrStyle}
             onChange={(v) => updateConfig("qrStyle", v)}
             options={[
-              { value: "squares", label: "Quadrados" },
-              { value: "rounded", label: "Arredond." },
-              { value: "dots", label: "Pontos" },
+              { value: "squares", label: t("Squares") },
+              { value: "rounded", label: t("Rounded") },
+              { value: "dots", label: t("Dots") },
             ]}
           />
           <Segmented
-            legend="Cantos (olhos)"
+            legend={t("Corners (eyes)")}
             name="eye-style"
             value={config.eyeStyle}
             onChange={(v) => updateConfig("eyeStyle", v)}
             options={[
-              { value: "square", label: "Retos" },
-              { value: "circle", label: "Arredond." },
-              { value: "dot", label: "Círculos" },
+              { value: "square", label: t("Straight") },
+              { value: "circle", label: t("Rounded") },
+              { value: "dot", label: t("Circles") },
             ]}
           />
         </div>
         <div className="stack stack-top">
           <RangeField
-            label="Tamanho dos módulos"
+            label={t("Module size")}
             value={Math.round((config.moduleScale ?? 1) * 100)}
             unit="%"
             min={40}
@@ -531,7 +536,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
             onChange={(v) => updateConfig("moduleScale", v / 100)}
           />
           <Segmented
-            legend="Correção de erro"
+            legend={t("Error correction")}
             name="ec-level"
             value={config.ecLevel}
             onChange={(v) => updateConfig("ecLevel", v)}
@@ -543,12 +548,11 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
             ]}
           />
           <p className="field-hint">
-            Quanto maior, mais o código aguenta sujeira, dobras, logo ou foto.
-            Use H com logo ou imagem de fundo; L deixa textos longos menos densos.
+            {t("The higher it is, the more dirt, folds, logo or photo the code withstands. Use H with a logo or background image; L makes long texts less dense.")}
           </p>
           <div className="two-col">
             <RangeField
-              label="Tamanho"
+              label={t("Size")}
               value={config.size}
               unit=" px"
               min={150}
@@ -557,7 +561,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
               onChange={(v) => updateConfig("size", v)}
             />
             <RangeField
-              label="Margem"
+              label={t("Margin")}
               value={config.margin ?? 10}
               unit=" px"
               min={0}
@@ -570,23 +574,23 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
       </div>
 
       <div className="panel-section">
-        <h2 className="section-title">Foto no código</h2>
-        {imagePicker("bgImage", "Escolher foto")}
+        <h2 className="section-title">{t("Photo in the code")}</h2>
+        {imagePicker("bgImage", t("Choose photo"))}
         {config.bgImage ? (
           <div className="stack stack-top">
             <Segmented
-              legend="Onde usar a foto"
+              legend={t("Where to use the photo")}
               name="photo-mode"
               value={config.bgImageMode || "behind"}
               onChange={(v) => updateConfig("bgImageMode", v)}
               options={[
-                { value: "behind", label: "Atrás do código" },
-                { value: "modules", label: "Dentro dos módulos" },
+                { value: "behind", label: t("Behind the code") },
+                { value: "modules", label: t("Inside the modules") },
               ]}
             />
             {config.bgImageMode === "modules" ? (
               <RangeField
-                label="Escurecer a foto"
+                label={t("Darken the photo")}
                 value={Math.round((config.moduleImageDarken ?? 0.35) * 100)}
                 unit="%"
                 min={0}
@@ -596,7 +600,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
               />
             ) : (
               <RangeField
-                label="Clarear a foto"
+                label={t("Lighten the photo")}
                 value={Math.round((config.bgImageLighten ?? 0.5) * 100)}
                 unit="%"
                 min={0}
@@ -607,25 +611,25 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
             )}
             <p className="field-hint">
               {config.bgImageMode === "modules"
-                ? "Os módulos mostram a foto. Fotos claras precisam de mais escurecimento; confira o teste de leitura embaixo do código."
-                : "A foto aparece entre os módulos. Diminua o tamanho dos módulos para ela aparecer mais, e confira o teste de leitura embaixo do código."}
+                ? t("The modules show the photo. Light photos need more darkening; check the scan test under the code.")
+                : t("The photo shows between the modules. Shrink the modules for it to show more, and check the scan test under the code.")}
             </p>
           </div>
         ) : (
-          <p className="field-hint">Uma foto atrás do código ou dentro dos módulos (QR artístico). Fica só no seu aparelho.</p>
+          <p className="field-hint">{t("A photo behind the code or inside the modules (artistic QR). It stays on your device only.")}</p>
         )}
       </div>
 
       <div className="panel-section">
-        <h2 className="section-title">Logo no centro</h2>
-        {imagePicker("logoImage", "Escolher imagem")}
-        {!config.logoImage && <p className="field-hint">PNG, JPG ou SVG. A imagem fica só no seu aparelho.</p>}
+        <h2 className="section-title">{t("Logo in the center")}</h2>
+        {imagePicker("logoImage", t("Choose image"))}
+        {!config.logoImage && <p className="field-hint">{t("PNG, JPG or SVG. The image stays on your device only.")}</p>}
 
         {config.logoImage && (
           <div className="stack stack-top">
             <div className="two-col">
               <RangeField
-                label="Tamanho"
+                label={t("Size")}
                 value={config.logoSize || 25}
                 unit="%"
                 min={10}
@@ -634,7 +638,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
                 onChange={(v) => updateConfig("logoSize", v)}
               />
               <RangeField
-                label="Arredondar"
+                label={t("Round corners")}
                 value={config.logoRadius || 0}
                 unit="%"
                 min={0}
@@ -643,7 +647,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
                 onChange={(v) => updateConfig("logoRadius", v)}
               />
               <RangeField
-                label="Borda em volta"
+                label={t("Border around")}
                 value={config.logoPad || 0}
                 unit=" px"
                 min={0}
@@ -652,7 +656,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
                 onChange={(v) => updateConfig("logoPad", v)}
               />
               <RangeField
-                label="Opacidade"
+                label={t("Opacity")}
                 value={Math.round(config.logoOpacity * 100)}
                 unit="%"
                 min={0}
@@ -667,7 +671,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
                 checked={config.removeQrCodeBehindLogo}
                 onChange={(e) => updateConfig("removeQrCodeBehindLogo", e.target.checked)}
               />
-              Limpar os módulos atrás da logo
+              {t("Clear the modules behind the logo")}
             </label>
             <CoverageMeter config={config} />
           </div>
@@ -679,6 +683,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
 
 /** How much of the code the logo hides, against what the error correction can recover. */
 const CoverageMeter = ({ config }) => {
+  const t = useT();
   let result;
   try {
     result = logoCoverage(config, config.text || "https://qrcode.devfrs.com");
@@ -691,16 +696,16 @@ const CoverageMeter = ({ config }) => {
   // Above ~60% of the capacity there is little room left for print and camera noise.
   const level = coverage <= capacity * 0.6 ? "ok" : coverage <= capacity ? "risk" : "over";
   const copy = {
-    ok: "Dentro da margem segura.",
-    risk: "No limite: pode falhar com impressão ou câmera ruins. Diminua a logo ou a borda.",
-    over: `Passa do que a correção ${config.ecLevel} recupera: o código provavelmente não vai ler. Diminua a logo ou use H.`,
+    ok: t("Within the safe margin."),
+    risk: t("At the limit: it may fail with poor printing or cameras. Shrink the logo or the border."),
+    over: t("More than correction {level} recovers: the code will probably not scan. Shrink the logo or use H.", { level: config.ecLevel }),
   }[level];
   return (
     <div className={`coverage coverage-${level}`} role="status">
       <div className="range-head">
-        <span className="field-label">A logo cobre</span>
+        <span className="field-label">{t("The logo covers")}</span>
         <span className="range-value">
-          {pct}% de {cap}% possíveis (correção {config.ecLevel})
+          {t("{pct}% of {cap}% possible (correction {level})", { pct, cap, level: config.ecLevel })}
         </span>
       </div>
       <div className="coverage-bar" aria-hidden="true">

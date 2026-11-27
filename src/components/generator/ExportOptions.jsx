@@ -4,6 +4,7 @@ import { AiOutlineDownload, AiOutlineCopy } from "react-icons/ai";
 import jsPDF from "jspdf";
 import Segmented from "../common/Segmented";
 import { svgDataUrl } from "../../utils/qrSvg";
+import { useT } from "../../i18n";
 import "./ExportOptions.css";
 
 const FORMATS = [
@@ -38,7 +39,9 @@ const save = (href, name) => {
  * string; every format is produced from it, so files match the preview.
  */
 const ExportOptions = ({ getSvg, kind, config, updateConfig, showToast, disabled = false }) => {
+  const t = useT();
   const [format, setFormat] = useState("png");
+  const formatName = format.toUpperCase();
   const base = `${kind}-${Date.now()}`;
 
   const download = async () => {
@@ -62,10 +65,10 @@ const ExportOptions = ({ getSvg, kind, config, updateConfig, showToast, disabled
           save(canvas.toDataURL(`image/${format}`, 0.95), `${base}.${format}`);
         }
       }
-      showToast?.(`${format.toUpperCase()} baixado.`);
+      showToast?.(t("{format} downloaded.", { format: formatName }));
     } catch (err) {
       console.error(err);
-      showToast?.(`Erro ao baixar o ${format.toUpperCase()}. Tente outro formato.`);
+      showToast?.(t("Error downloading the {format}. Try another format.", { format: formatName }));
     }
   };
 
@@ -74,10 +77,10 @@ const ExportOptions = ({ getSvg, kind, config, updateConfig, showToast, disabled
       const canvas = await svgToCanvas(getSvg());
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
       await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-      showToast?.("Imagem copiada.");
+      showToast?.(t("Image copied."));
     } catch (err) {
       console.error(err);
-      showToast?.("Erro ao copiar a imagem. Use o botão Baixar.");
+      showToast?.(t("Error copying the image. Use the Download button."));
     }
   };
 
@@ -86,15 +89,15 @@ const ExportOptions = ({ getSvg, kind, config, updateConfig, showToast, disabled
       <div className="export-actions">
         <button type="button" onClick={download} className="btn btn-primary export-download" disabled={disabled}>
           <AiOutlineDownload aria-hidden="true" />
-          Baixar {format.toUpperCase()}
+          {t("Download {format}", { format: formatName })}
         </button>
-        <button type="button" onClick={copy} className="btn btn-secondary" disabled={disabled} aria-label="Copiar imagem">
-          <AiOutlineCopy aria-hidden="true" /> Copiar
+        <button type="button" onClick={copy} className="btn btn-secondary" disabled={disabled} aria-label={t("Copy image")}>
+          <AiOutlineCopy aria-hidden="true" /> {t("Copy")}
         </button>
       </div>
       <div className="export-settings">
         <Segmented
-          legend="Formato do arquivo"
+          legend={t("File format")}
           hideLegend
           name={`export-format-${kind}`}
           value={format}
@@ -107,7 +110,7 @@ const ExportOptions = ({ getSvg, kind, config, updateConfig, showToast, disabled
             checked={!!config.transparentBg}
             onChange={(e) => updateConfig("transparentBg", e.target.checked)}
           />
-          Fundo transparente
+          {t("Transparent background")}
         </label>
       </div>
     </div>

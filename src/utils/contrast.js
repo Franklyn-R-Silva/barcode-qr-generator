@@ -32,17 +32,21 @@ export const contrastRatio = (a, b) => {
 export const MIN_SCAN_CONTRAST = 3;
 
 /**
- * pt-BR warning when a foreground/background pair is likely to scan badly,
- * or null when it is fine (or a colour is not a valid hex).
+ * Warning `{ message, ratio? }` when a foreground/background pair is likely to
+ * scan badly, or null when it is fine (or a colour is not a valid hex). The
+ * message is English with a {ratio} placeholder; the UI translates it.
  */
 export const scanWarning = (fg, bg) => {
   const ratio = contrastRatio(fg, bg);
   if (ratio === null) return null;
   if (luminance(fg) > luminance(bg)) {
-    return "Código claro sobre fundo escuro: muitos leitores não reconhecem. Deixe o código mais escuro que o fundo.";
+    return { message: "Light code on a dark background: many readers do not recognise it. Make the code darker than the background." };
   }
   if (ratio < MIN_SCAN_CONTRAST) {
-    return `Contraste baixo (${ratio.toFixed(1).replace(".", ",")}:1): o código pode não ser lido. Escureça o código ou clareie o fundo.`;
+    return {
+      message: "Low contrast ({ratio}:1): the code may not scan. Darken the code or lighten the background.",
+      ratio: ratio.toFixed(1),
+    };
   }
   return null;
 };

@@ -18,7 +18,7 @@ A free, fully client-side web app to **generate**, **customize**, and **scan** Q
 
 </div>
 
-> **Note:** The interface is in Brazilian Portuguese (pt-BR); the target audience is Brazilian users. The codebase and documentation are in English.
+> **Note:** The interface is in Brazilian Portuguese (pt-BR) and English, with a toggle in the header; the target audience is Brazilian users. The codebase and documentation are in English.
 
 ## Table of Contents
 
@@ -35,6 +35,8 @@ A free, fully client-side web app to **generate**, **customize**, and **scan** Q
 - [License](#license)
 
 ## Features
+
+- Interface in Portuguese and English
 
 ### QR Codes
 
