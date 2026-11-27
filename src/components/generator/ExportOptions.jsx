@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { AiOutlineDownload, AiOutlineCopy } from "react-icons/ai";
 import jsPDF from "jspdf";
 import Segmented from "../common/Segmented";
-import { svgDataUrl } from "../../utils/qrSvg";
+import { svgToCanvas } from "../../utils/qrSvg";
 import { useT } from "../../i18n";
 import "./ExportOptions.css";
 
@@ -14,18 +14,8 @@ const FORMATS = [
   { value: "pdf", label: "PDF" },
 ];
 
-// Rasterises the SVG at the screen's pixel density, as the old canvas export did.
-const svgToCanvas = async (svg) => {
-  const img = new Image();
-  img.src = svgDataUrl(svg);
-  await img.decode();
-  const scale = window.devicePixelRatio || 1;
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(img.naturalWidth * scale);
-  canvas.height = Math.round(img.naturalHeight * scale);
-  canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
-  return canvas;
-};
+// Files are rasterised at the screen's pixel density, as the old canvas export did.
+const rasterise = (svg) => svgToCanvas(svg, window.devicePixelRatio || 1);
 
 const save = (href, name) => {
   const link = document.createElement("a");
@@ -52,7 +42,7 @@ const ExportOptions = ({ getSvg, kind, config, updateConfig, showToast, disabled
         save(url, `${base}.svg`);
         URL.revokeObjectURL(url);
       } else {
-        const canvas = await svgToCanvas(svg);
+        const canvas = await rasterise(svg);
         if (format === "pdf") {
           const pdf = new jsPDF({
             orientation: canvas.width > canvas.height ? "landscape" : "portrait",
@@ -74,7 +64,7 @@ const ExportOptions = ({ getSvg, kind, config, updateConfig, showToast, disabled
 
   const copy = async () => {
     try {
-      const canvas = await svgToCanvas(getSvg());
+      const canvas = await rasterise(getSvg());
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
       await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
       showToast?.(t("Image copied."));
