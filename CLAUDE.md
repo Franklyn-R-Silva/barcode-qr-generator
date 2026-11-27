@@ -32,7 +32,8 @@ src/
                           ExportOptions, ColorPickerAdvanced, HistoryPanel, HistoryButton
     scanner/              ScannerPanel (html5-qrcode camera/image reader + NF-e details)
   constants/              generatorTypes.js, barcodeTypes.js
-  utils/                  barcodeValidators.js, nfeParser.js, contrast.js, qrSvg.js, qrContent.js, pix.js (+ tests)
+  utils/                  barcodeValidators.js, nfeParser.js, contrast.js, qrSvg.js, qrContent.js, pix.js,
+                          readQr.js, image.js (+ tests)
 ```
 
 ## Scanner & NF-e (`components/scanner/ScannerPanel.jsx`, `utils/nfeParser.js`)
@@ -44,6 +45,8 @@ src/
 These two paths are asymmetric and export logic branches on `isBarcode`:
 - **QR** (`QRCodePreview.jsx`) is drawn by `utils/qrSvg.js`: `qrcode-generator` builds the matrix (bytes converted with the same `utf16to8` react-qrcode-logo used, so codes are unchanged) and the function returns an SVG string with the module style, eyes, logo, transparency and the optional "Escaneie-me" frame. The preview is an `<img>` of that SVG; it throws when the text does not fit, and the preview shows an error.
 - **Barcode** (`BarcodePreview.jsx`) uses `react-barcode` (JsBarcode), which renders an inline **`<svg>`**; `getSvg` serialises it.
+
+`utils/qrSvg.js` also exports `logoCoverage(config, text)` (share of data modules under the logo plate vs `EC_CAPACITY` of the level) used by the meter in `Controls`. `utils/readQr.js` reads QR Codes from files with one hidden, serialised `Html5Qrcode` instance: `QRCodePreview` reads its own SVG back (debounced) to show "leitura testada / não leu", and `ContentInput` uses it to import a QR from an image. Uploaded images go through `utils/image.js` (`loadImage`, max 512px logo PNG / 800px photo JPEG) so data URLs stay small enough for the preview and the localStorage history.
 
 `ExportOptions.jsx` is shared by both: it receives `getSvg()` and produces every format from that string (SVG as is; PNG / WEBP / PDF and the clipboard copy by drawing it onto a canvas at `devicePixelRatio`). Transparency is `config.transparentBg` (the SVG simply has no background), so the preview shows it on a checkerboard.
 

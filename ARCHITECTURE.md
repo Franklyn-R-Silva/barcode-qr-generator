@@ -49,7 +49,9 @@ src/
     ├── contrast.js            # WCAG contrast + scan warning for colour pairs
     ├── qrSvg.js               # QR Code → SVG (preview and every export)
     ├── qrContent.js           # QR content types: form specs + encoders
-    └── pix.js                 # Static Pix QR (BR Code) payload + CRC16
+    ├── pix.js                 # Static Pix QR (BR Code) payload + CRC16
+    ├── readQr.js              # Read QR from a file/SVG (read test, import)
+    └── image.js               # Downscale uploaded images to data URLs
 ```
 
 ## QR vs barcode: two rendering paths

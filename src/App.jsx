@@ -14,6 +14,7 @@ import HistoryPanel from "./components/generator/HistoryPanel";
 import HistoryButton from "./components/generator/HistoryButton";
 import { GENERATOR_TYPES } from "./constants/generatorTypes";
 import { DEFAULT_BARCODE_FORMAT } from "./constants/barcodeTypes";
+import { loadImage } from "./utils/image";
 
 function App() {
   // 1. Estado Unificado das Configurações
@@ -37,11 +38,19 @@ function App() {
     logoImage: "",
     logoOpacity: 1,
     removeQrCodeBehindLogo: false,
-    logoSize: 25, // Percentual do tamanho do QR Code (25%)
-    logoX: 0, // Offset X da posição da logo
-    logoY: 0, // Offset Y da posição da logo
-    logoSizeMode: "auto", // "auto", "original", "custom"
+    logoSize: 25, // % do tamanho do QR Code
+    logoRadius: 0, // % do lado da logo (50 = círculo)
+    logoPad: 0, // px de borda em volta da logo
+    moduleScale: 1, // tamanho dos módulos (0.4–1)
+    margin: 10, // zona de silêncio, px
+    gradientOn: false,
+    fgColor2: "#2563eb",
+    eyeColorOn: false,
+    eyeColor: "#000000",
+    bgImage: "", // foto atrás do código (QR artístico)
+    bgImageLighten: 0.5, // véu da cor de fundo sobre a foto
     frame: false,
+    frameStyle: "band", // band | arc | circle | square
     frameText: "Escaneie-me",
 
     // Barcode específico
@@ -84,7 +93,14 @@ function App() {
   // Carregar configuração do histórico
   // Entradas antigas não têm tipo de conteúdo: abrem como texto livre.
   const loadConfigFromHistory = (historyConfig) => {
-    setConfig((prev) => ({ ...prev, contentType: "text", fields: {}, ...historyConfig }));
+    setConfig((prev) => ({
+      ...prev,
+      contentType: "text",
+      fields: {},
+      ...historyConfig,
+      // The old "Tamanho original" logo mode drew the logo at 40%.
+      ...(historyConfig.logoSizeMode === "original" ? { logoSize: 40 } : {}),
+    }));
   };
 
   // Salvar no histórico quando o texto mudar (após 2s de inatividade).
@@ -144,15 +160,17 @@ function App() {
   }, []);
 
   // Upload de Logo
-  const handleLogoUpload = (e) => {
+  // Logo keeps PNG transparency; the background photo goes JPEG to stay small.
+  const handleImageUpload = (field) => async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        updateConfig("logoImage", reader.result);
-        showToast("Logo adicionada.");
-      };
-      reader.readAsDataURL(file);
+    e.target.value = ""; // allow picking the same file again
+    if (!file) return;
+    try {
+      const isLogo = field === "logoImage";
+      updateConfig(field, await loadImage(file, isLogo ? 512 : 800, isLogo ? "image/png" : "image/jpeg"));
+      showToast(isLogo ? "Logo adicionada." : "Imagem de fundo adicionada.");
+    } catch {
+      showToast("Erro: não foi possível abrir essa imagem.");
     }
   };
 
@@ -205,6 +223,7 @@ function App() {
               updateConfig={updateConfig}
               socialLinks={socialLinks}
               handleCopyText={handleCopyText}
+              showToast={showToast}
             />
             {config.generatorType === GENERATOR_TYPES.QRCODE ? (
               <QRCodePreview config={config} updateConfig={updateConfig} showToast={showToast} />
@@ -214,7 +233,7 @@ function App() {
             <Controls
               config={config}
               updateConfig={updateConfig}
-              handleLogoUpload={handleLogoUpload}
+              handleImageUpload={handleImageUpload}
             />
           </>
         )}

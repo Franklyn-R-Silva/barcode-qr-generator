@@ -98,3 +98,24 @@
     max-width: min(100%, 200px);
   }
 }
+
+.read-test svg {
+  font-size: 1rem;
+  vertical-align: -0.1875rem;
+}
+
+.read-advice {
+  margin-top: -0.5rem;
+  font-size: 0.8125rem;
+  text-align: center;
+  color: var(--danger);
+}
+
+.read-ok {
+  color: var(--success);
+}
+
+.read-fail {
+  color: var(--danger);
+  font-weight: 500;
+}
