@@ -7,6 +7,14 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Photo inside the modules**: the uploaded photo can fill the dark modules
+  (clipped to their shapes, darkened so it scans) instead of sitting behind
+  the code.
+- SEO: title and description for the current features, a 1200x630
+  `og-image.png`, JSON-LD `WebApplication`, real `<noscript>` content and a
+  sitemap `lastmod`.
+- `.gitignore` covers editor, Claude Code, impeccable, Wrangler, cache and
+  log files; the personal `.vscode/settings.json` is no longer tracked.
 - **Frame formats**: band, U-shaped arc, circle and square, with the label
   following the curve or running all the way round (SVG `textPath`). Long
   band labels wrap to two lines or shrink to fit instead of overflowing.

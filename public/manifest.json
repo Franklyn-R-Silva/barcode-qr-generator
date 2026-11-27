@@ -1,7 +1,7 @@
 {
   "short_name": "QR Studio",
   "name": "QR & Barcode Studio",
-  "description": "Gerador e leitor de QR Codes, códigos de barras e NF-e / NFC-e no navegador.",
+  "description": "Gerador de QR Code (link, Pix, Wi-Fi, WhatsApp, contato) e código de barras, e leitor de QR Code e NF-e, no navegador.",
   "icons": [
     {
       "src": "favicon.svg",

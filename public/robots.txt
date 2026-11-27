@@ -1,4 +1,5 @@
 # https://www.robotstxt.org/robotstxt.html
+# A single public page; everything may be crawled.
 User-agent: *
 Allow: /
 

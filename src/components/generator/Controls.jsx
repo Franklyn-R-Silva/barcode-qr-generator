@@ -570,26 +570,49 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
       </div>
 
       <div className="panel-section">
-        <h2 className="section-title">Imagem de fundo</h2>
+        <h2 className="section-title">Foto no código</h2>
         {imagePicker("bgImage", "Escolher foto")}
         {config.bgImage ? (
           <div className="stack stack-top">
-            <RangeField
-              label="Clarear a foto"
-              value={Math.round((config.bgImageLighten ?? 0.5) * 100)}
-              unit="%"
-              min={0}
-              max={90}
-              step={5}
-              onChange={(v) => updateConfig("bgImageLighten", v / 100)}
+            <Segmented
+              legend="Onde usar a foto"
+              name="photo-mode"
+              value={config.bgImageMode || "behind"}
+              onChange={(v) => updateConfig("bgImageMode", v)}
+              options={[
+                { value: "behind", label: "Atrás do código" },
+                { value: "modules", label: "Dentro dos módulos" },
+              ]}
             />
+            {config.bgImageMode === "modules" ? (
+              <RangeField
+                label="Escurecer a foto"
+                value={Math.round((config.moduleImageDarken ?? 0.35) * 100)}
+                unit="%"
+                min={0}
+                max={90}
+                step={5}
+                onChange={(v) => updateConfig("moduleImageDarken", v / 100)}
+              />
+            ) : (
+              <RangeField
+                label="Clarear a foto"
+                value={Math.round((config.bgImageLighten ?? 0.5) * 100)}
+                unit="%"
+                min={0}
+                max={90}
+                step={5}
+                onChange={(v) => updateConfig("bgImageLighten", v / 100)}
+              />
+            )}
             <p className="field-hint">
-              A foto aparece entre os módulos. Diminua o tamanho dos módulos para
-              ela aparecer mais, e confira o teste de leitura embaixo do código.
+              {config.bgImageMode === "modules"
+                ? "Os módulos mostram a foto. Fotos claras precisam de mais escurecimento; confira o teste de leitura embaixo do código."
+                : "A foto aparece entre os módulos. Diminua o tamanho dos módulos para ela aparecer mais, e confira o teste de leitura embaixo do código."}
             </p>
           </div>
         ) : (
-          <p className="field-hint">Uma foto atrás do código (QR artístico). Fica só no seu aparelho.</p>
+          <p className="field-hint">Uma foto atrás do código ou dentro dos módulos (QR artístico). Fica só no seu aparelho.</p>
         )}
       </div>
 

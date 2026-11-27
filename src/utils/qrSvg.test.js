@@ -66,3 +66,14 @@ test("frame styles: long band labels wrap and fit; text runs round circle and sq
     }
   }
 });
+
+test("photo inside the modules is clipped to them and darkened", () => {
+  const photo = "data:image/jpeg;base64,CCCC";
+  const inside = qrSvg({ ...base, bgImage: photo, bgImageMode: "modules", moduleImageDarken: 0.5 }, "x").svg;
+  expect(inside).toContain('clip-path="url(#mc)"');
+  expect(inside).toContain('opacity="0.5"');
+  expect(inside.indexOf(photo)).toBeGreaterThan(inside.indexOf("<g transform"));
+  const behind = qrSvg({ ...base, bgImage: photo }, "x").svg;
+  expect(behind).not.toContain("url(#mc)");
+  expect(behind.indexOf(photo)).toBeLessThan(behind.indexOf("<g transform"));
+});
