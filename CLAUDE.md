@@ -16,23 +16,23 @@ npm test -- --watchAll=false   # Single run (CI-style)
 npm test -- <pattern>          # Run tests matching a filename/name pattern
 ```
 
-Node 18 is required (`engines` in package.json; `netlify.toml` pins `node_version = "18"`). There is no lint script and there are currently no test files, though the Jest tooling is configured.
+Use Node 20 (`.nvmrc`; the build itself also runs on 18, `engines` says `>=18`). There is no lint script; CRA's ESLint runs during `npm run build`, and with `CI=true` its warnings fail the build (that is how CI runs it). Tests: `src/utils/contrast.test.js`.
 
 ## Architecture
 
-Entry: `src/index.js` → `src/App.jsx`. `App.jsx` holds one unified `config` state object covering both generators (generatorType, shared text/colors, plus QR-specific and barcode-specific fields) and updates it via `updateConfig(field, value)`. State is prop-drilled to `Controls`, `ModeSelector`, and the preview/scanner components. `config.generatorType` (`GENERATOR_TYPES.QRCODE` | `.BARCODE` | `.SCANNER`, from `src/constants/generatorTypes.js`, values `"qrcode"`/`"barcode"`/`"scanner"`) selects which mode renders. `ModeSelector` is always rendered at the top of `<main>` (spans the grid) so the user can switch modes; in scanner mode `App.jsx` renders `ScannerPanel` in place of the preview + `Controls` pair.
+Entry: `src/index.js` → `src/App.jsx`. `App.jsx` holds one unified `config` state object covering both generators (generatorType, shared text/colors, plus QR-specific and barcode-specific fields) and updates it via `updateConfig(field, value)`. State is prop-drilled to `ContentInput` and `Controls` (both in `Controls.jsx`), `ModeSelector`, and the preview/scanner components. `config.generatorType` (`GENERATOR_TYPES.QRCODE` | `.BARCODE` | `.SCANNER`, from `src/constants/generatorTypes.js`, values `"qrcode"`/`"barcode"`/`"scanner"`) selects which mode renders. `ModeSelector` is always rendered at the top of `<main>` (spans the grid) so the user can switch modes; in scanner mode `App.jsx` renders `ScannerPanel` in place of the content/preview/settings trio. Layout lives in `App.css` grid areas (`content`, `preview`, `settings`): stacked on phones, preview sticky on the left from 960px.
 
 ```
 src/
   App.jsx / App.css       Root component + global styles / theme variables
   components/
     layout/               Header (theme toggle), Footer
-    common/               Toast
+    common/               Toast, Segmented (radio-based segmented control)
     generator/            QRCodePreview, BarcodePreview, Controls, ModeSelector,
                           ExportOptions, ColorPickerAdvanced, HistoryPanel, HistoryButton
     scanner/              ScannerPanel (html5-qrcode camera/image reader + NF-e details)
   constants/              generatorTypes.js, barcodeTypes.js
-  utils/                  barcodeValidators.js, nfeParser.js
+  utils/                  barcodeValidators.js, nfeParser.js, contrast.js (+ test)
 ```
 
 ## Scanner & NF-e (`components/scanner/ScannerPanel.jsx`, `utils/nfeParser.js`)
@@ -45,7 +45,7 @@ These two paths are asymmetric and export logic branches on `isBarcode`:
 - **QR** (`QRCodePreview.jsx`) uses `react-qrcode-logo`, which renders to a **`<canvas>`**. Export reads the canvas directly (`getCanvas`).
 - **Barcode** (`BarcodePreview.jsx`) uses `react-barcode` (JsBarcode), which renders to an **`<svg>`**. Export serializes the SVG and draws it onto a canvas first (`getSVG` → `svgToCanvas`).
 
-`ExportOptions.jsx` is shared by both and does all export work inline (PNG / WEBP / PDF via jsPDF; SVG download is barcode-only), including the optional transparent-background pass.
+`ExportOptions.jsx` is shared by both and does all export work inline (PNG / WEBP / PDF via jsPDF; SVG download is barcode-only), including the optional transparent-background pass. The preview passes its copy-image button as `children`.
 
 ## Barcode formats & validation
 
@@ -60,4 +60,8 @@ These two paths are asymmetric and export logic branches on `isBarcode`:
 
 ## Styling & theming
 
-Plain CSS co-located per component. Theme is a `light`/`dark` class on the root `.app-container`, driving CSS custom properties in `App.css` (`:root` for light, `.dark` for dark). Note the alias variables in `App.css` (`--text-primary`, `--text-secondary`, `--bg-secondary`) that map to the base tokens (`--text-main`, `--text-muted`, `--secondary`) — several component stylesheets use the alias names, so keep both sets defined.
+Plain CSS co-located per component; tokens and shared primitives (`.panel`, `.btn*`, `.input`, `.select`, `.check`, `.alert`) live in `App.css`. Theme is a `dark` class on `<html>` (set before paint by an inline script in `public/index.html`, then kept in sync and saved by `App.jsx`), driving CSS custom properties in `App.css` (`:root` for light, `.dark` for dark). `App.css` still defines the older alias names (`--text-primary`, `--text-secondary`, `--bg-secondary`, …) mapped to the base tokens (`--text-main`, `--text-muted`, `--bg-sunken`); new code should use the base names.
+
+## Design (impeccable)
+
+The UI was redesigned with [impeccable](https://github.com/pbakaus/impeccable) (installed under `.claude/`, with its design hook in `.claude/settings.json`). Read `PRODUCT.md` (who it is for, constraints) and `DESIGN.md` (tokens, components) before UI work; the direction contract is in `.impeccable/surfaces/src-app-jsx.md`. The chosen direction is the category standard: familiar, one blue for actions, no gradients, emoji or decorative motion. `.impeccable/config.json` waives the `overused-font` finding for Inter on purpose.

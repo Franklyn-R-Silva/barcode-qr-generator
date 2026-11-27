@@ -1,269 +1,584 @@
-/* src/App.css */
+/* src/App.css — tokens, base and shared primitives */
 
-/* 1. Importando a fonte Outfit do Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
-  /* Fontes */
-  --font-main: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+  color-scheme: light;
 
-  /* Cores Base (Light Mode) */
-  --primary: #4361ee; /* Azul vibrante */
-  --primary-hover: #3a56d4;
-  --primary-light: #818cf8;
-  --secondary: #eef2ff; /* Azul bem clarinho para fundos secundários */
-  --accent: #06b6d4; /* Cyan para destaques */
-  --success: #10b981;
-  --warning: #f59e0b;
+  --font-main: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono",
+    monospace;
 
-  --bg-app: #f8fafc; /* Fundo da página */
-  --bg-panel: #ffffff; /* Fundo dos cards/painéis */
-  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --bg-gradient-light: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  /* Surfaces */
+  --bg-app: #f5f6f8;
+  --bg-panel: #ffffff;
+  --bg-sunken: #eef0f3;
+  --border: #dde1e7;
+  --border-strong: #b9c0ca;
 
-  --text-main: #1e293b; /* Texto principal (quase preto) */
-  --text-muted: #64748b; /* Texto secundário (cinza) */
+  /* Ink */
+  --text-main: #111827;
+  --text-muted: #4b5563;
+  --text-faint: #5f6875;
 
-  /* Aliases para compatibilidade entre componentes.
-     Resolvidos no ponto de uso, então herdam automaticamente os
-     valores sobrescritos no dark mode. */
+  /* Action (the one accent) */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-pressed: #1e40af;
+  --primary-soft: #eaf1ff;
+  --primary-text: #1d4ed8;
+  --on-primary: #ffffff;
+
+  /* State */
+  --success: #047857;
+  --success-soft: #e8f7f0;
+  --warning: #a14d07;
+  --warning-soft: #fff6e5;
+  --danger: #b91c1c;
+  --danger-soft: #fdeeee;
+
+  /* Shape and depth */
+  --radius-sm: 6px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, 0.06);
+  --shadow: 0 2px 6px rgba(17, 24, 39, 0.08), 0 1px 2px rgba(17, 24, 39, 0.06);
+  --shadow-lg: 0 12px 32px rgba(17, 24, 39, 0.14),
+    0 2px 6px rgba(17, 24, 39, 0.08);
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Aliases kept for component stylesheets that use the older names. */
   --text-primary: var(--text-main);
   --text-secondary: var(--text-muted);
   --bg-primary: var(--bg-panel);
-  --bg-secondary: var(--secondary);
+  --bg-secondary: var(--bg-sunken);
+  --secondary: var(--bg-sunken);
   --border-color: var(--border);
-  --shadow-md: var(--shadow);
-
-  --border: #e2e8f0; /* Cor das bordas */
-
-  /* Sombras em camadas */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-glow: 0 0 20px rgba(67, 97, 238, 0.3);
-
-  /* Arredondamento padrão */
-  --radius: 16px;
-  --radius-sm: 8px;
-  --radius-lg: 24px;
 }
 
-/* Cores Base (Dark Mode) */
+/* Dark theme: the class sits on <html> so the page background follows it. */
 .dark {
-  --primary: #818cf8; /* Azul mais claro para dark mode */
-  --primary-hover: #6366f1;
-  --primary-light: #a5b4fc;
-  --secondary: #1e293b; /* Fundo secundário escuro */
-  --accent: #22d3ee;
-  --success: #34d399;
+  color-scheme: dark;
+
+  --bg-app: #0b1120;
+  --bg-panel: #131b2c;
+  --bg-sunken: #1c2537;
+  --border: #2a3548;
+  --border-strong: #46536a;
+
+  --text-main: #f1f4f8;
+  --text-muted: #c1c8d3;
+  --text-faint: #9aa4b3;
+
+  --primary: #2563eb;
+  --primary-hover: #3b74f0;
+  --primary-pressed: #1d4ed8;
+  --primary-soft: rgba(59, 130, 246, 0.16);
+  --primary-text: #8db4ff;
+
+  --success: #4ade80;
+  --success-soft: rgba(74, 222, 128, 0.12);
   --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.12);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.12);
 
-  --bg-app: #0f172a; /* Fundo da página bem escuro (Slate 900) */
-  --bg-panel: #1e293b; /* Fundo dos cards (Slate 800) */
-  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --bg-gradient-light: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+  --focus-ring: 0 0 0 3px rgba(96, 150, 255, 0.45);
 
-  --text-main: #f1f5f9; /* Texto claro */
-  --text-muted: #94a3b8; /* Cinza claro */
-
-  /* Os aliases precisam ser redeclarados aqui: um alias definido só no
-     :root como var(--base) é resolvido uma única vez no :root e não
-     acompanha a sobrescrita do dark mode. */
   --text-primary: var(--text-main);
   --text-secondary: var(--text-muted);
   --bg-primary: var(--bg-panel);
-  --bg-secondary: var(--secondary);
+  --bg-secondary: var(--bg-sunken);
+  --secondary: var(--bg-sunken);
   --border-color: var(--border);
-  --shadow-md: var(--shadow);
-
-  --border: #334155; /* Bordas mais escuras */
-
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5),
-    0 4px 6px -2px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6),
-    0 10px 10px -5px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px rgba(129, 140, 248, 0.4);
 }
 
-/* =========================================
-   2. Reset Básico
-   ========================================= */
+/* ---------- Base ---------- */
+
 html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  font-family: var(--font-main);
   background-color: var(--bg-app);
   color: var(--text-main);
-  transition: background-color 0.3s ease, color 0.3s ease;
-  -webkit-font-smoothing: antialiased; /* Texto mais nítido */
+  font-family: var(--font-main);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scrollbar-color: var(--border-strong) var(--bg-app);
 }
 
-/* =========================================
-   3. Layout Principal (App Container)
-   ========================================= */
+::selection {
+  background: rgba(37, 99, 235, 0.22);
+  color: inherit;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+  color: inherit;
+  caret-color: var(--primary);
+}
+
+a {
+  color: var(--primary-text);
+  text-underline-offset: 3px;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* ---------- Layout ---------- */
+
 .app-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* =========================================
-   4. Grid de Conteúdo (Main)
-   ========================================= */
-.main-content {
-  flex: 1; /* Ocupa todo o espaço restante abaixo do Header */
+.page-intro {
   width: 100%;
-  max-width: 1100px; /* Largura máxima para não esticar demais em monitores ultrawide */
-  margin: 0 auto; /* Centraliza na tela */
-  padding: 2rem;
-
-  display: grid;
-  gap: 2rem;
-
-  /* Responsividade Mobile-First (padrão é 1 coluna) */
-  grid-template-columns: 1fr;
-  align-items: start; /* Alinha os itens ao topo */
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 0;
   box-sizing: border-box;
+  text-align: center;
 }
 
-/* =========================================
-   5. Responsividade (Desktop)
-   ========================================= */
-@media (min-width: 900px) {
-  .main-content {
-    /* Divide em 2 colunas: 
-       - Esquerda (QRCodeArea): Fixa em 400px ou flexível
-       - Direita (Controls): Ocupa o restante
-    */
-    grid-template-columns: 400px 1fr;
-    padding-top: 3rem;
-  }
+.page-intro h1 {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
-/* Pequeno ajuste para telas muito pequenas (celulares antigos) */
-@media (max-width: 480px) {
-  .main-content {
-    padding: 1rem;
-    gap: 1.5rem;
-  }
+.page-intro p {
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+  font-size: 1rem;
+  text-wrap: balance;
 }
 
-/* Scrollbar personalizada (opcional, mas fica bonito) */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-app);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* =========================================
-   6. Animações Globais
-   ========================================= */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-/* Aplicar animação aos elementos principais */
 .main-content {
-  animation: fadeIn 0.5s ease-out;
+  flex: 1;
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 4rem;
+  box-sizing: border-box;
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "mode"
+    "content"
+    "preview"
+    "settings";
+  align-items: start;
 }
 
-/* Transições suaves para todos os elementos interativos */
-* {
-  transition-property: background-color, border-color, color, fill, stroke,
-    opacity, box-shadow, transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+.main-content.is-scanner {
+  grid-template-areas:
+    "mode"
+    "scanner";
 }
 
-/* =========================================
-   7. Estados de Foco (Acessibilidade)
-   ========================================= */
-/* Estilo de foco visível para navegação por teclado */
-*:focus-visible {
-  outline: 3px solid var(--primary);
-  outline-offset: 3px;
-  border-radius: 4px;
+.mode-area {
+  grid-area: mode;
+}
+.content-area {
+  grid-area: content;
+}
+.preview-area {
+  grid-area: preview;
+}
+.settings-area {
+  grid-area: settings;
+}
+.scanner-area {
+  grid-area: scanner;
 }
 
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
+@media (min-width: 960px) {
+  .page-intro {
+    padding-top: 2.25rem;
+  }
+
+  .page-intro h1 {
+    font-size: 2rem;
+  }
+
+  .main-content {
+    grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+    grid-template-areas:
+      "mode mode"
+      "preview content"
+      "preview settings";
+    grid-template-rows: auto auto 1fr;
+    column-gap: 2rem;
+  }
+
+  .main-content.is-scanner {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "mode"
+      "scanner";
+    grid-template-rows: auto;
+  }
+
+  .preview-area {
+    position: sticky;
+    top: 1.5rem;
+  }
 }
 
-/* Remove outline padrão para mouse mas mantém para teclado */
-*:focus:not(:focus-visible) {
+@media (max-width: 480px) {
+  .page-intro {
+    padding: 1rem 1rem 0;
+  }
+
+  /* The privacy line stays in the footer; on phones the preview needs the room. */
+  .intro-extra {
+    display: none;
+  }
+
+  .mode-selector {
+    margin-bottom: 0;
+  }
+
+  .page-intro h1 {
+    font-size: 1.25rem;
+  }
+
+  .page-intro p {
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+  }
+
+  textarea.input {
+    min-height: 4.25rem;
+  }
+
+  .main-content {
+    padding: 1rem 1rem 3rem;
+    gap: 1rem;
+  }
+}
+
+/* ---------- Panels ---------- */
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-section {
+  padding: 1.25rem 1.5rem;
+}
+
+.panel-section + .panel-section {
+  border-top: 1px solid var(--border);
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.375rem;
+}
+
+.field-hint {
+  font-size: 0.8125rem;
+  color: var(--text-faint);
+  margin-top: 0.375rem;
+}
+
+@media (max-width: 480px) {
+  .panel-section {
+    padding: 1rem;
+  }
+}
+
+/* ---------- Form controls ---------- */
+
+.input,
+.select {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 44px;
+  padding: 0.625rem 0.75rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--text-main);
+  transition: border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+}
+
+.input::placeholder {
+  color: var(--text-faint);
+  opacity: 1;
+}
+
+.input:hover,
+.select:hover {
+  border-color: var(--text-faint);
+}
+
+.input:focus,
+.select:focus {
   outline: none;
+  border-color: var(--primary);
+  box-shadow: var(--focus-ring);
 }
 
-/* =========================================
-   8. Utilitários de Acessibilidade
-   ========================================= */
-/* Desabilita animações para usuários que preferem movimento reduzido */
+textarea.input {
+  resize: vertical;
+  min-height: 5.5rem;
+}
+
+.select {
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%236b7280' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  cursor: pointer;
+}
+
+.select optgroup {
+  font-weight: 600;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 0.25rem 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 44px;
+  font-size: 0.9375rem;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.check input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.range-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.range-value {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out), color 150ms var(--ease-out);
+}
+
+.btn svg {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.btn-primary:active:not(:disabled) {
+  background: var(--primary-pressed);
+}
+
+.btn-secondary {
+  background: var(--bg-panel);
+  border-color: var(--border-strong);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-sunken);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--bg-sunken);
+  color: var(--text-main);
+}
+
+/* Secondary text actions stay neutral: blue belongs to the one primary action. */
+.btn-link {
+  min-height: 44px;
+  padding: 0.375rem 0.5rem;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.btn-link:hover:not(:disabled) {
+  background: var(--bg-sunken);
+  color: var(--text-main);
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 150ms var(--ease-out), color 150ms var(--ease-out);
+}
+
+.icon-btn svg {
+  font-size: 1.25rem;
+}
+
+.icon-btn:hover {
+  background: var(--bg-sunken);
+  color: var(--text-main);
+}
+
+.icon-btn.danger:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+/* ---------- Alerts ---------- */
+
+.alert {
+  display: flex;
+  gap: 0.625rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.875rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.alert svg {
+  flex-shrink: 0;
+  font-size: 1.125rem;
+  margin-top: 0.0625rem;
+}
+
+.alert-warning {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.alert-danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.alert strong {
+  font-weight: 600;
+}
+
+/* ---------- Motion preferences ---------- */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

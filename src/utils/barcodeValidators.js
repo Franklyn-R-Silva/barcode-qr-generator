@@ -242,7 +242,7 @@ export const validateCODE39 = (value) => {
     return {
       valid: false,
       message: "CODE39 aceita apenas números, letras maiúsculas e -. $/+%",
-      suggestion: "EXAMPLE123",
+      suggestion: "EXEMPLO123",
     };
   }
   return { valid: true };
@@ -256,7 +256,7 @@ export const validateCODE128 = (value) => {
     return {
       valid: false,
       message: "Digite um valor para o código",
-      suggestion: "Example 1234",
+      suggestion: "Exemplo 1234",
     };
   }
   return { valid: true };
@@ -271,7 +271,7 @@ export const validateCODE128A = (value) => {
     return {
       valid: false,
       message: "CODE128A aceita apenas letras maiúsculas, números e espaços",
-      suggestion: "EXAMPLE 123",
+      suggestion: "EXEMPLO 123",
     };
   }
   return { valid: true };

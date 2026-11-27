@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-11-27T13:10:20.916Z",
+        "reason": "Category-standard direction chosen by the user (2026-11-27); Inter matches the approved canon card and the QRCode Monkey / QR Code Generator craft bar."
+      }
+    ]
+  }
+}

@@ -7,7 +7,7 @@ import Footer from "./components/layout/Footer";
 import Toast from "./components/common/Toast";
 import QRCodePreview from "./components/generator/QRCodePreview";
 import BarcodePreview from "./components/generator/BarcodePreview";
-import Controls from "./components/generator/Controls";
+import Controls, { ContentInput } from "./components/generator/Controls";
 import ModeSelector from "./components/generator/ModeSelector";
 import ScannerPanel from "./components/scanner/ScannerPanel";
 import HistoryPanel from "./components/generator/HistoryPanel";
@@ -49,7 +49,15 @@ function App() {
   });
 
   // 2. Estados de Interface (Tema e Notificações)
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState(() => {
+    try {
+      const saved = localStorage.getItem("theme");
+      if (saved === "light" || saved === "dark") return saved;
+    } catch {
+      /* storage blocked: fall back to the system preference */
+    }
+    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  });
   const [notification, setNotification] = useState(null);
 
   // Guarda o último texto salvo no histórico para evitar duplicatas
@@ -89,6 +97,16 @@ function App() {
     }
   }, [config]);
 
+  // O tema fica no <html> para o fundo da página acompanhar, e é lembrado.
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    try {
+      localStorage.setItem("theme", theme);
+    } catch {
+      /* sem armazenamento: o tema só não é lembrado */
+    }
+  }, [theme]);
+
   // Alternar tema
   const toggleTheme = () =>
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
@@ -103,7 +121,7 @@ function App() {
           ? GENERATOR_TYPES.BARCODE
           : GENERATOR_TYPES.QRCODE,
     }));
-    showToast("Conteúdo enviado para o gerador!");
+    showToast("Valor enviado para o gerador.");
   };
 
   // Ouvir evento de reset do barcode
@@ -125,7 +143,7 @@ function App() {
       const reader = new FileReader();
       reader.onloadend = () => {
         updateConfig("logoImage", reader.result);
-        showToast("Logo carregado com sucesso!");
+        showToast("Logo adicionada.");
       };
       reader.readAsDataURL(file);
     }
@@ -135,9 +153,9 @@ function App() {
   const handleCopyText = () => {
     if (config.text) {
       navigator.clipboard.writeText(config.text);
-      showToast("Texto copiado para a área de transferência!");
+      showToast("Texto copiado.");
     } else {
-      showToast("Digite algum texto primeiro!");
+      showToast("Nada para copiar: digite um conteúdo primeiro.");
     }
   };
 
@@ -146,51 +164,50 @@ function App() {
   const socialLinks = {
     whatsapp: `https://wa.me/?text=${shareTextEncoded}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${shareTextEncoded}`,
-    twitter: `https://twitter.com/intent/tweet?text=${shareTextEncoded}`,
   };
 
+  const isScanner = config.generatorType === GENERATOR_TYPES.SCANNER;
+
   return (
-    <div className={`app-container ${theme}`}>
-      {/* Componente de Notificação (Renderizado condicionalmente) */}
+    <div className="app-container">
       {notification && <Toast message={notification} onClose={closeToast} />}
 
-      {/* Painel de Histórico (nível raiz para z-index funcionar corretamente) */}
-      <HistoryPanel
-        onLoadConfig={loadConfigFromHistory}
-        showToast={showToast}
-      />
+      <HistoryPanel onLoadConfig={loadConfigFromHistory} showToast={showToast} />
 
-      {/* Cabeçalho */}
       <Header theme={theme} toggleTheme={toggleTheme}>
         <HistoryButton />
       </Header>
 
-      <main className="main-content">
-        {/* Barra de seleção de modo (sempre visível, largura total) */}
+      <div className="page-intro">
+        <h1>Gerador e leitor de QR Code e código de barras</h1>
+        <p>
+          Grátis, sem cadastro e sem marca d’água.
+          <span className="intro-extra"> Tudo acontece no seu navegador.</span>
+        </p>
+      </div>
+
+      <main className={`main-content ${isScanner ? "is-scanner" : ""}`}>
         <ModeSelector config={config} updateConfig={updateConfig} />
 
-        {config.generatorType === GENERATOR_TYPES.SCANNER ? (
-          /* Modo Leitor */
-          <ScannerPanel
-            showToast={showToast}
-            onGenerate={handleGenerateFromScan}
-          />
+        {isScanner ? (
+          <ScannerPanel showToast={showToast} onGenerate={handleGenerateFromScan} />
         ) : (
           <>
-            {/* Esquerda: Visualização do Código */}
+            <ContentInput
+              config={config}
+              updateConfig={updateConfig}
+              socialLinks={socialLinks}
+              handleCopyText={handleCopyText}
+            />
             {config.generatorType === GENERATOR_TYPES.QRCODE ? (
               <QRCodePreview config={config} showToast={showToast} />
             ) : (
               <BarcodePreview config={config} showToast={showToast} />
             )}
-
-            {/* Direita: Controles de Edição */}
             <Controls
               config={config}
               updateConfig={updateConfig}
               handleLogoUpload={handleLogoUpload}
-              socialLinks={socialLinks}
-              handleCopyText={handleCopyText}
             />
           </>
         )}

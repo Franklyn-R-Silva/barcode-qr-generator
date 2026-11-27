@@ -125,11 +125,11 @@ export const BARCODE_DEFAULTS = {
  * A valid example value for each format id.
  */
 export const BARCODE_EXAMPLES = {
-  CODE39: "EXAMPLE123",
-  CODE93: "EXAMPLE123",
-  CODE128: "Example 1234",
-  CODE128A: "EXAMPLE 123",
-  CODE128B: "Example123",
+  CODE39: "EXEMPLO123",
+  CODE93: "EXEMPLO123",
+  CODE128: "Exemplo 1234",
+  CODE128A: "EXEMPLO 123",
+  CODE128B: "Exemplo123",
   CODE128C: "12345678",
   GS1_128: "00123456789012345675",
   ITF: "1234567890",

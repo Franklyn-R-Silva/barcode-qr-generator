@@ -1,18 +1,26 @@
 // src/components/generator/HistoryPanel.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   AiOutlineHistory,
   AiOutlineDelete,
-  AiOutlineEye,
   AiOutlineClose,
-  AiOutlineClear,
+  AiOutlineQrcode,
+  AiOutlineBarcode,
 } from "react-icons/ai";
 import "./HistoryPanel.css";
 
 const HistoryPanel = ({ onLoadConfig, showToast }) => {
   const [history, setHistory] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [previewItem, setPreviewItem] = useState(null);
+  const dialogRef = useRef(null);
+
+  // <dialog> nativo: Esc, foco preso e fundo inerte vêm de graça.
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (isOpen && !dialog.open) dialog.showModal?.();
+    if (!isOpen && dialog.open) dialog.close();
+  }, [isOpen]);
 
   // Carregar histórico do localStorage
   useEffect(() => {
@@ -34,21 +42,21 @@ const HistoryPanel = ({ onLoadConfig, showToast }) => {
     const updated = history.filter((item) => item.id !== id);
     setHistory(updated);
     localStorage.setItem("qrcode_history", JSON.stringify(updated));
-    showToast?.("🗑️ Item removido do histórico");
+    showToast?.("Item removido do histórico.");
   };
 
   const clearHistory = () => {
-    if (window.confirm("Tem certeza que deseja limpar todo o histórico?")) {
+    if (window.confirm("Apagar todo o histórico? Isso não pode ser desfeito.")) {
       setHistory([]);
       localStorage.removeItem("qrcode_history");
-      showToast?.("🗑️ Histórico limpo");
+      showToast?.("Histórico apagado.");
     }
   };
 
   const loadItem = (item) => {
     onLoadConfig?.(item.config);
     setIsOpen(false);
-    showToast?.("✅ Configuração carregada");
+    showToast?.("Código carregado do histórico.");
   };
 
   const formatDate = (isoString) => {
@@ -96,142 +104,89 @@ const HistoryPanel = ({ onLoadConfig, showToast }) => {
   }, [history]);
 
   return (
-    <>
-      {isOpen && (
-        <div className="history-panel-overlay" onClick={() => setIsOpen(false)}>
-          <div className="history-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="history-header">
-              <h3>
-                <AiOutlineHistory /> Histórico de Gerações
-              </h3>
-              <div className="history-actions">
-                {history.length > 0 && (
-                  <button
-                    onClick={clearHistory}
-                    className="btn-icon-small"
-                    title="Limpar histórico"
-                  >
-                    <AiOutlineClear />
-                  </button>
-                )}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="btn-icon-small"
-                  aria-label="Fechar"
-                >
-                  <AiOutlineClose />
-                </button>
-              </div>
-            </div>
+    <dialog
+      ref={dialogRef}
+      className="history-drawer"
+      aria-labelledby="history-title"
+      onClose={() => setIsOpen(false)}
+      onClick={(e) => {
+        // Clique no fundo escurecido (fora da folha) fecha.
+        if (e.target === e.currentTarget) setIsOpen(false);
+      }}
+    >
+      <div className="history-sheet">
+        <header className="history-header">
+          <h2 id="history-title">Histórico</h2>
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="icon-btn"
+            aria-label="Fechar histórico"
+          >
+            <AiOutlineClose aria-hidden="true" />
+          </button>
+        </header>
 
-            <div className="history-content">
-              {history.length === 0 ? (
-                <div className="history-empty">
-                  <AiOutlineHistory size={48} />
-                  <p>Nenhum código no histórico</p>
-                  <small>Seus códigos gerados aparecerão aqui</small>
-                </div>
-              ) : (
-                <div className="history-list">
-                  {history.map((item) => (
-                    <div key={item.id} className="history-item">
-                      <div className="history-item-content">
-                        <div className="history-item-type">
-                          {item.config.generatorType === "qrcode"
-                            ? "🔲 QR Code"
-                            : "📊 Barcode"}
-                        </div>
-                        <div className="history-item-text">{item.preview}</div>
-                        <div className="history-item-date">
+        {history.length === 0 ? (
+          <div className="history-empty">
+            <AiOutlineHistory aria-hidden="true" />
+            <p>Nenhum código ainda</p>
+            <small>
+              Os códigos que você gerar aparecem aqui, guardados só neste
+              navegador.
+            </small>
+          </div>
+        ) : (
+          <>
+            <ul className="history-list">
+              {history.map((item) => {
+                const isQR = item.config.generatorType === "qrcode";
+                return (
+                  <li key={item.id} className="history-item">
+                    <button
+                      type="button"
+                      className="history-load"
+                      onClick={() => loadItem(item)}
+                      title={item.config.text}
+                    >
+                      <span
+                        className="history-icon"
+                        style={{ background: item.config.bgColor, color: item.config.fgColor }}
+                        aria-hidden="true"
+                      >
+                        {isQR ? <AiOutlineQrcode /> : <AiOutlineBarcode />}
+                      </span>
+                      <span className="history-text">
+                        <span className="history-preview">{item.preview}</span>
+                        <span className="history-meta">
+                          {isQR ? "QR Code" : "Código de barras"} ·{" "}
                           {formatDate(item.timestamp)}
-                        </div>
-                      </div>
-                      <div className="history-item-actions">
-                        <button
-                          onClick={() => setPreviewItem(item)}
-                          className="btn-icon-small"
-                          title="Visualizar"
-                        >
-                          <AiOutlineEye />
-                        </button>
-                        <button
-                          onClick={() => loadItem(item)}
-                          className="btn-icon-small btn-load"
-                          title="Carregar"
-                        >
-                          ↻
-                        </button>
-                        <button
-                          onClick={() => deleteItem(item.id)}
-                          className="btn-icon-small btn-delete"
-                          title="Excluir"
-                        >
-                          <AiOutlineDelete />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {previewItem && (
-        <div
-          className="preview-modal-overlay"
-          onClick={() => setPreviewItem(null)}
-        >
-          <div className="preview-modal" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => setPreviewItem(null)}
-              className="preview-close"
-              aria-label="Fechar"
-            >
-              <AiOutlineClose />
-            </button>
-            <h4>Preview do Histórico</h4>
-            <div className="preview-details">
-              <p>
-                <strong>Tipo:</strong>{" "}
-                {previewItem.config.generatorType === "qrcode"
-                  ? "QR Code"
-                  : "Código de Barras"}
-              </p>
-              <p>
-                <strong>Conteúdo:</strong> {previewItem.config.text}
-              </p>
-              <p>
-                <strong>Cor:</strong>{" "}
-                <span
-                  className="color-preview"
-                  style={{ backgroundColor: previewItem.config.fgColor }}
-                ></span>{" "}
-                {previewItem.config.fgColor}
-              </p>
-              <p>
-                <strong>Fundo:</strong>{" "}
-                <span
-                  className="color-preview"
-                  style={{ backgroundColor: previewItem.config.bgColor }}
-                ></span>{" "}
-                {previewItem.config.bgColor}
-              </p>
-            </div>
-            <button
-              onClick={() => {
-                loadItem(previewItem);
-                setPreviewItem(null);
-              }}
-              className="btn btn-primary"
-            >
-              Carregar Configuração
-            </button>
-          </div>
-        </div>
-      )}
-    </>
+                        </span>
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteItem(item.id)}
+                      className="icon-btn danger"
+                      aria-label={`Excluir ${item.preview}`}
+                      title="Excluir"
+                    >
+                      <AiOutlineDelete aria-hidden="true" />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            <footer className="history-footer">
+              <span>{history.length} de 20 guardados</span>
+              <button type="button" onClick={clearHistory} className="btn btn-ghost">
+                Apagar tudo
+              </button>
+            </footer>
+          </>
+        )}
+      </div>
+    </dialog>
   );
 };
 

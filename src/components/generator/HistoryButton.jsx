@@ -6,37 +6,25 @@ const HistoryButton = () => {
   const [historyCount, setHistoryCount] = useState(0);
 
   useEffect(() => {
-    // Atualizar contagem periodicamente
+    // shortcut: polls the window.* channel HistoryPanel exposes; lift history into App state if this grows.
     const updateCount = () => {
-      if (window.getHistoryCount) {
-        setHistoryCount(window.getHistoryCount());
-      }
+      if (window.getHistoryCount) setHistoryCount(window.getHistoryCount());
     };
-
     updateCount();
     const interval = setInterval(updateCount, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
-  const handleClick = () => {
-    if (window.openHistoryPanel) {
-      window.openHistoryPanel();
-    }
-  };
-
   return (
     <button
-      onClick={handleClick}
-      className="btn-history"
-      aria-label="Ver histórico"
-      title={`Histórico (${historyCount} itens)`}
+      type="button"
+      onClick={() => window.openHistoryPanel?.()}
+      className="btn btn-ghost btn-history"
+      aria-label={`Histórico, ${historyCount} ${historyCount === 1 ? "item" : "itens"}`}
     >
-      <AiOutlineHistory size={20} />
-      <span>Histórico</span>
-      {historyCount > 0 && (
-        <span className="history-badge">{historyCount}</span>
-      )}
+      <AiOutlineHistory aria-hidden="true" />
+      <span className="btn-history-label">Histórico</span>
+      {historyCount > 0 && <span className="history-badge" aria-hidden="true">{historyCount}</span>}
     </button>
   );
 };

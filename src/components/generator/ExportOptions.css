@@ -1,157 +1,42 @@
-/* src/components/generator/ExportOptions.css */
-
 .export-options {
-  position: relative;
-  width: 100%;
-}
-
-.btn-export {
-  width: 100%;
-  font-size: 1rem;
-  padding: 1rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-}
-
-.btn-export:hover:not(:disabled) {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5),
-    0 0 30px rgba(16, 185, 129, 0.3);
-}
-
-.export-dropdown {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 0;
-  right: 0;
-  background: var(--bg-panel);
-  border: 2px solid var(--border);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: var(--shadow-xl);
-  z-index: 1000;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.export-section {
-  margin-bottom: 1.5rem;
-}
-
-.export-section:last-of-type {
-  margin-bottom: 1rem;
-}
-
-.export-label {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: var(--text-main);
-  margin-bottom: 0.75rem;
-  font-size: 0.95rem;
-}
-
-.format-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-  gap: 0.5rem;
-}
-
-.format-btn {
-  padding: 0.75rem;
-  border: 2px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg-app);
-  color: var(--text-main);
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-}
-
-.format-btn:hover {
-  border-color: var(--primary);
-  /* Tinta translúcida de primary — legível tanto no claro quanto no escuro
-     (--secondary no dark é igual ao fundo do dropdown e "sumia"). */
-  background: rgba(67, 97, 238, 0.12);
-  transform: translateY(-2px);
-}
-
-.format-btn.active {
-  background: linear-gradient(
-    135deg,
-    var(--primary) 0%,
-    var(--primary-hover) 100%
-  );
-  color: white;
-  border-color: var(--primary);
-  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-}
-
-.checkbox-label-export {
-  display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.75rem;
-  padding: 1rem;
-  border: 2px dashed var(--border);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: var(--bg-app);
 }
 
-.checkbox-label-export:hover {
-  border-color: var(--primary);
-  background: var(--secondary);
+.export-settings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
 }
 
-.checkbox-label-export input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
+.export-settings .segmented {
+  flex: 1 1 220px;
 }
 
-.checkbox-label-export span {
-  font-weight: 600;
-  color: var(--text-main);
-  flex: 1;
-}
-
-.export-hint {
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
+.export-transparent {
+  min-height: 36px;
+  font-size: 0.875rem;
   color: var(--text-muted);
-  padding-left: 0.5rem;
 }
 
-.btn-download-confirm {
-  width: 100%;
-  font-weight: 700;
+.export-transparent:has(input:disabled) {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.export-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.export-download {
+  flex: 1 1 auto;
+  min-height: 48px;
   font-size: 1rem;
 }
 
-/* Responsividade */
-@media (max-width: 600px) {
-  .export-dropdown {
-    padding: 1rem;
-  }
-
-  .format-buttons {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.export-actions .btn-secondary {
+  min-height: 48px;
 }

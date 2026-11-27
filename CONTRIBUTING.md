@@ -6,7 +6,7 @@ for an overview before diving in.
 
 ## Getting started
 
-Requires **Node.js 18.x**.
+Requires **Node.js 20** (see `.nvmrc`).
 
 ```bash
 git clone https://github.com/Franklyn-R-Silva/barcode-qr-generator.git
@@ -18,9 +18,11 @@ npm start          # http://localhost:3000
 Before opening a pull request, make sure the production build compiles:
 
 ```bash
-npm run build
-npm test -- --watchAll=false   # if you added or changed tests
+CI=true npm run build          # CI treats lint warnings as errors
+npm test -- --watchAll=false
 ```
+
+GitHub Actions runs both on every pull request.
 
 ## Workflow
 
@@ -53,7 +55,9 @@ Write the summary in the imperative mood and keep it under ~72 characters.
   not inline in components.
 - **Theming** uses the CSS custom properties defined in `App.css`. Reuse the
   existing tokens (`--primary`, `--text-main`, `--bg-panel`, `--border`, …)
-  rather than hard-coding colors, so light/dark mode keeps working.
+  rather than hard-coding colors, so light/dark mode keeps working. Shared
+  building blocks (`.panel`, `.btn`, `.input`, `.select`, `Segmented`) already
+  exist; use them before adding new styles. `DESIGN.md` documents the system.
 - User-facing strings are in **Portuguese (pt-BR)**; keep new UI copy consistent.
 
 ## Adding a new barcode format

@@ -1,11 +1,7 @@
 // src/components/generator/ExportOptions.jsx
 import React, { useState } from "react";
-import {
-  AiOutlineDownload,
-  AiOutlineFilePdf,
-  AiOutlineFileImage,
-  AiOutlinePicture,
-} from "react-icons/ai";
+import { AiOutlineDownload } from "react-icons/ai";
+import Segmented from "../common/Segmented";
 import jsPDF from "jspdf";
 import "./ExportOptions.css";
 
@@ -15,8 +11,9 @@ const ExportOptions = ({
   config,
   isBarcode = false,
   showToast,
+  disabled = false,
+  children,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [exportFormat, setExportFormat] = useState("png");
   const [transparentBg, setTransparentBg] = useState(false);
 
@@ -127,10 +124,10 @@ const ExportOptions = ({
       link.download = `${isBarcode ? "barcode" : "qrcode"}-${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
-      showToast?.("✅ PNG baixado com sucesso!");
+      showToast?.("PNG baixado.");
     } catch (err) {
       console.error(err);
-      showToast?.("❌ Erro ao baixar PNG");
+      showToast?.("Erro ao baixar o PNG. Tente outro formato.");
     }
   };
 
@@ -145,10 +142,10 @@ const ExportOptions = ({
       link.download = `${isBarcode ? "barcode" : "qrcode"}-${Date.now()}.webp`;
       link.href = dataUrl;
       link.click();
-      showToast?.("✅ WEBP baixado com sucesso!");
+      showToast?.("WEBP baixado.");
     } catch (err) {
       console.error(err);
-      showToast?.("❌ Erro ao baixar WEBP");
+      showToast?.("Erro ao baixar o WEBP. Tente PNG.");
     }
   };
 
@@ -169,13 +166,13 @@ const ExportOptions = ({
         link.href = url;
         link.click();
         URL.revokeObjectURL(url);
-        showToast?.("✅ SVG baixado com sucesso!");
+        showToast?.("SVG baixado.");
       } else {
-        showToast?.("⚠️ SVG disponível apenas para códigos de barras");
+        showToast?.("Erro: SVG só está disponível para códigos de barras.");
       }
     } catch (err) {
       console.error(err);
-      showToast?.("❌ Erro ao baixar SVG");
+      showToast?.("Erro ao baixar o SVG. Tente PNG.");
     }
   };
 
@@ -195,10 +192,10 @@ const ExportOptions = ({
 
       pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
       pdf.save(`${isBarcode ? "barcode" : "qrcode"}-${Date.now()}.pdf`);
-      showToast?.("✅ PDF baixado com sucesso!");
+      showToast?.("PDF baixado.");
     } catch (err) {
       console.error(err);
-      showToast?.("❌ Erro ao baixar PDF");
+      showToast?.("Erro ao baixar o PDF. Tente PNG.");
     }
   };
 
@@ -224,85 +221,46 @@ const ExportOptions = ({
     }
   };
 
+  const formats = [
+    { value: "png", label: "PNG" },
+    { value: "webp", label: "WEBP" },
+    ...(isBarcode ? [{ value: "svg", label: "SVG" }] : []),
+    { value: "pdf", label: "PDF" },
+  ];
+
   return (
     <div className="export-options">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="btn btn-primary btn-export"
-        aria-label="Opções de exportação"
-        aria-expanded={isOpen}
-      >
-        <AiOutlineDownload aria-hidden="true" />
-        Baixar {exportFormat.toUpperCase()}
-      </button>
-
-      {isOpen && (
-        <div className="export-dropdown">
-          <div className="export-section">
-            <label className="export-label">
-              <AiOutlineFileImage /> Formato:
-            </label>
-            <div className="format-buttons">
-              <button
-                className={`format-btn ${
-                  exportFormat === "png" ? "active" : ""
-                }`}
-                onClick={() => setExportFormat("png")}
-              >
-                PNG
-              </button>
-              <button
-                className={`format-btn ${
-                  exportFormat === "webp" ? "active" : ""
-                }`}
-                onClick={() => setExportFormat("webp")}
-              >
-                WEBP
-              </button>
-              {isBarcode && (
-                <button
-                  className={`format-btn ${
-                    exportFormat === "svg" ? "active" : ""
-                  }`}
-                  onClick={() => setExportFormat("svg")}
-                >
-                  SVG
-                </button>
-              )}
-              <button
-                className={`format-btn ${
-                  exportFormat === "pdf" ? "active" : ""
-                }`}
-                onClick={() => setExportFormat("pdf")}
-              >
-                <AiOutlineFilePdf /> PDF
-              </button>
-            </div>
-          </div>
-
-          <div className="export-section">
-            <label className="checkbox-label-export">
-              <input
-                type="checkbox"
-                checked={transparentBg}
-                onChange={(e) => setTransparentBg(e.target.checked)}
-              />
-              <AiOutlinePicture />
-              <span>Fundo Transparente</span>
-            </label>
-            <p className="export-hint">
-              Remove o fundo, mantendo apenas o código
-            </p>
-          </div>
-
-          <button
-            onClick={handleDownload}
-            className="btn btn-primary btn-download-confirm"
-          >
-            <AiOutlineDownload /> Baixar Agora
-          </button>
-        </div>
-      )}
+      <div className="export-actions">
+        <button
+          type="button"
+          onClick={handleDownload}
+          className="btn btn-primary export-download"
+          disabled={disabled}
+        >
+          <AiOutlineDownload aria-hidden="true" />
+          Baixar {exportFormat.toUpperCase()}
+        </button>
+        {children}
+      </div>
+      <div className="export-settings">
+        <Segmented
+          legend="Formato do arquivo"
+          hideLegend
+          name={`export-format-${isBarcode ? "barcode" : "qr"}`}
+          value={exportFormat}
+          onChange={setExportFormat}
+          options={formats}
+        />
+        <label className="check export-transparent">
+          <input
+            type="checkbox"
+            checked={transparentBg}
+            disabled={exportFormat === "svg"}
+            onChange={(e) => setTransparentBg(e.target.checked)}
+          />
+          Fundo transparente
+        </label>
+      </div>
     </div>
   );
 };

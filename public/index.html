@@ -2,9 +2,19 @@
 <html lang="pt-br">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" sizes="any" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#4361ee" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131b2c" media="(prefers-color-scheme: dark)" />
+    <script>
+      // Apply the saved/system theme before React paints, so dark mode never flashes white.
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "dark" || (!t && matchMedia("(prefers-color-scheme: dark)").matches))
+          document.documentElement.classList.add("dark");
+      } catch (e) {}
+    </script>
     <meta
       name="description"
       content="Gerador e leitor de QR Codes e códigos de barras online, grátis e sem instalação. Personalize cores, logo e estilos, exporte em PNG, SVG ou PDF e escaneie QR Codes e NF-e / NFC-e direto pela câmera."

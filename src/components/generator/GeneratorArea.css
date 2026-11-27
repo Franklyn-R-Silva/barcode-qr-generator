@@ -1,258 +1,79 @@
-/* src/components/generator/GeneratorArea.css */
-
-.preview-section {
+.preview-panel {
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  /* Sticky: Mantém o preview visível enquanto rola a página (apenas desktop) */
-  position: -webkit-sticky;
-  position: sticky;
-  top: 2rem;
-}
-
-.preview-card {
-  background: var(--bg-panel);
-  padding: 2.5rem;
-  border-radius: 20px;
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 2px solid var(--border);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 320px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Efeito de brilho no fundo */
-.preview-card::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(67, 97, 238, 0.05) 0%,
-    transparent 70%
-  );
-  animation: pulse 4s ease-in-out infinite;
-  pointer-events: none;
-}
-
-/* Fundo quadriculado para QR Codes (ajuda a ver transparência) */
-.preview-card:not(.barcode-card) {
-  background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
-    linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
-    linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-  background-color: var(--bg-panel);
-}
-
-.dark .preview-card:not(.barcode-card) {
-  background-image: linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.03) 25%,
-      transparent 25%
-    ),
-    linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%),
-    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%);
-}
-
-.preview-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: var(--shadow-xl), 0 0 40px rgba(67, 97, 238, 0.15);
-  border-color: var(--primary);
-}
-
-/* Estilos específicos para Barcode */
-.barcode-card {
-  background: var(--bg-panel);
-  overflow-x: auto;
-}
-
-.barcode-card svg {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Mensagem de erro */
-.error-message {
-  text-align: center;
-  padding: 2.5rem;
-  animation: shake 0.5s ease-in-out;
-}
-
-.error-message p {
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: #ef4444;
-  text-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
-}
-
-.error-message small {
-  color: var(--text-muted);
-  display: block;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.error-suggestion {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: rgba(67, 97, 238, 0.1);
-  border-radius: 8px;
-  border-left: 4px solid var(--primary);
-}
-
-.error-suggestion p {
-  color: var(--text-primary) !important;
-  font-size: 0.95rem !important;
-  font-weight: 500 !important;
-  margin-bottom: 0.5rem;
-}
-
-.error-suggestion strong {
-  color: var(--primary);
-}
-
-.btn-small {
-  padding: 0.5rem 1rem !important;
-  font-size: 0.85rem !important;
-  gap: 0.3rem;
-}
-
-@keyframes shake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-5px);
-  }
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(5px);
-  }
-}
-
-/* Grid para os botões */
-.action-buttons-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  align-items: stretch;
 }
 
-/* Botão de copiar ocupa 1 coluna, Export Options ocupa 1 coluna */
-.action-buttons-grid > * {
-  min-height: 56px;
+.preview-stage {
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  padding: 1.25rem;
+  background-color: var(--bg-sunken);
+  border-radius: var(--radius);
 }
 
-/* Estilos dos Botões */
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem 1.25rem;
-  border: none;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  font-family: inherit;
-  position: relative;
-  overflow: hidden;
+.preview-code {
+  display: grid;
+  place-items: center;
+  max-width: 100%;
 }
 
-.btn::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
-}
-
-.btn:hover::before {
-  width: 300px;
-  height: 300px;
-}
-
-.btn:hover {
-  transform: translateY(-2px) scale(1.02);
-}
-
-.btn:active {
-  transform: translateY(0) scale(0.98);
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn:disabled::before {
-  display: none;
-}
-
-.btn-primary {
-  background: linear-gradient(
-    135deg,
-    var(--primary) 0%,
-    var(--primary-hover) 100%
-  );
-  color: white;
-  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.4);
-}
-
-.btn-primary:hover:not(:disabled) {
-  box-shadow: 0 8px 20px rgba(67, 97, 238, 0.5), 0 0 30px rgba(67, 97, 238, 0.3);
-}
-
-.btn-secondary {
-  background-color: var(--bg-panel);
-  border: 2px solid var(--border);
-  color: var(--text-main);
+.preview-code canvas {
+  display: block;
+  max-width: 100%;
+  height: auto !important;
+  border-radius: 2px;
   box-shadow: var(--shadow);
 }
 
-.btn-secondary:hover:not(:disabled) {
-  background-color: var(--secondary);
-  border-color: var(--primary);
-  box-shadow: var(--shadow-lg);
+.preview-code.barcode-code {
+  width: 100%;
 }
 
-/* Ajuste para telas pequenas */
-@media (max-width: 600px) {
-  .preview-section {
-    position: static; /* Remove o sticky em celulares */
+.preview-code.barcode-code svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  box-shadow: var(--shadow);
+}
+
+.preview-meta {
+  margin-top: -0.25rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.barcode-error {
+  width: 100%;
+  max-width: 360px;
+  box-sizing: border-box;
+}
+
+.barcode-error p + p {
+  margin-top: 0.25rem;
+}
+
+.barcode-reset {
+  margin-top: 0.75rem;
+  min-height: 40px;
+}
+
+@media (max-width: 480px) {
+  .preview-panel {
+    padding: 1rem;
   }
 
-  .preview-card {
-    padding: 1.5rem;
+  .preview-stage {
+    min-height: 0;
+    padding: 1rem;
   }
 
-  .action-buttons-grid {
-    grid-template-columns: 1fr; /* Botões um embaixo do outro no celular */
+  /* Only the on-screen preview shrinks; the exported file keeps its size. */
+  .preview-code canvas {
+    max-width: min(100%, 220px);
   }
 }
