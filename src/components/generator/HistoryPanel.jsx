@@ -10,6 +10,23 @@ import {
 import { LangContext, useT } from "../../i18n";
 import "./HistoryPanel.css";
 
+/**
+ * Saves the history and returns what was actually kept. Images make entries
+ * large; when localStorage is full, the oldest entries are dropped until the
+ * list fits, instead of the newest one silently not being saved.
+ */
+export const persistHistory = (items, storage = localStorage) => {
+  for (let kept = items; kept.length; kept = kept.slice(0, -1)) {
+    try {
+      storage.setItem("qrcode_history", JSON.stringify(kept));
+      return kept;
+    } catch {
+      // quota exceeded: try again without the oldest entry
+    }
+  }
+  return [];
+};
+
 const HistoryPanel = ({ onLoadConfig, showToast }) => {
   const t = useT();
   const lang = useContext(LangContext);
@@ -85,9 +102,7 @@ const HistoryPanel = ({ onLoadConfig, showToast }) => {
             (config.text.length > 50 ? "..." : ""),
         };
 
-        const updatedHistory = [newItem, ...history].slice(0, 20);
-        setHistory(updatedHistory);
-        localStorage.setItem("qrcode_history", JSON.stringify(updatedHistory));
+        setHistory(persistHistory([newItem, ...history].slice(0, 20)));
       } catch (err) {
         console.error("Error saving the history:", err);
       }

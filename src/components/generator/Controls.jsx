@@ -22,7 +22,7 @@ import {
   BARCODE_EXAMPLES,
 } from "../../constants/barcodeTypes";
 import { scanWarning } from "../../utils/contrast";
-import { logoCoverage } from "../../utils/qrSvg";
+import { logoCoverage, EXAMPLE_URL } from "../../utils/qrSvg";
 import { readQrFile } from "../../utils/readQr";
 import { CONTENT_TYPES, DEFAULT_FIELDS, encodeContent } from "../../utils/qrContent";
 import Segmented from "../common/Segmented";
@@ -501,7 +501,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
 
       <div className="panel-section">
         <h2 className="section-title">{t("Style")}</h2>
-        <div className="two-col">
+        <div className="stack">
           <Segmented
             legend={t("Modules")}
             name="qr-style"
@@ -629,7 +629,7 @@ const Controls = ({ config, updateConfig, handleImageUpload }) => {
           <div className="stack stack-top">
             <div className="two-col">
               <RangeField
-                label={t("Size")}
+                label={t("Logo size")}
                 value={config.logoSize || 25}
                 unit="%"
                 min={10}
@@ -686,7 +686,7 @@ const CoverageMeter = ({ config }) => {
   const t = useT();
   let result;
   try {
-    result = logoCoverage(config, config.text || "https://qrcode.devfrs.com");
+    result = logoCoverage(config, config.text || EXAMPLE_URL);
   } catch {
     return null;
   }

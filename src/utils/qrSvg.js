@@ -3,6 +3,9 @@ import qrcode from "qrcode-generator";
 // Default margin (quiet zone) in px; react-qrcode-logo, which this replaced, used 10.
 export const QUIET_ZONE = 10;
 
+// What the QR shows (and the coverage meter measures) while the content is empty.
+export const EXAMPLE_URL = "https://qrcode.devfrs.com";
+
 // How much of the code each error-correction level can lose and still read.
 export const EC_CAPACITY = { L: 0.07, M: 0.15, Q: 0.25, H: 0.3 };
 

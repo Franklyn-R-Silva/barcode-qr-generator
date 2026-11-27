@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { AiOutlineCloseCircle, AiOutlineCheckCircle, AiOutlineWarning } from "react-icons/ai";
 import ExportOptions from "./ExportOptions";
-import { qrSvg, svgDataUrl } from "../../utils/qrSvg";
+import { qrSvg, svgDataUrl, EXAMPLE_URL } from "../../utils/qrSvg";
 import { readQrSvg } from "../../utils/readQr";
 import { useT } from "../../i18n";
 import "./GeneratorArea.css";
 
-const EXAMPLE = "https://qrcode.devfrs.com";
 
 const QRCodePreview = ({ config, updateConfig, showToast }) => {
   const t = useT();
@@ -14,7 +13,7 @@ const QRCodePreview = ({ config, updateConfig, showToast }) => {
 
   const qr = useMemo(() => {
     try {
-      return qrSvg(config, config.text || EXAMPLE);
+      return qrSvg(config, config.text || EXAMPLE_URL);
     } catch {
       return null; // more data than a QR Code holds
     }
@@ -29,7 +28,7 @@ const QRCodePreview = ({ config, updateConfig, showToast }) => {
     const timer = setTimeout(async () => {
       let ok = false;
       try {
-        ok = (await readQrSvg(qr.svg)) === (config.text || EXAMPLE);
+        ok = (await readQrSvg(qr.svg)) === (config.text || EXAMPLE_URL);
       } catch {
         ok = false;
       }
