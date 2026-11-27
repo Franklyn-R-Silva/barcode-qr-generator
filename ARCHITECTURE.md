@@ -1,6 +1,6 @@
 # Architecture
 
-A client-side Create React App (React 18). No backend — QR codes and barcodes are generated, previewed, exported, and scanned entirely in the browser.
+A client-side React 18 app built with Vite. No backend — QR codes and barcodes are generated, previewed, exported, and scanned entirely in the browser.
 
 ## Entry point & state
 
@@ -109,15 +109,15 @@ Two interactions bypass props (kept intentionally simple):
 
 ## Styling & theming
 
-Plain CSS, co-located per component. `App.css` holds the design tokens (`:root` for light, `.dark` for dark) and the shared primitives (`.panel`, `.btn*`, `.input`, `.select`, `.check`, `.alert`). The `dark` class sits on `<html>`: an inline script in `public/index.html` applies the saved or system theme before React paints, and `App.jsx` keeps it in sync and stores it in `localStorage`. Dark-mode overrides must be keyed on the `.dark` class (not `prefers-color-scheme`), because the theme can be toggled in-app. The visual system is documented in `DESIGN.md`; product context for design work is in `PRODUCT.md`.
+Plain CSS, co-located per component. `App.css` holds the design tokens (`:root` for light, `.dark` for dark) and the shared primitives (`.panel`, `.btn*`, `.input`, `.select`, `.check`, `.alert`). The `dark` class sits on `<html>`: an inline script in `index.html` applies the saved or system theme before React paints, and `App.jsx` keeps it in sync and stores it in `localStorage`. Dark-mode overrides must be keyed on the `.dark` class (not `prefers-color-scheme`), because the theme can be toggled in-app. The visual system is documented in `DESIGN.md`; product context for design work is in `PRODUCT.md`.
 
 ## Deployment
 
-Built with `react-scripts build` and served as static files on **Cloudflare Workers** (static assets)
+Built with `vite build` (output in `build/`) and served as static files on **Cloudflare Workers** (static assets)
 under the custom domain `qrcode.devfrs.com`. There is no server-side component.
 
 Cloudflare is connected to the GitHub repository and rebuilds on every push to
-`main` using build command `npm run build` (Node 20, pinned via `.nvmrc`). The
+`main` using build command `npm run build` (Node 22, pinned via `.nvmrc`). The
 `build/` output is published as Cloudflare Workers static assets via `wrangler.jsonc`
 (`assets.directory: ./build`, SPA fallback), deployed with `npx wrangler deploy`.
 The custom domain and DNS are managed in the Cloudflare dashboard, so no `homepage`

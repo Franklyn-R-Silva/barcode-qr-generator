@@ -95,7 +95,7 @@ Every format has dedicated input validation with example values and inline error
 
 ## Getting Started
 
-**Prerequisites:** [Node.js 20](https://nodejs.org/) (pinned in `.nvmrc`)
+**Prerequisites:** [Node.js 22](https://nodejs.org/) (pinned in `.nvmrc`)
 
 ```bash
 git clone https://github.com/Franklyn-R-Silva/barcode-qr-generator.git
@@ -112,8 +112,9 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 | --------------- | ------------------------------------ |
 | `npm start`     | Start the development server         |
 | `npm run build` | Create an optimized production build |
-| `npm test`      | Run the test suite (Jest + RTL, watch mode) |
-| `npm test -- --watchAll=false` | Run the tests once (as CI does) |
+| `npm run preview` | Serve the production build locally |
+| `npm test`      | Run the tests once with Vitest (as CI does) |
+| `npm run test:watch` | Run the tests in watch mode |
 
 ## Deployment
 
@@ -130,7 +131,7 @@ runs `npx wrangler deploy`).
 | Build command          | `npm run build` |
 | Deploy command         | `npx wrangler deploy` |
 | Build output directory | `build` (also set in `wrangler.jsonc` → `assets.directory`) |
-| Node version           | `20` (pinned via `.nvmrc`; Wrangler 4 requires Node ≥ 20) |
+| Node version           | `22` (pinned via `.nvmrc`) |
 
 `wrangler.jsonc` configures a static-assets-only Worker (no server code) with SPA
 fallback. The custom domain and DNS are managed in the Cloudflare dashboard, so no
@@ -138,7 +139,7 @@ fallback. The custom domain and DNS are managed in the Cloudflare dashboard, so 
 
 ## Architecture
 
-Create React App (React 18), running entirely in the browser. A single `config`
+React 18 built with Vite, running entirely in the browser. A single `config`
 state object in `App.jsx` drives both generators and the scanner, and flows down
 to the preview, control, and scanner components.
 
@@ -171,7 +172,7 @@ the impeccable skill and its design hook are already set up in `.claude/`.
 
 ## Tech Stack
 
-- **React 18** (Create React App), plain CSS with design tokens
+- **React 18** + **Vite**, plain CSS with design tokens; **Vitest** for tests
 - **Inter** (Google Fonts) — UI typeface
 - **qrcode-generator** — QR matrix (drawn as SVG by `utils/qrSvg.js`)
 - **react-barcode** / **JsBarcode** — barcode rendering

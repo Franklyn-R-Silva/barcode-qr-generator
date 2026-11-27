@@ -5,6 +5,13 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Changed
+
+- **Build moved from Create React App to Vite** (tests to Vitest). This removes
+  `react-scripts` and its ~1,450 transitive packages, which closes all 24 open
+  Dependabot alerts (`npm audit`: 0 vulnerabilities). Node 22 is now required
+  (Node 20 reached end of life). The output folder is still `build/`.
+
 ### Added
 
 - **More gradient options**: horizontal, vertical, diagonal or radial; an

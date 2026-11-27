@@ -31,7 +31,7 @@ Fully client-side and free: nothing is uploaded, there is no sign-up, no waterma
 - Barcodes: 25+ formats (Code 39/93/128 A-B-C, GS1-128, ITF, ITF-14, EAN-13/8/5/2, ISBN, UPC-A/E, MSI variants, Pharmacode, Codabar, Boleto, NF-e/DANFE) with per-format validation, example values and inline error hints.
 - Export PNG, WEBP, PDF, SVG (barcodes only), optional transparent background; copy image or text; share via WhatsApp and Facebook.
 - Local history in `localStorage`; light and dark themes; installable PWA.
-- Stack: React 18 (Create React App), plain co-located CSS, deployed as Cloudflare Workers static assets at qrcode.devfrs.com. UI is pt-BR by default with an English option (src/locales/pt.js); code and docs are English.
+- Stack: React 18 + Vite, plain co-located CSS, deployed as Cloudflare Workers static assets at qrcode.devfrs.com. UI is pt-BR by default with an English option (src/locales/pt.js); code and docs are English.
 - No backend, no analytics claims, no accounts. Do not add features that need a server.
 
 ## Brand Commitments

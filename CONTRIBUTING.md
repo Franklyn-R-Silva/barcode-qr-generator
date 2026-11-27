@@ -23,20 +23,20 @@ never a public issue.
 
 ## Getting started
 
-Requires **Node.js 20** (see `.nvmrc`).
+Requires **Node.js 22** (see `.nvmrc`).
 
 ```bash
 git clone https://github.com/Franklyn-R-Silva/barcode-qr-generator.git
 cd barcode-qr-generator
 npm install
-npm start          # http://localhost:3000
+npm start          # http://localhost:3000 (Vite)
 ```
 
 Before opening a pull request, make sure the production build compiles:
 
 ```bash
-CI=true npm run build          # CI treats lint warnings as errors
-npm test -- --watchAll=false
+npm test
+npm run build
 ```
 
 GitHub Actions runs both on every pull request.
@@ -59,7 +59,7 @@ says `Closes #<number>`, and merging it closes the issue.
 New behaviour and bug fixes come with a test that fails without the change.
 Pure logic lives in `src/utils/` with a `*.test.js` next to it (see
 `pix.test.js`, `qrSvg.test.js`); that is the easiest place to test. CI runs
-`npm test -- --watchAll=false` and `CI=true npm run build` on every pull request.
+`npm test` and `npm run build` on every pull request.
 UI-only changes can say how you checked them instead.
 
 ## Commit messages
