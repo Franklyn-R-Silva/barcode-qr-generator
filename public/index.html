@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="%PUBLIC_URL%/favicon.svg" />
@@ -17,9 +17,9 @@
     </script>
     <meta
       name="description"
-      content="Gerador e leitor de QR Codes e códigos de barras online, grátis e sem instalação. Personalize cores, logo e estilos, exporte em PNG, SVG ou PDF e escaneie QR Codes e NF-e / NFC-e direto pela câmera."
+      content="QR Code grátis de link, Pix, Wi-Fi, WhatsApp e contato, com logo, foto e moldura. Código de barras e leitor de QR e NF-e. Sem cadastro, no navegador."
     />
-    <meta name="keywords" content="qr code, gerador de qr code, código de barras, leitor de qr code, escanear nfe, nfc-e, danfe, barcode generator" />
+    <meta name="keywords" content="gerador de qr code, qr code grátis, qr code pix, qr code wifi, qr code whatsapp, qr code com logo, código de barras, gerador de código de barras, leitor de qr code, ler nfe, nfc-e, danfe, boleto" />
     <meta name="author" content="Franklyn Silva" />
 
     <!-- Canonical -->
@@ -27,25 +27,70 @@
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
     <meta property="og:site_name" content="QR & Barcode Studio" />
-    <meta property="og:title" content="QR & Barcode Studio — Gerador e Leitor de QR Code, Código de Barras e NF-e" />
-    <meta property="og:description" content="Crie, personalize e escaneie QR Codes, códigos de barras e chaves de acesso de NF-e / NFC-e diretamente no navegador." />
+    <meta property="og:title" content="Gerador de QR Code grátis — Pix, Wi-Fi, WhatsApp, com logo e foto" />
+    <meta property="og:description" content="Crie QR Codes e códigos de barras no navegador, sem cadastro e sem marca d’água. Também lê QR Codes e chaves de NF-e / NFC-e." />
     <meta property="og:url" content="https://qrcode.devfrs.com/" />
-    <meta property="og:image" content="https://qrcode.devfrs.com/logo512.png" />
+    <meta property="og:image" content="https://qrcode.devfrs.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="QR & Barcode Studio: um QR Code azul ao lado do formulário com os tipos Link, Pix, WhatsApp e Wi-Fi" />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="QR & Barcode Studio" />
-    <meta name="twitter:description" content="Gerador e leitor de QR Codes, códigos de barras e NF-e no navegador." />
-    <meta name="twitter:image" content="https://qrcode.devfrs.com/logo512.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Gerador de QR Code grátis — Pix, Wi-Fi, WhatsApp, com logo e foto" />
+    <meta name="twitter:description" content="QR Codes e códigos de barras no navegador, sem cadastro. Também lê QR Codes e NF-e." />
+    <meta name="twitter:image" content="https://qrcode.devfrs.com/og-image.png" />
 
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
-    <title>QR & Barcode Studio — Gerador e Leitor de QR Code, Código de Barras e NF-e</title>
+    <title>Gerador de QR Code grátis — Pix, Wi-Fi e WhatsApp | QR Studio</title>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "QR & Barcode Studio",
+        "url": "https://qrcode.devfrs.com/",
+        "description": "Gerador de QR Code e código de barras grátis no navegador, com Pix, Wi-Fi, WhatsApp, contato, logo, foto e moldura, e leitor de QR Code e NF-e.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "browserRequirements": "Requires JavaScript",
+        "inLanguage": "pt-BR",
+        "isAccessibleForFree": true,
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL"
+        },
+        "featureList": [
+          "QR Code de link, texto, Pix, WhatsApp, Wi-Fi, e-mail, telefone, SMS e contato",
+          "QR Code com logo, foto e moldura",
+          "Exportação em PNG, WEBP, SVG e PDF",
+          "Mais de 25 formatos de código de barras, incluindo boleto e DANFE",
+          "Leitor de QR Code e chave de acesso de NF-e / NFC-e"
+        ],
+        "author": {
+          "@type": "Person",
+          "name": "Franklyn Silva",
+          "url": "https://github.com/Franklyn-R-Silva"
+        },
+        "license": "https://opensource.org/licenses/MIT"
+      }
+    </script>
   </head>
   <body>
-    <noscript>Você precisa habilitar o JavaScript para usar este aplicativo.</noscript>
+    <noscript>
+      <h1>Gerador e leitor de QR Code e código de barras</h1>
+      <p>
+        QR Codes de link, texto, Pix, WhatsApp, Wi-Fi, e-mail, telefone, SMS e
+        contato, com logo, foto e moldura; mais de 25 formatos de código de
+        barras; leitor de QR Code e de chave de NF-e / NFC-e. Grátis, sem
+        cadastro, e tudo é feito no seu navegador.
+      </p>
+      <p>Ative o JavaScript para usar o aplicativo.</p>
+    </noscript>
     <div id="root"></div>
   </body>
 </html>
