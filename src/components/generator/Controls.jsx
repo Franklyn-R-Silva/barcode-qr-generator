@@ -14,6 +14,7 @@ import {
   AiOutlinePhone,
   AiOutlineMessage,
   AiOutlineIdcard,
+  AiOutlineScan,
 } from "react-icons/ai";
 import { GENERATOR_TYPES } from "../../constants/generatorTypes";
 import {
@@ -21,6 +22,8 @@ import {
   BARCODE_EXAMPLES,
 } from "../../constants/barcodeTypes";
 import { scanWarning } from "../../utils/contrast";
+import { logoCoverage } from "../../utils/qrSvg";
+import { readQrFile } from "../../utils/readQr";
 import { CONTENT_TYPES, DEFAULT_FIELDS, encodeContent } from "../../utils/qrContent";
 import Segmented from "../common/Segmented";
 import ColorPickerAdvanced from "./ColorPickerAdvanced";
@@ -126,7 +129,7 @@ const FormField = ({ field, value, onChange }) => {
  * O que vai no código: tipo de conteúdo e formulário (QR) ou formato e valor
  * (código de barras). Fica separado dos ajustes para vir antes da prévia no celular.
  */
-export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText }) => {
+export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText, showToast }) => {
   const isQRCode = config.generatorType === GENERATOR_TYPES.QRCODE;
   const type = isQRCode ? config.contentType || "text" : "text";
   const spec = CONTENT_TYPES.find((t) => t.id === type);
@@ -142,6 +145,21 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
   const setType = (next) => {
     updateConfig("contentType", next);
     if (next !== "text") updateConfig("text", encodeContent(next, config.fields).text);
+  };
+
+  // Lê um QR de uma foto ou print e traz o conteúdo para editar e recriar.
+  const importFromImage = async (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      const text = await readQrFile(file);
+      updateConfig("contentType", "text");
+      updateConfig("text", text);
+      showToast?.("QR lido: o conteúdo está no campo Texto.");
+    } catch {
+      showToast?.("Erro: nenhum QR Code encontrado nessa imagem.");
+    }
   };
 
   // Preenche com o exemplo do formato escolhido.
@@ -237,6 +255,12 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
           <button type="button" onClick={handleCopyText} className="btn btn-link">
             <AiOutlineCopy aria-hidden="true" /> {type === "pix" ? "Copiar Pix copia e cola" : "Copiar texto"}
           </button>
+          {isQRCode && (
+            <label className="btn btn-link import-btn" title="Lê um QR Code de uma foto ou print e traz o conteúdo para recriar">
+              <AiOutlineScan aria-hidden="true" /> Importar de imagem
+              <input type="file" accept="image/*" className="visually-hidden" onChange={importFromImage} />
+            </label>
+          )}
           {isQRCode && (type === "link" || type === "text") && (
             <>
               <a href={socialLinks.whatsapp} target="_blank" rel="noreferrer" className="btn btn-link" aria-label="Enviar no WhatsApp">
@@ -254,9 +278,12 @@ export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText
 };
 
 /** Ajustes de aparência do QR Code ou do código de barras. */
-const Controls = ({ config, updateConfig, handleLogoUpload }) => {
+const Controls = ({ config, updateConfig, handleImageUpload }) => {
   const isQRCode = config.generatorType === GENERATOR_TYPES.QRCODE;
-  const warning = scanWarning(config.fgColor, config.bgColor);
+  const warning =
+    scanWarning(config.fgColor, config.bgColor) ||
+    (isQRCode && config.gradientOn && scanWarning(config.fgColor2, config.bgColor)) ||
+    (isQRCode && config.eyeColorOn && scanWarning(config.eyeColor, config.bgColor));
 
   const applyTemplate = (t) => {
     updateConfig("fgColor", t.fg);
@@ -288,6 +315,38 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
           onChange={(color) => updateConfig("bgColor", color)}
         />
       </div>
+      {isQRCode && (
+        <div className="two-col stack-top">
+          <div className="stack">
+            <label className="check">
+              <input type="checkbox" checked={!!config.gradientOn} onChange={(e) => updateConfig("gradientOn", e.target.checked)} />
+              Degradê no código
+            </label>
+            {config.gradientOn && (
+              <ColorPickerAdvanced
+                label="Segunda cor"
+                color={config.fgColor2}
+                presets={FG_PRESETS}
+                onChange={(color) => updateConfig("fgColor2", color)}
+              />
+            )}
+          </div>
+          <div className="stack">
+            <label className="check">
+              <input type="checkbox" checked={!!config.eyeColorOn} onChange={(e) => updateConfig("eyeColorOn", e.target.checked)} />
+              Cor diferente nos olhos
+            </label>
+            {config.eyeColorOn && (
+              <ColorPickerAdvanced
+                label="Cor dos olhos"
+                color={config.eyeColor}
+                presets={FG_PRESETS}
+                onChange={(color) => updateConfig("eyeColor", color)}
+              />
+            )}
+          </div>
+        </div>
+      )}
       {warning && (
         <p className="alert alert-warning controls-alert" role="status">
           <AiOutlineWarning aria-hidden="true" />
@@ -345,6 +404,30 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
     );
   }
 
+  const imagePicker = (field, label) => (
+    <div className="logo-row">
+      <label className="btn btn-secondary file-btn">
+        <AiOutlineUpload aria-hidden="true" />
+        {config[field] ? "Trocar imagem" : label}
+        <input type="file" accept="image/*" className="visually-hidden" onChange={handleImageUpload(field)} />
+      </label>
+      {config[field] && (
+        <>
+          <img className="logo-thumb" src={config[field]} alt="" />
+          <button
+            type="button"
+            className="icon-btn danger"
+            aria-label="Remover imagem"
+            title="Remover imagem"
+            onClick={() => updateConfig(field, "")}
+          >
+            <AiOutlineDelete aria-hidden="true" />
+          </button>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <section className="panel settings-area" aria-label="Aparência do QR Code">
       <div className="panel-section">
@@ -360,10 +443,7 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
             >
               <span className="template-swatch" style={{ background: t.bg, color: t.fg }} aria-hidden="true">
                 <svg viewBox="0 0 12 12">
-                  <path
-                    d="M1 1h4v4H1zM7 1h4v4H7zM1 7h4v4H1zM7 7h2v2H7zM9 9h2v2H9z"
-                    fill="currentColor"
-                  />
+                  <path d="M1 1h4v4H1zM7 1h4v4H7zM1 7h4v4H1zM7 7h2v2H7zM9 9h2v2H9z" fill="currentColor" />
                 </svg>
               </span>
               <span>{t.name}</span>
@@ -377,14 +457,20 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
       <div className="panel-section">
         <h2 className="section-title">Moldura</h2>
         <Segmented
-          legend="Moldura com texto"
+          legend="Formato da moldura"
           hideLegend
           name="frame"
-          value={config.frame ? "on" : "off"}
-          onChange={(v) => updateConfig("frame", v === "on")}
+          value={config.frame ? config.frameStyle || "band" : "off"}
+          onChange={(v) => {
+            updateConfig("frame", v !== "off");
+            if (v !== "off") updateConfig("frameStyle", v);
+          }}
           options={[
-            { value: "off", label: "Sem moldura" },
-            { value: "on", label: "Com texto" },
+            { value: "off", label: "Sem" },
+            { value: "band", label: "Faixa" },
+            { value: "arc", label: "Em U" },
+            { value: "circle", label: "Círculo" },
+            { value: "square", label: "Quadrado" },
           ]}
         />
         {config.frame && (
@@ -395,11 +481,15 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
             <input
               id="frame-text"
               className="input"
-              maxLength={24}
+              maxLength={60}
               value={config.frameText || ""}
               onChange={(e) => updateConfig("frameText", e.target.value)}
             />
-            <p className="field-hint">Até 24 caracteres. Ex.: Escaneie-me, Cardápio, Pague com Pix.</p>
+            <p className="field-hint">
+              {config.frameStyle === "circle" || config.frameStyle === "square"
+                ? "O texto se repete até dar a volta no código."
+                : "Textos longos quebram em duas linhas ou diminuem para caber."}
+            </p>
           </div>
         )}
       </div>
@@ -414,6 +504,7 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
             onChange={(v) => updateConfig("qrStyle", v)}
             options={[
               { value: "squares", label: "Quadrados" },
+              { value: "rounded", label: "Arredond." },
               { value: "dots", label: "Pontos" },
             ]}
           />
@@ -424,11 +515,21 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
             onChange={(v) => updateConfig("eyeStyle", v)}
             options={[
               { value: "square", label: "Retos" },
-              { value: "circle", label: "Redondos" },
+              { value: "circle", label: "Arredond." },
+              { value: "dot", label: "Círculos" },
             ]}
           />
         </div>
         <div className="stack stack-top">
+          <RangeField
+            label="Tamanho dos módulos"
+            value={Math.round((config.moduleScale ?? 1) * 100)}
+            unit="%"
+            min={40}
+            max={100}
+            step={5}
+            onChange={(v) => updateConfig("moduleScale", v / 100)}
+          />
           <Segmented
             legend="Correção de erro"
             name="ec-level"
@@ -442,81 +543,101 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
             ]}
           />
           <p className="field-hint">
-            Quanto maior, mais o código aguenta sujeira, dobras ou uma logo no
-            meio. Use H com logo; L deixa textos longos menos densos.
+            Quanto maior, mais o código aguenta sujeira, dobras, logo ou foto.
+            Use H com logo ou imagem de fundo; L deixa textos longos menos densos.
           </p>
-          <RangeField
-            label="Tamanho"
-            value={config.size}
-            unit=" px"
-            min={150}
-            max={450}
-            step={10}
-            onChange={(v) => updateConfig("size", v)}
-          />
+          <div className="two-col">
+            <RangeField
+              label="Tamanho"
+              value={config.size}
+              unit=" px"
+              min={150}
+              max={450}
+              step={10}
+              onChange={(v) => updateConfig("size", v)}
+            />
+            <RangeField
+              label="Margem"
+              value={config.margin ?? 10}
+              unit=" px"
+              min={0}
+              max={40}
+              step={2}
+              onChange={(v) => updateConfig("margin", v)}
+            />
+          </div>
         </div>
       </div>
 
       <div className="panel-section">
-        <h2 className="section-title">Logo no centro</h2>
-        <div className="logo-row">
-          <label className="btn btn-secondary file-btn">
-            <AiOutlineUpload aria-hidden="true" />
-            {config.logoImage ? "Trocar imagem" : "Escolher imagem"}
-            <input type="file" accept="image/*" className="visually-hidden" onChange={handleLogoUpload} />
-          </label>
-          {config.logoImage && (
-            <>
-              <img className="logo-thumb" src={config.logoImage} alt="Logo atual" />
-              <button
-                type="button"
-                className="icon-btn danger"
-                aria-label="Remover logo"
-                title="Remover logo"
-                onClick={() => updateConfig("logoImage", "")}
-              >
-                <AiOutlineDelete aria-hidden="true" />
-              </button>
-            </>
-          )}
-        </div>
-        {!config.logoImage && (
-          <p className="field-hint">PNG, JPG ou SVG. A imagem fica só no seu aparelho.</p>
+        <h2 className="section-title">Imagem de fundo</h2>
+        {imagePicker("bgImage", "Escolher foto")}
+        {config.bgImage ? (
+          <div className="stack stack-top">
+            <RangeField
+              label="Clarear a foto"
+              value={Math.round((config.bgImageLighten ?? 0.5) * 100)}
+              unit="%"
+              min={0}
+              max={90}
+              step={5}
+              onChange={(v) => updateConfig("bgImageLighten", v / 100)}
+            />
+            <p className="field-hint">
+              A foto aparece entre os módulos. Diminua o tamanho dos módulos para
+              ela aparecer mais, e confira o teste de leitura embaixo do código.
+            </p>
+          </div>
+        ) : (
+          <p className="field-hint">Uma foto atrás do código (QR artístico). Fica só no seu aparelho.</p>
         )}
+      </div>
+
+      <div className="panel-section">
+        <h2 className="section-title">Logo no centro</h2>
+        {imagePicker("logoImage", "Escolher imagem")}
+        {!config.logoImage && <p className="field-hint">PNG, JPG ou SVG. A imagem fica só no seu aparelho.</p>}
 
         {config.logoImage && (
           <div className="stack stack-top">
-            <Segmented
-              legend="Tamanho da logo"
-              name="logo-size-mode"
-              value={config.logoSizeMode || "auto"}
-              onChange={(v) => updateConfig("logoSizeMode", v)}
-              options={[
-                { value: "auto", label: "Automático" },
-                { value: "original", label: "Grande" },
-                { value: "custom", label: "Ajustar" },
-              ]}
-            />
-            {config.logoSizeMode === "custom" && (
+            <div className="two-col">
               <RangeField
-                label="Tamanho em relação ao código"
+                label="Tamanho"
                 value={config.logoSize || 25}
                 unit="%"
                 min={10}
-                max={50}
+                max={40}
                 step={1}
                 onChange={(v) => updateConfig("logoSize", v)}
               />
-            )}
-            <RangeField
-              label="Opacidade"
-              value={Math.round(config.logoOpacity * 100)}
-              unit="%"
-              min={0}
-              max={100}
-              step={10}
-              onChange={(v) => updateConfig("logoOpacity", v / 100)}
-            />
+              <RangeField
+                label="Arredondar"
+                value={config.logoRadius || 0}
+                unit="%"
+                min={0}
+                max={50}
+                step={5}
+                onChange={(v) => updateConfig("logoRadius", v)}
+              />
+              <RangeField
+                label="Borda em volta"
+                value={config.logoPad || 0}
+                unit=" px"
+                min={0}
+                max={20}
+                step={1}
+                onChange={(v) => updateConfig("logoPad", v)}
+              />
+              <RangeField
+                label="Opacidade"
+                value={Math.round(config.logoOpacity * 100)}
+                unit="%"
+                min={0}
+                max={100}
+                step={10}
+                onChange={(v) => updateConfig("logoOpacity", v / 100)}
+              />
+            </div>
             <label className="check">
               <input
                 type="checkbox"
@@ -525,19 +646,45 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
               />
               Limpar os módulos atrás da logo
             </label>
-            {config.ecLevel !== "H" && (
-              <p className="alert alert-warning" role="status">
-                <AiOutlineWarning aria-hidden="true" />
-                <span>
-                  Com logo, use a correção de erro <strong>H</strong> para o
-                  código continuar legível.
-                </span>
-              </p>
-            )}
+            <CoverageMeter config={config} />
           </div>
         )}
       </div>
     </section>
+  );
+};
+
+/** How much of the code the logo hides, against what the error correction can recover. */
+const CoverageMeter = ({ config }) => {
+  let result;
+  try {
+    result = logoCoverage(config, config.text || "https://qrcode.devfrs.com");
+  } catch {
+    return null;
+  }
+  const { coverage, capacity } = result;
+  const pct = Math.round(coverage * 100);
+  const cap = Math.round(capacity * 100);
+  // Above ~60% of the capacity there is little room left for print and camera noise.
+  const level = coverage <= capacity * 0.6 ? "ok" : coverage <= capacity ? "risk" : "over";
+  const copy = {
+    ok: "Dentro da margem segura.",
+    risk: "No limite: pode falhar com impressão ou câmera ruins. Diminua a logo ou a borda.",
+    over: `Passa do que a correção ${config.ecLevel} recupera: o código provavelmente não vai ler. Diminua a logo ou use H.`,
+  }[level];
+  return (
+    <div className={`coverage coverage-${level}`} role="status">
+      <div className="range-head">
+        <span className="field-label">A logo cobre</span>
+        <span className="range-value">
+          {pct}% de {cap}% possíveis (correção {config.ecLevel})
+        </span>
+      </div>
+      <div className="coverage-bar" aria-hidden="true">
+        <span style={{ width: `${Math.min(100, (coverage / capacity) * 100)}%` }} />
+      </div>
+      <p className="field-hint">{copy}</p>
+    </div>
   );
 };
 

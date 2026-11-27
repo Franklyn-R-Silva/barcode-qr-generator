@@ -7,6 +7,21 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Frame formats**: band, U-shaped arc, circle and square, with the label
+  following the curve or running all the way round (SVG `textPath`). Long
+  band labels wrap to two lines or shrink to fit instead of overflowing.
+- **Artistic QR**: a photo behind the code with a lightening veil and a
+  module-size control (the photo shows between smaller modules).
+- **Logo controls**: size, rounded corners up to a circle, border, opacity and
+  cleared modules, with a coverage meter against the error-correction capacity
+  (`logoCoverage` in `utils/qrSvg.js`).
+- **Live read test**: the preview reads its own code back with the scanner's
+  decoder (`utils/readQr.js`) and shows "leitura testada" or "não leu".
+- **More QR styles**: rounded modules, circular eyes, gradient, eye colour,
+  adjustable margin.
+- **Import from an image**: recreate a QR Code from a photo or screenshot of it.
+- Uploaded images are downscaled (`utils/image.js`) so the preview stays fast
+  and the history fits in localStorage.
 - **QR content types**: Link, Texto, Pix, WhatsApp, Wi-Fi, E-mail, Telefone,
   SMS and Contato (vCard), each with a form (`utils/qrContent.js`, tested).
 - **Pix**: static QR Code in the Banco Central BR Code format with CRC-16

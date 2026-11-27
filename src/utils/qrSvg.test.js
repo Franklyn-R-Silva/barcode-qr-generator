@@ -1,5 +1,5 @@
 import qrcode from "qrcode-generator";
-import { qrSvg, utf16to8, QUIET_ZONE } from "./qrSvg";
+import { qrSvg, utf16to8, QUIET_ZONE, logoCoverage } from "./qrSvg";
 
 const base = { size: 280, fgColor: "#000000", bgColor: "#ffffff", ecLevel: "H", qrStyle: "squares", eyeStyle: "square" };
 
@@ -25,4 +25,44 @@ test("transparency, frame label escaping and too-long text", () => {
   expect(framed.svg).toContain("&lt;Cardápio&gt;</text>");
   expect(framed.height).toBeGreaterThan(framed.width);
   expect(() => qrSvg(base, "x".repeat(5000))).toThrow();
+});
+
+test("logo coverage grows with size and border, and clears modules", () => {
+  const logo = { ...base, logoImage: "data:image/png;base64,AAAA", logoSize: 20 };
+  const small = logoCoverage(logo, "https://qrcode.devfrs.com");
+  const big = logoCoverage({ ...logo, logoSize: 35, logoPad: 8 }, "https://qrcode.devfrs.com");
+  expect(small.capacity).toBe(0.3);
+  expect(small.coverage).toBeGreaterThan(0.02);
+  expect(big.coverage).toBeGreaterThan(small.coverage);
+  expect(logoCoverage(base, "x").coverage).toBe(0);
+  const kept = qrSvg(logo, "x").svg.match(/h1v1h-1z/g).length;
+  const cleared = qrSvg({ ...logo, removeQrCodeBehindLogo: true }, "x").svg.match(/h1v1h-1z/g).length;
+  expect(cleared).toBeLessThan(kept);
+});
+
+test("margin, gradient, eye colour, round eyes and background image", () => {
+  const svg = qrSvg(
+    { ...base, margin: 0, gradientOn: true, fgColor2: "#2563eb", eyeColorOn: true, eyeColor: "#ff0000", eyeStyle: "dot", bgImage: "data:image/jpeg;base64,BBBB", bgImageLighten: 0.6 },
+    "x"
+  );
+  expect(svg.width).toBe(280);
+  expect(svg.svg).toContain('stop-color="#2563eb"');
+  expect(svg.svg).toContain('fill="url(#g)"');
+  expect(svg.svg.match(/<circle[^>]*stroke="#ff0000"/g)).toHaveLength(3);
+  expect(svg.svg).toContain('opacity="0.6"');
+});
+
+test("frame styles: long band labels wrap and fit; text runs round circle and square", () => {
+  const long = qrSvg({ ...base, frame: true, frameText: "Escaneie aqui essa informação agora" }, "x").svg;
+  expect(long.match(/<text /g)).toHaveLength(2);
+  const noSpace = qrSvg({ ...base, frame: true, frameText: "Escaneie-me6656665656565" }, "x").svg;
+  expect(noSpace).toContain("textLength=");
+  for (const frameStyle of ["circle", "square", "arc"]) {
+    const f = qrSvg({ ...base, frame: true, frameStyle, frameText: "Escaneie aqui" }, "x");
+    expect(f.svg).toContain('<textPath href="#fp"');
+    if (frameStyle !== "arc") {
+      expect(f.width).toBe(f.height);
+      expect(f.svg).toContain("Escaneie aqui • Escaneie aqui");
+    }
+  }
 });
