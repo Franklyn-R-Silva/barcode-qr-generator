@@ -20,12 +20,33 @@
   max-width: 100%;
 }
 
-.preview-code canvas {
+.qr-image {
   display: block;
   max-width: 100%;
-  height: auto !important;
+  height: auto;
   border-radius: 2px;
   box-shadow: var(--shadow);
+}
+
+/* "Fundo transparente": show the real result on a checkerboard. */
+.preview-stage.is-transparent {
+  background-color: #ffffff;
+  background-image: conic-gradient(#e5e7eb 25%, transparent 0 50%, #e5e7eb 0 75%, transparent 0);
+  background-size: 16px 16px;
+}
+
+.dark .preview-stage.is-transparent {
+  background-color: #1c2537;
+  background-image: conic-gradient(#2a3548 25%, transparent 0 50%, #2a3548 0 75%, transparent 0);
+}
+
+.is-transparent .qr-image,
+.is-transparent .barcode-code svg {
+  box-shadow: none;
+}
+
+.preview-error {
+  max-width: 360px;
 }
 
 .preview-code.barcode-code {
@@ -73,7 +94,7 @@
   }
 
   /* Only the on-screen preview shrinks; the exported file keeps its size. */
-  .preview-code canvas {
-    max-width: min(100%, 220px);
+  .qr-image {
+    max-width: min(100%, 200px);
   }
 }

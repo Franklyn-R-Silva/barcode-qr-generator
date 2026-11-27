@@ -30,7 +30,7 @@ src/
 │   ├── layout/                # Header (theme toggle), Footer
 │   ├── common/                # Toast, Segmented (radio-based segmented control)
 │   ├── generator/
-│   │   ├── QRCodePreview.jsx      # QR render + copy (react-qrcode-logo → <canvas>)
+│   │   ├── QRCodePreview.jsx      # QR preview: <img> of the SVG from utils/qrSvg.js
 │   │   ├── BarcodePreview.jsx     # Barcode render + validation (react-barcode → <svg>)
 │   │   ├── Controls.jsx           # ContentInput (named export) + appearance settings
 │   │   ├── ModeSelector.jsx       # QR / Barcode / Scan switcher (always visible)
@@ -46,17 +46,20 @@ src/
 └── utils/
     ├── barcodeValidators.js   # Per-format validation & normalization
     ├── nfeParser.js           # NF-e / NFC-e access-key extraction & decoding
-    └── contrast.js            # WCAG contrast + scan warning for colour pairs
+    ├── contrast.js            # WCAG contrast + scan warning for colour pairs
+    ├── qrSvg.js               # QR Code → SVG (preview and every export)
+    ├── qrContent.js           # QR content types: form specs + encoders
+    └── pix.js                 # Static Pix QR (BR Code) payload + CRC16
 ```
 
 ## QR vs barcode: two rendering paths
 
 The two generators are asymmetric, and export logic branches on `isBarcode`:
 
-- **QR** (`QRCodePreview`) uses `react-qrcode-logo`, which renders to a **`<canvas>`**. Export reads the canvas directly.
-- **Barcode** (`BarcodePreview`) uses `react-barcode` (JsBarcode), which renders to an **`<svg>`**. Export serializes the SVG onto a canvas first before producing PNG/WEBP/PDF; SVG export is available for barcodes only.
+- **QR** (`QRCodePreview`) is an SVG string built by `utils/qrSvg.js` from the `qrcode-generator` matrix (module style, eyes, logo, transparency, optional frame). The preview is an `<img>` of it.
+- **Barcode** (`BarcodePreview`) uses `react-barcode` (JsBarcode), which renders an inline **`<svg>`** that is serialised for export.
 
-`ExportOptions` is shared by both and handles all downloads, including an optional transparent-background pass. Each preview passes its own "Copiar" (copy image) button in as `children`, so it sits beside the download button. The on-screen preview is scaled with CSS only; exported files keep the size chosen in the settings.
+`ExportOptions` is shared by both: given `getSvg()`, it saves the SVG as is and draws it onto a canvas for PNG / WEBP / PDF and the clipboard, so every file matches the preview. QR content types (`utils/qrContent.js`) and the Pix BR Code (`utils/pix.js`) only produce `config.text`; rendering does not know about them. The on-screen preview is scaled with CSS only; exported files keep the size chosen in the settings.
 
 ## Barcode formats & validation
 

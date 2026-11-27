@@ -7,6 +7,17 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **QR content types**: Link, Texto, Pix, WhatsApp, Wi-Fi, E-mail, Telefone,
+  SMS and Contato (vCard), each with a form (`utils/qrContent.js`, tested).
+- **Pix**: static QR Code in the Banco Central BR Code format with CRC-16
+  (`utils/pix.js`); the test reproduces the manual's example exactly. The
+  "copia e cola" text can be copied.
+- **Frame** with a label ("Escaneie-me", "Cardápio"…) around the QR Code,
+  included in every export.
+- **SVG export for QR Codes**, and a checkerboard preview when "Fundo
+  transparente" is on (barcodes now export with a truly transparent background).
+- New app icons (`logo192.png`, `logo512.png`, `favicon.ico`) drawn from the
+  new mark; the manifest also lists `favicon.svg`.
 - **Redesign** made with [impeccable](https://github.com/pbakaus/impeccable): the
   familiar layout of the category leaders (code on the left, always in view,
   with one blue download button; content and settings on the right; on phones
@@ -97,6 +108,10 @@ All notable changes to this project are documented here. The format is based on
 
 ### Removed
 
+- `react-qrcode-logo`: QR Codes are drawn as SVG by `utils/qrSvg.js` on top of
+  `qrcode-generator` (the same matrix library, same byte encoding), so the
+  preview and every export come from one drawing. Exported codes were
+  checked by reading them back with the app's scanner.
 - `framer-motion` and the entrance/hover-zoom animations on the code preview.
 - The history "preview" modal (its details now show in the list row).
 - **Netlify**: removed `netlify.toml` and all Netlify references (deployment

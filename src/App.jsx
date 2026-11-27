@@ -23,6 +23,9 @@ function App() {
 
     // Comum
     text: "",
+    contentType: "link", // QR: link | text | pix | whatsapp | wifi | email | phone | sms | vcard
+    fields: {}, // valores do formulário do tipo de conteúdo
+    transparentBg: false,
     fgColor: "#000000",
     bgColor: "#ffffff",
 
@@ -38,6 +41,8 @@ function App() {
     logoX: 0, // Offset X da posição da logo
     logoY: 0, // Offset Y da posição da logo
     logoSizeMode: "auto", // "auto", "original", "custom"
+    frame: false,
+    frameText: "Escaneie-me",
 
     // Barcode específico
     barcodeFormat: DEFAULT_BARCODE_FORMAT,
@@ -77,8 +82,9 @@ function App() {
   };
 
   // Carregar configuração do histórico
+  // Entradas antigas não têm tipo de conteúdo: abrem como texto livre.
   const loadConfigFromHistory = (historyConfig) => {
-    setConfig(historyConfig);
+    setConfig((prev) => ({ ...prev, contentType: "text", fields: {}, ...historyConfig }));
   };
 
   // Salvar no histórico quando o texto mudar (após 2s de inatividade).
@@ -116,6 +122,7 @@ function App() {
     setConfig((prev) => ({
       ...prev,
       text: text || "",
+      contentType: "text",
       generatorType:
         targetType === GENERATOR_TYPES.BARCODE
           ? GENERATOR_TYPES.BARCODE
@@ -200,9 +207,9 @@ function App() {
               handleCopyText={handleCopyText}
             />
             {config.generatorType === GENERATOR_TYPES.QRCODE ? (
-              <QRCodePreview config={config} showToast={showToast} />
+              <QRCodePreview config={config} updateConfig={updateConfig} showToast={showToast} />
             ) : (
-              <BarcodePreview config={config} showToast={showToast} />
+              <BarcodePreview config={config} updateConfig={updateConfig} showToast={showToast} />
             )}
             <Controls
               config={config}
