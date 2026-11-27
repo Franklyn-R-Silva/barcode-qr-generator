@@ -16,7 +16,7 @@ npm test -- --watchAll=false   # Single run (CI-style)
 npm test -- <pattern>          # Run tests matching a filename/name pattern
 ```
 
-Use Node 20 (`.nvmrc`; the build itself also runs on 18, `engines` says `>=18`). There is no lint script; CRA's ESLint runs during `npm run build`, and with `CI=true` its warnings fail the build (that is how CI runs it). Tests: `src/utils/contrast.test.js`.
+Use Node 20 (`.nvmrc`; the build itself also runs on 18, `engines` says `>=18`). There is no lint script; CRA's ESLint runs during `npm run build`, and with `CI=true` its warnings fail the build (that is how CI runs it). Tests live next to the utils (`src/utils/*.test.js`).
 
 ## Architecture
 
@@ -32,20 +32,24 @@ src/
                           ExportOptions, ColorPickerAdvanced, HistoryPanel, HistoryButton
     scanner/              ScannerPanel (html5-qrcode camera/image reader + NF-e details)
   constants/              generatorTypes.js, barcodeTypes.js
-  utils/                  barcodeValidators.js, nfeParser.js, contrast.js (+ test)
+  utils/                  barcodeValidators.js, nfeParser.js, contrast.js, qrSvg.js, qrContent.js, pix.js (+ tests)
 ```
 
 ## Scanner & NF-e (`components/scanner/ScannerPanel.jsx`, `utils/nfeParser.js`)
 
 `ScannerPanel` uses `html5-qrcode` to read QR + 1D barcodes from the camera (`facingMode: "environment"`) or an uploaded image; a single lazily-created `Html5Qrcode` instance targets `#qr-reader-region`, stops on first read, and is released on unmount. `utils/nfeParser.js` is pure: `parseNFe(text)` extracts a 44-digit NF-e/NFC-e access key (from a raw barcode, `chNFe=` param, or SEFAZ URL), validates the modulo-11 check digit, and decodes UF/emission/CNPJ/model/series/number. `ScannerPanel.onGenerate(targetType, text)` (wired to `App.handleGenerateFromScan`) sends a scanned value back into a generator.
 
-## QR vs Barcode rendering differences
+## QR and barcode rendering
 
 These two paths are asymmetric and export logic branches on `isBarcode`:
-- **QR** (`QRCodePreview.jsx`) uses `react-qrcode-logo`, which renders to a **`<canvas>`**. Export reads the canvas directly (`getCanvas`).
-- **Barcode** (`BarcodePreview.jsx`) uses `react-barcode` (JsBarcode), which renders to an **`<svg>`**. Export serializes the SVG and draws it onto a canvas first (`getSVG` → `svgToCanvas`).
+- **QR** (`QRCodePreview.jsx`) is drawn by `utils/qrSvg.js`: `qrcode-generator` builds the matrix (bytes converted with the same `utf16to8` react-qrcode-logo used, so codes are unchanged) and the function returns an SVG string with the module style, eyes, logo, transparency and the optional "Escaneie-me" frame. The preview is an `<img>` of that SVG; it throws when the text does not fit, and the preview shows an error.
+- **Barcode** (`BarcodePreview.jsx`) uses `react-barcode` (JsBarcode), which renders an inline **`<svg>`**; `getSvg` serialises it.
 
-`ExportOptions.jsx` is shared by both and does all export work inline (PNG / WEBP / PDF via jsPDF; SVG download is barcode-only), including the optional transparent-background pass. The preview passes its copy-image button as `children`.
+`ExportOptions.jsx` is shared by both: it receives `getSvg()` and produces every format from that string (SVG as is; PNG / WEBP / PDF and the clipboard copy by drawing it onto a canvas at `devicePixelRatio`). Transparency is `config.transparentBg` (the SVG simply has no background), so the preview shows it on a checkerboard.
+
+## QR content types & Pix (`utils/qrContent.js`, `utils/pix.js`)
+
+`CONTENT_TYPES` declares each QR type (Link, Texto, Pix, WhatsApp, Wi-Fi, E-mail, Telefone, SMS, Contato) as a list of fields; `ContentInput` renders the form from it and `encodeContent(type, fields)` turns the values into `config.text` (`{ text, error }`). `config.contentType` and `config.fields` travel with the config (and the history); entries without a type load as `text`. `pix.js` builds the static BR Code (EMV) with CRC-16/CCITT-FALSE; its test reproduces the Banco Central manual example exactly, so keep it green before touching the payload.
 
 ## Barcode formats & validation
 

@@ -6,6 +6,14 @@ import {
   AiOutlineUpload,
   AiOutlineDelete,
   AiOutlineWarning,
+  AiOutlineLink,
+  AiOutlineFileText,
+  AiOutlineDollarCircle,
+  AiOutlineWifi,
+  AiOutlineMail,
+  AiOutlinePhone,
+  AiOutlineMessage,
+  AiOutlineIdcard,
 } from "react-icons/ai";
 import { GENERATOR_TYPES } from "../../constants/generatorTypes";
 import {
@@ -13,6 +21,7 @@ import {
   BARCODE_EXAMPLES,
 } from "../../constants/barcodeTypes";
 import { scanWarning } from "../../utils/contrast";
+import { CONTENT_TYPES, DEFAULT_FIELDS, encodeContent } from "../../utils/qrContent";
 import Segmented from "../common/Segmented";
 import ColorPickerAdvanced from "./ColorPickerAdvanced";
 import "./Controls.css";
@@ -52,17 +61,88 @@ const RangeField = ({ label, value, unit, min, max, step, onChange }) => {
   );
 };
 
+const TYPE_ICONS = {
+  link: <AiOutlineLink aria-hidden="true" />,
+  text: <AiOutlineFileText aria-hidden="true" />,
+  pix: <AiOutlineDollarCircle aria-hidden="true" />,
+  whatsapp: <AiOutlineWhatsApp aria-hidden="true" />,
+  wifi: <AiOutlineWifi aria-hidden="true" />,
+  email: <AiOutlineMail aria-hidden="true" />,
+  phone: <AiOutlinePhone aria-hidden="true" />,
+  sms: <AiOutlineMessage aria-hidden="true" />,
+  vcard: <AiOutlineIdcard aria-hidden="true" />,
+};
+
+const TYPE_OPTIONS = CONTENT_TYPES.map((t) => ({ value: t.id, label: t.label, icon: TYPE_ICONS[t.id] }));
+
+/** One field of a content-type form, rendered from its spec in utils/qrContent. */
+const FormField = ({ field, value, onChange }) => {
+  const id = useId();
+  if (field.type === "checkbox") {
+    return (
+      <label className="check">
+        <input type="checkbox" checked={!!value} onChange={(e) => onChange(e.target.checked)} />
+        {field.label}
+      </label>
+    );
+  }
+  const common = {
+    id,
+    value: value ?? "",
+    onChange: (e) => onChange(e.target.value),
+    placeholder: field.placeholder,
+    maxLength: field.maxLength,
+  };
+  return (
+    <div className={field.type === "textarea" ? "form-wide" : undefined}>
+      <label className="field-label" htmlFor={id}>
+        {field.label}
+      </label>
+      {field.type === "select" ? (
+        <select className="select" {...common}>
+          {field.options.map(([v, label]) => (
+            <option key={v} value={v}>
+              {label}
+            </option>
+          ))}
+        </select>
+      ) : field.type === "textarea" ? (
+        <textarea className="input" rows={2} {...common} />
+      ) : (
+        <input
+          className="input"
+          type={field.type === "decimal" ? "text" : field.type}
+          inputMode={field.type === "decimal" ? "decimal" : undefined}
+          autoComplete="off"
+          spellCheck={false}
+          {...common}
+        />
+      )}
+    </div>
+  );
+};
+
 /**
- * O que vai no código: formato (barcode) e conteúdo. Fica separado dos
- * ajustes para vir antes da pré-visualização no celular.
+ * O que vai no código: tipo de conteúdo e formulário (QR) ou formato e valor
+ * (código de barras). Fica separado dos ajustes para vir antes da prévia no celular.
  */
-export const ContentInput = ({
-  config,
-  updateConfig,
-  socialLinks,
-  handleCopyText,
-}) => {
+export const ContentInput = ({ config, updateConfig, socialLinks, handleCopyText }) => {
   const isQRCode = config.generatorType === GENERATOR_TYPES.QRCODE;
+  const type = isQRCode ? config.contentType || "text" : "text";
+  const spec = CONTENT_TYPES.find((t) => t.id === type);
+  const fields = { ...DEFAULT_FIELDS, ...config.fields };
+  const { error } = type === "text" ? {} : encodeContent(type, fields);
+
+  const setField = (name, value) => {
+    const next = { ...config.fields, [name]: value };
+    updateConfig("fields", next);
+    updateConfig("text", encodeContent(type, next).text);
+  };
+
+  const setType = (next) => {
+    updateConfig("contentType", next);
+    if (next !== "text") updateConfig("text", encodeContent(next, config.fields).text);
+  };
 
   // Preenche com o exemplo do formato escolhido.
   const handleFormatChange = (format) => {
@@ -70,6 +150,10 @@ export const ContentInput = ({
     updateConfig("barcodeFormat", format);
     if (BARCODE_EXAMPLES[format]) updateConfig("text", BARCODE_EXAMPLES[format]);
   };
+
+  const visibleFields = (spec?.fields || []).filter(
+    (f) => !(f.name === "password" && fields.encryption === "nopass")
+  );
 
   return (
     <section className="panel content-area" aria-label="Conteúdo do código">
@@ -98,33 +182,62 @@ export const ContentInput = ({
       )}
 
       <div className="panel-section">
-        <label className="field-label" htmlFor="code-text">
-          {isQRCode ? "Conteúdo" : "Valor do código"}
-        </label>
-        <textarea
-          id="code-text"
-          className="input"
-          rows={3}
-          spellCheck={false}
-          placeholder={
-            isQRCode
-              ? "Cole um link ou digite um texto, e-mail ou telefone"
-              : "Digite os números ou o texto do código"
-          }
-          value={config.text}
-          onChange={(e) => updateConfig("text", e.target.value)}
-        />
-        <p className={`field-hint ${isQRCode ? "live-hint" : ""}`}>
-          {isQRCode
-            ? "O QR Code muda enquanto você digita."
-            : `Exemplo válido: ${BARCODE_EXAMPLES[config.barcodeFormat] ?? "—"}`}
-        </p>
+        {isQRCode && (
+          <div className="type-picker">
+            <Segmented
+              size="grid"
+              legend="Tipo de conteúdo"
+              hideLegend
+              name="content-type"
+              value={type}
+              onChange={setType}
+              options={TYPE_OPTIONS}
+            />
+          </div>
+        )}
+        {type === "text" ? (
+          <>
+            <label className="field-label" htmlFor="code-text">
+              {isQRCode ? "Texto" : "Valor do código"}
+            </label>
+            <textarea
+              id="code-text"
+              className="input"
+              rows={3}
+              spellCheck={false}
+              placeholder={isQRCode ? "Qualquer texto, até cerca de 2.900 caracteres" : "Digite os números ou o texto do código"}
+              value={config.text}
+              onChange={(e) => updateConfig("text", e.target.value)}
+            />
+            <p className={`field-hint ${isQRCode ? "live-hint" : ""}`}>
+              {isQRCode
+                ? "O QR Code muda enquanto você digita."
+                : `Exemplo válido: ${BARCODE_EXAMPLES[config.barcodeFormat] ?? "—"}`}
+            </p>
+          </>
+        ) : (
+          <div className="content-form">
+            {visibleFields.map((f) => (
+              <FormField key={f.name} field={f} value={fields[f.name]} onChange={(v) => setField(f.name, v)} />
+            ))}
+          </div>
+        )}
+
+        {error && (
+          <p className="alert alert-warning controls-alert" role="status">
+            <AiOutlineWarning aria-hidden="true" />
+            <span>{error}</span>
+          </p>
+        )}
+        {type === "pix" && !error && config.text && (
+          <p className="field-hint">Antes de divulgar, faça um teste: leia o QR no app do seu banco e confira nome e valor.</p>
+        )}
 
         <div className="share-row">
           <button type="button" onClick={handleCopyText} className="btn btn-link">
-            <AiOutlineCopy aria-hidden="true" /> Copiar texto
+            <AiOutlineCopy aria-hidden="true" /> {type === "pix" ? "Copiar Pix copia e cola" : "Copiar texto"}
           </button>
-          {isQRCode && (
+          {isQRCode && (type === "link" || type === "text") && (
             <>
               <a href={socialLinks.whatsapp} target="_blank" rel="noreferrer" className="btn btn-link" aria-label="Enviar no WhatsApp">
                 <AiOutlineWhatsApp aria-hidden="true" /> WhatsApp
@@ -260,6 +373,36 @@ const Controls = ({ config, updateConfig, handleLogoUpload }) => {
       </div>
 
       {colors}
+
+      <div className="panel-section">
+        <h2 className="section-title">Moldura</h2>
+        <Segmented
+          legend="Moldura com texto"
+          hideLegend
+          name="frame"
+          value={config.frame ? "on" : "off"}
+          onChange={(v) => updateConfig("frame", v === "on")}
+          options={[
+            { value: "off", label: "Sem moldura" },
+            { value: "on", label: "Com texto" },
+          ]}
+        />
+        {config.frame && (
+          <div className="stack-top">
+            <label className="field-label" htmlFor="frame-text">
+              Texto da moldura
+            </label>
+            <input
+              id="frame-text"
+              className="input"
+              maxLength={24}
+              value={config.frameText || ""}
+              onChange={(e) => updateConfig("frameText", e.target.value)}
+            />
+            <p className="field-hint">Até 24 caracteres. Ex.: Escaneie-me, Cardápio, Pague com Pix.</p>
+          </div>
+        )}
+      </div>
 
       <div className="panel-section">
         <h2 className="section-title">Estilo</h2>

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import Barcode from "react-barcode";
-import { AiOutlineCopy, AiOutlineReload, AiOutlineCloseCircle } from "react-icons/ai";
+import { AiOutlineReload, AiOutlineCloseCircle } from "react-icons/ai";
 import ExportOptions from "./ExportOptions";
 import {
   validateBarcodeValue,
@@ -9,7 +9,7 @@ import {
 import { JSBARCODE_FORMAT, BARCODE_CATEGORIES } from "../../constants/barcodeTypes";
 import "./GeneratorArea.css";
 
-const BarcodePreview = ({ config, showToast }) => {
+const BarcodePreview = ({ config, updateConfig, showToast }) => {
   const barcodeRef = useRef(null);
   const [error, setError] = useState(null);
   const [validationError, setValidationError] = useState(null);
@@ -46,56 +46,8 @@ const BarcodePreview = ({ config, showToast }) => {
     if (showToast) showToast("Valor trocado pelo exemplo.");
   };
 
-  /**
-   * Função auxiliar para pegar o elemento SVG
-   */
-  const getSVG = () => {
-    return barcodeRef.current?.querySelector("svg");
-  };
-
-  /**
-   * Converte SVG para Canvas
-   */
-  const svgToCanvas = async (svg) => {
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const svgData = new XMLSerializer().serializeToString(svg);
-      const img = new Image();
-
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        resolve(canvas);
-      };
-
-      img.onerror = reject;
-      img.src =
-        "data:image/svg+xml;base64," +
-        btoa(unescape(encodeURIComponent(svgData)));
-    });
-  };
-
-  /**
-   * Lógica de Copiar para a Área de Transferência
-   */
-  const handleCopyBarcode = async () => {
-    const svg = getSVG();
-    if (!svg) return;
-
-    try {
-      const canvas = await svgToCanvas(svg);
-      const dataUrl = canvas.toDataURL("image/png");
-      const blob = await (await fetch(dataUrl)).blob();
-      const clipboardItem = new ClipboardItem({ "image/png": blob });
-      await navigator.clipboard.write([clipboardItem]);
-      if (showToast) showToast("Imagem do código de barras copiada.");
-    } catch (err) {
-      console.error(err);
-      if (showToast) showToast("Erro ao copiar a imagem. Use o botão Baixar.");
-    }
-  };
+  // The rendered <svg>, serialised: every export format is produced from it.
+  const getSvg = () => new XMLSerializer().serializeToString(barcodeRef.current.querySelector("svg"));
 
   const formatLabel =
     BARCODE_CATEGORIES.flatMap((c) => c.formats).find((f) => f.id === config.barcodeFormat)
@@ -103,7 +55,7 @@ const BarcodePreview = ({ config, showToast }) => {
 
   return (
     <section className="panel preview-area preview-panel" aria-label="Pré-visualização do código de barras">
-      <div className="preview-stage">
+      <div className={`preview-stage ${config.transparentBg ? "is-transparent" : ""}`}>
         <div
           className="preview-code barcode-code"
           ref={barcodeRef}
@@ -132,7 +84,7 @@ const BarcodePreview = ({ config, showToast }) => {
               width={config.barcodeWidth || 2}
               height={config.barcodeHeight || 100}
               displayValue={config.barcodeDisplayValue !== false}
-              background={config.bgColor || "#ffffff"}
+              background={config.transparentBg ? "transparent" : config.bgColor || "#ffffff"}
               lineColor={config.fgColor || "#000000"}
               fontSize={config.barcodeFontSize || 20}
               margin={config.barcodeMargin || 10}
@@ -150,17 +102,14 @@ const BarcodePreview = ({ config, showToast }) => {
 
       <p className="preview-meta">{formatLabel}</p>
 
-      <ExportOptions getSVG={getSVG} config={config} isBarcode={true} showToast={showToast} disabled={!!error}>
-        <button
-          type="button"
-          onClick={handleCopyBarcode}
-          className="btn btn-secondary"
-          disabled={!!error}
-          aria-label="Copiar imagem do código de barras"
-        >
-          <AiOutlineCopy aria-hidden="true" /> Copiar
-        </button>
-      </ExportOptions>
+      <ExportOptions
+        kind="barcode"
+        getSvg={getSvg}
+        config={config}
+        updateConfig={updateConfig}
+        showToast={showToast}
+        disabled={!!error}
+      />
     </section>
   );
 };

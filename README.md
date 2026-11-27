@@ -36,6 +36,10 @@ A free, fully client-side web app to **generate**, **customize**, and **scan** Q
 
 ### QR Codes
 
+- Content types: **link, text, Pix, WhatsApp, Wi-Fi, e-mail, phone, SMS and contact (vCard)**, each with its own form
+- **Pix**: static QR Code in the Banco Central BR Code format (key, name, city, optional amount and description), plus the "copia e cola" text
+- Optional frame with a label such as "Escaneie-me"
+
 - Full color customization (foreground and background)
 - Module styles (squares or dots) and eye styles (square or rounded)
 - Logo upload with adjustable size, opacity, and background removal
@@ -72,7 +76,7 @@ Every format has dedicated input validation with example values and inline error
 
 ### General
 
-- Export to **PNG**, **WEBP**, **PDF**, and **SVG** (SVG for barcodes), with an optional transparent background
+- Export to **PNG**, **WEBP**, **PDF**, and **SVG** (QR Codes and barcodes), with an optional transparent background shown on a checkerboard
 - Copy the generated image straight to the clipboard
 - Light / dark theme that follows the system on the first visit and is remembered
 - Local generation history (stored in `localStorage`)
@@ -140,7 +144,7 @@ src/
 └── utils/           # Barcode validators, NF-e access-key parser, colour contrast
 ```
 
-QR codes render to a `<canvas>` (via `react-qrcode-logo`), barcodes to an `<svg>`
+QR codes are drawn as SVG by `utils/qrSvg.js` (on top of `qrcode-generator`), barcodes as SVG by `react-barcode`
 (via `react-barcode`/JsBarcode), and the scanner uses `html5-qrcode`; export logic
 adapts to each path. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full picture.
 
@@ -159,7 +163,7 @@ the impeccable skill and its design hook are already set up in `.claude/`.
 
 - **React 18** (Create React App), plain CSS with design tokens
 - **Inter** (Google Fonts) — UI typeface
-- **react-qrcode-logo** — QR rendering
+- **qrcode-generator** — QR matrix (drawn as SVG by `utils/qrSvg.js`)
 - **react-barcode** / **JsBarcode** — barcode rendering
 - **html5-qrcode** — camera & image scanning
 - **react-colorful** — color picker

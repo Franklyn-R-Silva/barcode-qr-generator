@@ -10,6 +10,7 @@ import {
   BARCODE_EXAMPLES,
   DEFAULT_BARCODE_FORMAT,
 } from "../../constants/barcodeTypes";
+import { encodeContent } from "../../utils/qrContent";
 import "./ModeSelector.css";
 
 /**
@@ -27,8 +28,12 @@ const ModeSelector = ({ config, updateConfig }) => {
   };
 
   const handleChange = (mode) => {
-    if (mode === GENERATOR_TYPES.BARCODE) selectBarcode();
-    else updateConfig("generatorType", mode);
+    if (mode === GENERATOR_TYPES.BARCODE) return selectBarcode();
+    updateConfig("generatorType", mode);
+    // The barcode value may have replaced the text; the QR form is the source of truth.
+    if (mode === GENERATOR_TYPES.QRCODE && config.contentType && config.contentType !== "text") {
+      updateConfig("text", encodeContent(config.contentType, config.fields).text);
+    }
   };
 
   return (
