@@ -156,9 +156,12 @@ export const qrSvg = (config, text) => {
     })
     .join("");
 
+  // The uploaded photo goes either behind the code or inside the dark modules.
+  const photoInModules = config.bgImage && config.bgImageMode === "modules";
+
   // Ground: colour, then an optional photo lightened by a veil of the background colour.
   let ground = transparentBg ? "" : `<rect width="${box}" height="${box}" fill="${bg}"/>`;
-  if (config.bgImage) {
+  if (config.bgImage && !photoInModules) {
     ground +=
       `<image href="${esc(config.bgImage)}" width="${box}" height="${box}" preserveAspectRatio="xMidYMid slice"/>` +
       `<rect width="${box}" height="${box}" fill="${bg}" opacity="${config.bgImageLighten ?? 0.5}"/>`;
@@ -167,7 +170,13 @@ export const qrSvg = (config, text) => {
   let code =
     ground +
     `<g transform="translate(${margin} ${margin}) scale(${n3(cs)})">` +
-    `<path d="${d}" fill="${ink}"${qrStyle === "squares" || !qrStyle ? ' shape-rendering="crispEdges"' : ""}/>${eyes}</g>`;
+    (photoInModules
+      ? // Photo clipped to the module shapes, under a veil of the code colour so it still scans.
+        `<clipPath id="mc"><path d="${d}"/></clipPath>` +
+        `<image href="${esc(config.bgImage)}" width="${n}" height="${n}" preserveAspectRatio="xMidYMid slice" clip-path="url(#mc)"/>` +
+        `<path d="${d}" fill="${ink}" opacity="${config.moduleImageDarken ?? 0.35}"/>`
+      : `<path d="${d}" fill="${ink}"${qrStyle === "squares" || !qrStyle ? ' shape-rendering="crispEdges"' : ""}/>`) +
+    `${eyes}</g>`;
 
   if (plate) {
     const logoW = logoSize(config);

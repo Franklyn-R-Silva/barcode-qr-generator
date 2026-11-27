@@ -49,6 +49,8 @@ function App() {
     eyeColor: "#000000",
     bgImage: "", // foto atrás do código (QR artístico)
     bgImageLighten: 0.5, // véu da cor de fundo sobre a foto
+    bgImageMode: "behind", // behind | modules (photo fills the dark modules)
+    moduleImageDarken: 0.35, // veil of the code colour over the photo in the modules
     frame: false,
     frameStyle: "band", // band | arc | circle | square
     frameText: "Escaneie-me",
