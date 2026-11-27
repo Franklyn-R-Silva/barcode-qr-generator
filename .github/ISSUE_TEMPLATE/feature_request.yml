@@ -1,0 +1,28 @@
+name: 💡 Feature request
+description: An idea that would make the app more useful
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! Tell us the problem first; the solution can be worked out together.
+        Portuguese or English.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to do?
+      description: The task, and what gets in the way today.
+      placeholder: I print QR Codes for a restaurant menu and want…
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea (optional)
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contributing
+      options:
+        - label: I would like to work on this myself

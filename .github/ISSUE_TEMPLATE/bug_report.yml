@@ -1,0 +1,28 @@
+name: 🐛 Bug report
+description: Something looks wrong, a code does not scan, or the app breaks
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! Only the first box is required: a short report is
+        better than none, and follow-up questions are fine. Portuguese or English.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you saw, and what you expected instead.
+      placeholder: I chose EAN-13, typed 7891234567895, and the download button stayed grey…
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Content and settings
+      description: The text or barcode value, the mode (QR / barcode / scanner) and the options you changed. A screenshot helps a lot.
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Chrome 140 on Android, Safari on iPhone, Firefox on Windows…

@@ -1,8 +1,25 @@
 # Contributing
 
-Thanks for your interest in improving the QR Code & Barcode Generator! This is a
-client-side Create React App project — see [ARCHITECTURE.md](./ARCHITECTURE.md)
-for an overview before diving in.
+Everyone is welcome here: first-time contributors, designers, people who only
+found a typo, and people who want to add a barcode format. You do not need to
+know the whole codebase; [ARCHITECTURE.md](./ARCHITECTURE.md) gives the map in
+five minutes. Portuguese or English are both fine in issues and pull requests.
+
+By taking part you agree to follow the [Code of Conduct](./CODE_OF_CONDUCT.md).
+
+## Ways to help
+
+- **Report a bug** or a code that does not scan: open a
+  [bug report](https://github.com/Franklyn-R-Silva/barcode-qr-generator/issues/new?template=bug_report.yml).
+- **Suggest an idea**: open a
+  [feature request](https://github.com/Franklyn-R-Silva/barcode-qr-generator/issues/new?template=feature_request.yml).
+- **Pick an issue**: start with the
+  [good first issues](https://github.com/Franklyn-R-Silva/barcode-qr-generator/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22),
+  or any open issue; say in a comment that you are taking it.
+- **Improve the docs**: README, this guide, or a clearer error message in the app.
+
+Security problems go through the private channel in [SECURITY.md](./SECURITY.md),
+never a public issue.
 
 ## Getting started
 
@@ -26,12 +43,24 @@ GitHub Actions runs both on every pull request.
 
 ## Workflow
 
+Every change starts from an issue: open one (or pick an existing one) before
+the pull request, so the problem is agreed on first. The pull request then
+says `Closes #<number>`, and merging it closes the issue.
+
 1. Fork the repository and create a branch from `main`:
    `git checkout -b feat/short-description` (or `fix/…`, `refactor/…`, `docs/…`).
 2. Make your change, keeping it focused — one concern per pull request.
 3. Verify `npm run build` succeeds.
 4. Push your branch and open a pull request against `main` describing **what**
    changed and **why**.
+
+## Tests
+
+New behaviour and bug fixes come with a test that fails without the change.
+Pure logic lives in `src/utils/` with a `*.test.js` next to it (see
+`pix.test.js`, `qrSvg.test.js`); that is the easiest place to test. CI runs
+`npm test -- --watchAll=false` and `CI=true npm run build` on every pull request.
+UI-only changes can say how you checked them instead.
 
 ## Commit messages
 
