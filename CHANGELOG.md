@@ -7,6 +7,21 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **Redesign** made with [impeccable](https://github.com/pbakaus/impeccable): the
+  familiar layout of the category leaders (code on the left, always in view,
+  with one blue download button; content and settings on the right; on phones
+  content, code, settings). New tokens and shared primitives in `App.css`,
+  Inter type, radio-based `Segmented` control, history as a native `<dialog>`
+  drawer, colour picker that closes on Esc/outside click and validates hex.
+  `PRODUCT.md`, `DESIGN.md` and the impeccable skill/hook under `.claude/`.
+- Scan-safety warning when the code colour is too light for its background or
+  lighter than it (`utils/contrast.js`, with tests), and a reminder to use
+  error correction H when a logo is added; button to remove the logo.
+- Theme follows the system on the first visit, is remembered, and is applied
+  before the first paint (no white flash in dark mode).
+- `LICENSE` (MIT, which the README already claimed), `SECURITY.md` with private
+  vulnerability reporting, a CI workflow (tests + `CI=true` build) and grouped
+  monthly Dependabot updates.
 - **Brazilian document barcodes**: new "Boletos & Notas Fiscais" category with
   Boleto Bancário and Boleto de Arrecadação (ITF, 44 digits) and NF-e / DANFE
   (Code-128C, 44 digits). Validators accept either the 44-digit barcode or the
@@ -22,8 +37,9 @@ All notable changes to this project are documented here. The format is based on
   copy / open-link / SEFAZ-lookup / re-generate actions.
 - **Always-visible `ModeSelector`** (QR Code / Barcode / Scan) at the top of the
   content area, replacing the two-button selector previously inside `Controls`.
-- **Cloudflare Pages deployment** as a static build (`npm run build` → `build/`,
-  Node 18 pinned via `.nvmrc`), served from the custom domain `qrcode.devfrs.com`.
+- **Cloudflare deployment** as a static build (`npm run build` → `build/`,
+  published as Workers static assets, Node 20 pinned via `.nvmrc`), served from
+  the custom domain `qrcode.devfrs.com`.
 - SEO/PWA metadata: descriptive `<title>`, Open Graph/Twitter tags, canonical URL,
   `robots.txt` + `sitemap.xml`, and a branded `manifest.json`.
 - `CONTRIBUTING.md` with development setup, branch/commit conventions, and code
@@ -33,6 +49,12 @@ All notable changes to this project are documented here. The format is based on
 
 ### Changed
 
+- Export: the download button sits right under the code and names the format
+  ("Baixar PNG"); format and transparent background are always visible instead
+  of hidden in a dropdown.
+- Emoji removed from headings and messages; icons come from one set.
+- Deployment docs: Cloudflare Workers static assets and Node 20 everywhere
+  (README, CONTRIBUTING, ARCHITECTURE, CLAUDE.md).
 - **Rebranded** the app to "QR & Barcode Studio" across the header, footer, page
   title, and manifest; the footer now links to `qrcode.devfrs.com`.
 - Barcode formats now use a unique `id` decoupled from the JsBarcode render
@@ -75,8 +97,10 @@ All notable changes to this project are documented here. The format is based on
 
 ### Removed
 
-- **Netlify**: removed `netlify.toml` and all Netlify references; deployment now
-  runs entirely on GitHub Pages.
+- `framer-motion` and the entrance/hover-zoom animations on the code preview.
+- The history "preview" modal (its details now show in the list row).
+- **Netlify**: removed `netlify.toml` and all Netlify references (deployment
+  moved to GitHub Pages at the time, and later to Cloudflare).
 - Dead parallel architecture that was never wired into the running app
   (`App.refactored.jsx`, `contexts/`, `services/`, `hooks/`, `styles/`,
   and the unused `AnimatedGenerator` and `LoadingSpinner` components).

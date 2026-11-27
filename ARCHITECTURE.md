@@ -6,11 +6,12 @@ A client-side Create React App (React 18). No backend — QR codes and barcodes 
 
 `src/index.js` renders `src/App.jsx`. `App.jsx` owns a single `config` object that covers both generators (shared fields plus QR-specific and barcode-specific fields) and updates it through `updateConfig(field, value)`. `config.generatorType` (`"qrcode"` | `"barcode"` | `"scanner"`, from `constants/generatorTypes.js`) selects which mode renders. State is passed down via props.
 
-`ModeSelector` is rendered at the top of `<main>` at all times so the user can switch between generating and scanning; it spans the full width of the two-column content grid.
+`ModeSelector` is rendered at the top of `<main>` at all times so the user can switch between generating and scanning; it spans the full width of the content grid. In the generators the grid has three areas: `ContentInput` (format + content), the preview, and `Controls` (appearance). On phones they stack in that order (content, code, settings); from 960px the preview takes the left column and stays sticky while content and settings scroll on the right.
 
 ```
 App.jsx  ── config, updateConfig ──▶  ModeSelector       (QR / Barcode / Scan)
-         ── config, updateConfig ──▶  Controls           (all generator inputs)
+         ── config, updateConfig ──▶  ContentInput       (barcode format + content)
+         ── config, updateConfig ──▶  Controls           (appearance settings)
          ── config ────────────────▶  QRCodePreview  or  BarcodePreview
          ── showToast, onGenerate ─▶  ScannerPanel       (scanner mode)
          ── notification ──────────▶  Toast
@@ -27,15 +28,15 @@ src/
 ├── index.js                   # Entry point
 ├── components/
 │   ├── layout/                # Header (theme toggle), Footer
-│   ├── common/                # Toast
+│   ├── common/                # Toast, Segmented (radio-based segmented control)
 │   ├── generator/
 │   │   ├── QRCodePreview.jsx      # QR render + copy (react-qrcode-logo → <canvas>)
 │   │   ├── BarcodePreview.jsx     # Barcode render + validation (react-barcode → <svg>)
-│   │   ├── Controls.jsx           # Unified control panel for both generators
+│   │   ├── Controls.jsx           # ContentInput (named export) + appearance settings
 │   │   ├── ModeSelector.jsx       # QR / Barcode / Scan switcher (always visible)
-│   │   ├── ExportOptions.jsx      # PNG / WEBP / PDF / SVG export
+│   │   ├── ExportOptions.jsx      # Download button + format choice (PNG / WEBP / PDF / SVG)
 │   │   ├── ColorPickerAdvanced.jsx
-│   │   ├── HistoryPanel.jsx       # localStorage-backed history modal
+│   │   ├── HistoryPanel.jsx       # localStorage-backed history drawer (native <dialog>)
 │   │   └── HistoryButton.jsx      # History trigger in the header
 │   └── scanner/
 │       └── ScannerPanel.jsx       # Camera/image reader (html5-qrcode) + NF-e details
@@ -44,7 +45,8 @@ src/
 │   └── barcodeTypes.js        # Formats, UI categories, examples, defaults
 └── utils/
     ├── barcodeValidators.js   # Per-format validation & normalization
-    └── nfeParser.js           # NF-e / NFC-e access-key extraction & decoding
+    ├── nfeParser.js           # NF-e / NFC-e access-key extraction & decoding
+    └── contrast.js            # WCAG contrast + scan warning for colour pairs
 ```
 
 ## QR vs barcode: two rendering paths
@@ -54,7 +56,7 @@ The two generators are asymmetric, and export logic branches on `isBarcode`:
 - **QR** (`QRCodePreview`) uses `react-qrcode-logo`, which renders to a **`<canvas>`**. Export reads the canvas directly.
 - **Barcode** (`BarcodePreview`) uses `react-barcode` (JsBarcode), which renders to an **`<svg>`**. Export serializes the SVG onto a canvas first before producing PNG/WEBP/PDF; SVG export is available for barcodes only.
 
-`ExportOptions` is shared by both and handles all downloads, including an optional transparent-background pass.
+`ExportOptions` is shared by both and handles all downloads, including an optional transparent-background pass. Each preview passes its own "Copiar" (copy image) button in as `children`, so it sits beside the download button. The on-screen preview is scaled with CSS only; exported files keep the size chosen in the settings.
 
 ## Barcode formats & validation
 
@@ -96,11 +98,11 @@ Two interactions bypass props (kept intentionally simple):
 
 ## Styling & theming
 
-Plain CSS, co-located per component. Theming is driven by CSS custom properties defined in `App.css` under `:root` (light) and `.dark` (dark); the active theme is toggled by adding a `light`/`dark` class to the root `.app-container`. Dark-mode overrides must be keyed on the `.dark` class (not the OS `prefers-color-scheme`), because the theme is toggled in-app.
+Plain CSS, co-located per component. `App.css` holds the design tokens (`:root` for light, `.dark` for dark) and the shared primitives (`.panel`, `.btn*`, `.input`, `.select`, `.check`, `.alert`). The `dark` class sits on `<html>`: an inline script in `public/index.html` applies the saved or system theme before React paints, and `App.jsx` keeps it in sync and stores it in `localStorage`. Dark-mode overrides must be keyed on the `.dark` class (not `prefers-color-scheme`), because the theme can be toggled in-app. The visual system is documented in `DESIGN.md`; product context for design work is in `PRODUCT.md`.
 
 ## Deployment
 
-Built with `react-scripts build` and served as static files on **Cloudflare Pages**
+Built with `react-scripts build` and served as static files on **Cloudflare Workers** (static assets)
 under the custom domain `qrcode.devfrs.com`. There is no server-side component.
 
 Cloudflare is connected to the GitHub repository and rebuilds on every push to

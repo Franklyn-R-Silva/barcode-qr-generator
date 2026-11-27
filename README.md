@@ -2,16 +2,18 @@
 
 # QR & Barcode Studio
 
-A modern, fully client-side React app to **generate**, **customize**, and **scan** QR Codes and barcodes (25+ formats) — plus a dedicated reader that decodes Brazilian **NF-e / NFC-e** access keys. Live preview, light/dark themes, logo embedding, multi-format export, and a local history. No backend, no sign-up.
+A free, fully client-side web app to **generate**, **customize**, and **scan** QR Codes and barcodes (25+ formats), with a reader that decodes Brazilian **NF-e / NFC-e** access keys. Live preview, logo embedding, PNG / WEBP / PDF / SVG export, light and dark themes, and a local history. No backend, no sign-up, no watermark: nothing leaves your device.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
+[![CI](https://github.com/Franklyn-R-Silva/barcode-qr-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/Franklyn-R-Silva/barcode-qr-generator/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/17194/badge)](https://www.bestpractices.dev/projects/17194)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
-[![Deploy: Cloudflare Pages](https://img.shields.io/badge/deploy-Cloudflare%20Pages-F38020?logo=cloudflare&logoColor=white)](https://qrcode.devfrs.com)
+[![Deploy: Cloudflare Workers](https://img.shields.io/badge/deploy-Cloudflare%20Workers-F38020?logo=cloudflare&logoColor=white)](https://qrcode.devfrs.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
 **[🌐 Live App — qrcode.devfrs.com](https://qrcode.devfrs.com)**
 
-![Preview](foto.png)
+![QR & Barcode Studio: QR Code preview with download button beside the content and appearance settings](foto.png)
 
 </div>
 
@@ -24,8 +26,10 @@ A modern, fully client-side React app to **generate**, **customize**, and **scan
 - [Available Scripts](#available-scripts)
 - [Deployment](#deployment)
 - [Architecture](#architecture)
+- [Design](#design)
 - [Tech Stack](#tech-stack)
 - [Contributing](#contributing)
+- [Security](#security)
 - [License](#license)
 
 ## Features
@@ -36,7 +40,8 @@ A modern, fully client-side React app to **generate**, **customize**, and **scan
 - Module styles (squares or dots) and eye styles (square or rounded)
 - Logo upload with adjustable size, opacity, and background removal
 - Four error-correction levels (L, M, Q, H)
-- Ready-made templates (Default, WhatsApp, Dark, Blue Tech)
+- Ready-made templates (Padrão, WhatsApp, Dark, Azul Tech)
+- A warning when the colours are too light or inverted to scan reliably
 
 ### Barcodes (25+ formats)
 
@@ -69,14 +74,14 @@ Every format has dedicated input validation with example values and inline error
 
 - Export to **PNG**, **WEBP**, **PDF**, and **SVG** (SVG for barcodes), with an optional transparent background
 - Copy the generated image straight to the clipboard
-- Light / dark theme
+- Light / dark theme that follows the system on the first visit and is remembered
 - Local generation history (stored in `localStorage`)
 - Social sharing (WhatsApp, Facebook)
 - Responsive, mobile-first layout · installable PWA
 
 ## Getting Started
 
-**Prerequisites:** [Node.js 18.x](https://nodejs.org/)
+**Prerequisites:** [Node.js 20](https://nodejs.org/) (pinned in `.nvmrc`)
 
 ```bash
 git clone https://github.com/Franklyn-R-Silva/barcode-qr-generator.git
@@ -93,11 +98,12 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 | --------------- | ------------------------------------ |
 | `npm start`     | Start the development server         |
 | `npm run build` | Create an optimized production build |
-| `npm test`      | Run the test suite (Jest + RTL)      |
+| `npm test`      | Run the test suite (Jest + RTL, watch mode) |
+| `npm test -- --watchAll=false` | Run the tests once (as CI does) |
 
 ## Deployment
 
-The app is hosted on **Cloudflare Pages** under the custom domain
+The app is hosted on **Cloudflare Workers** (static assets) under the custom domain
 **[qrcode.devfrs.com](https://qrcode.devfrs.com)**. It is a fully static build —
 there is no server-side component.
 
@@ -126,25 +132,36 @@ to the preview, control, and scanner components.
 src/
 ├── components/
 │   ├── layout/      # Header, Footer
-│   ├── common/      # Toast
+│   ├── common/      # Toast, Segmented control
 │   ├── generator/   # QRCodePreview, BarcodePreview, Controls, ModeSelector,
 │   │                # ExportOptions, ColorPickerAdvanced, History*
 │   └── scanner/     # ScannerPanel (camera + image reader, NF-e details)
 ├── constants/       # Generator/mode types & barcode format definitions
-└── utils/           # Barcode validators, NF-e access-key parser
+└── utils/           # Barcode validators, NF-e access-key parser, colour contrast
 ```
 
 QR codes render to a `<canvas>` (via `react-qrcode-logo`), barcodes to an `<svg>`
 (via `react-barcode`/JsBarcode), and the scanner uses `html5-qrcode`; export logic
 adapts to each path. See [ARCHITECTURE.md](./ARCHITECTURE.md) for the full picture.
 
+## Design
+
+The interface follows the familiar layout of the best QR generators: the code on
+the left, always in view, with one blue button to download it; content and
+appearance settings on the right. On phones the order is content, code, settings.
+
+The redesign was made with [impeccable](https://github.com/pbakaus/impeccable).
+[`PRODUCT.md`](./PRODUCT.md) records who the app is for and its constraints, and
+[`DESIGN.md`](./DESIGN.md) documents the tokens and components. With Claude Code,
+the impeccable skill and its design hook are already set up in `.claude/`.
+
 ## Tech Stack
 
-- **React 18** (Create React App)
+- **React 18** (Create React App), plain CSS with design tokens
+- **Inter** (Google Fonts) — UI typeface
 - **react-qrcode-logo** — QR rendering
 - **react-barcode** / **JsBarcode** — barcode rendering
 - **html5-qrcode** — camera & image scanning
-- **framer-motion** — animations
 - **react-colorful** — color picker
 - **jsPDF** — PDF export
 - **react-icons** — icons
@@ -156,9 +173,13 @@ for the development setup, branch/commit conventions, and code style. In short:
 fork → branch from `main` → make a focused change → verify `npm run build` →
 open a PR using [Conventional Commits](https://www.conventionalcommits.org/).
 
+## Security
+
+Found a vulnerability? Please report it privately; see [SECURITY.md](./SECURITY.md).
+
 ## License
 
-Released under the [MIT License](https://opensource.org/licenses/MIT).
+Released under the [MIT License](./LICENSE).
 
 ## Author
 

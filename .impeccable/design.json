@@ -1,0 +1,847 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-27T13:23:38+00:00",
+  "title": "Design System: QR & Barcode Studio",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Action Blue",
+        "canonical": "#2563eb",
+        "tonalRamp": [
+          "oklch(15% 0.020 262.9)",
+          "oklch(25% 0.087 262.9)",
+          "oklch(35% 0.150 262.9)",
+          "oklch(45% 0.188 262.9)",
+          "oklch(55% 0.200 262.9)",
+          "oklch(65% 0.188 262.9)",
+          "oklch(80% 0.122 262.9)",
+          "oklch(95% 0.020 262.9)"
+        ]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Action Blue, Hover",
+        "canonical": "#1d4ed8",
+        "tonalRamp": [
+          "oklch(15% 0.020 264.4)",
+          "oklch(25% 0.087 264.4)",
+          "oklch(35% 0.150 264.4)",
+          "oklch(45% 0.188 264.4)",
+          "oklch(55% 0.200 264.4)",
+          "oklch(65% 0.188 264.4)",
+          "oklch(80% 0.122 264.4)",
+          "oklch(95% 0.020 264.4)"
+        ]
+      },
+      "primary-pressed": {
+        "role": "primary",
+        "displayName": "Action Blue, Pressed",
+        "canonical": "#1e40af",
+        "tonalRamp": [
+          "oklch(15% 0.018 265.6)",
+          "oklch(25% 0.079 265.6)",
+          "oklch(35% 0.136 265.6)",
+          "oklch(45% 0.170 265.6)",
+          "oklch(55% 0.181 265.6)",
+          "oklch(65% 0.170 265.6)",
+          "oklch(80% 0.110 265.6)",
+          "oklch(95% 0.018 265.6)"
+        ]
+      },
+      "primary-soft": {
+        "role": "primary",
+        "displayName": "Selection Wash",
+        "canonical": "#eaf1ff",
+        "tonalRamp": [
+          "oklch(15% 0.002 264.5)",
+          "oklch(25% 0.009 264.5)",
+          "oklch(35% 0.015 264.5)",
+          "oklch(45% 0.019 264.5)",
+          "oklch(55% 0.020 264.5)",
+          "oklch(65% 0.019 264.5)",
+          "oklch(80% 0.012 264.5)",
+          "oklch(95% 0.002 264.5)"
+        ]
+      },
+      "primary-text": {
+        "role": "primary",
+        "displayName": "Blue Text",
+        "canonical": "#1d4ed8",
+        "tonalRamp": [
+          "oklch(15% 0.020 264.4)",
+          "oklch(25% 0.087 264.4)",
+          "oklch(35% 0.150 264.4)",
+          "oklch(45% 0.188 264.4)",
+          "oklch(55% 0.200 264.4)",
+          "oklch(65% 0.188 264.4)",
+          "oklch(80% 0.122 264.4)",
+          "oklch(95% 0.020 264.4)"
+        ]
+      },
+      "on-primary": {
+        "role": "primary",
+        "displayName": "On-Blue White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(35% 0.000 89.9)",
+          "oklch(45% 0.000 89.9)",
+          "oklch(55% 0.000 89.9)",
+          "oklch(65% 0.000 89.9)",
+          "oklch(80% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "bg-app": {
+        "role": "neutral",
+        "displayName": "Cool Grey Ground",
+        "canonical": "#f5f6f8",
+        "tonalRamp": [
+          "oklch(15% 0.000 264.5)",
+          "oklch(25% 0.001 264.5)",
+          "oklch(35% 0.002 264.5)",
+          "oklch(45% 0.003 264.5)",
+          "oklch(55% 0.003 264.5)",
+          "oklch(65% 0.003 264.5)",
+          "oklch(80% 0.002 264.5)",
+          "oklch(95% 0.000 264.5)"
+        ]
+      },
+      "bg-panel": {
+        "role": "neutral",
+        "displayName": "Panel White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(25% 0.000 89.9)",
+          "oklch(35% 0.000 89.9)",
+          "oklch(45% 0.000 89.9)",
+          "oklch(55% 0.000 89.9)",
+          "oklch(65% 0.000 89.9)",
+          "oklch(80% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "bg-sunken": {
+        "role": "neutral",
+        "displayName": "Sunken Stage",
+        "canonical": "#eef0f3",
+        "tonalRamp": [
+          "oklch(15% 0.000 258.3)",
+          "oklch(25% 0.002 258.3)",
+          "oklch(35% 0.003 258.3)",
+          "oklch(45% 0.004 258.3)",
+          "oklch(55% 0.005 258.3)",
+          "oklch(65% 0.004 258.3)",
+          "oklch(80% 0.003 258.3)",
+          "oklch(95% 0.000 258.3)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#dde1e7",
+        "tonalRamp": [
+          "oklch(15% 0.001 258.3)",
+          "oklch(25% 0.004 258.3)",
+          "oklch(35% 0.007 258.3)",
+          "oklch(45% 0.009 258.3)",
+          "oklch(55% 0.009 258.3)",
+          "oklch(65% 0.009 258.3)",
+          "oklch(80% 0.006 258.3)",
+          "oklch(95% 0.001 258.3)"
+        ]
+      },
+      "border-strong": {
+        "role": "neutral",
+        "displayName": "Field Stroke",
+        "canonical": "#b9c0ca",
+        "tonalRamp": [
+          "oklch(15% 0.002 257.2)",
+          "oklch(25% 0.007 257.2)",
+          "oklch(35% 0.012 257.2)",
+          "oklch(45% 0.015 257.2)",
+          "oklch(55% 0.016 257.2)",
+          "oklch(65% 0.015 257.2)",
+          "oklch(80% 0.010 257.2)",
+          "oklch(95% 0.002 257.2)"
+        ]
+      },
+      "text-main": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#111827",
+        "tonalRamp": [
+          "oklch(15% 0.003 264.7)",
+          "oklch(25% 0.014 264.7)",
+          "oklch(35% 0.024 264.7)",
+          "oklch(45% 0.030 264.7)",
+          "oklch(55% 0.032 264.7)",
+          "oklch(65% 0.030 264.7)",
+          "oklch(80% 0.019 264.7)",
+          "oklch(95% 0.003 264.7)"
+        ]
+      },
+      "text-muted": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "canonical": "#4b5563",
+        "tonalRamp": [
+          "oklch(15% 0.003 256.8)",
+          "oklch(25% 0.012 256.8)",
+          "oklch(35% 0.020 256.8)",
+          "oklch(45% 0.025 256.8)",
+          "oklch(55% 0.026 256.8)",
+          "oklch(65% 0.025 256.8)",
+          "oklch(80% 0.016 256.8)",
+          "oklch(95% 0.003 256.8)"
+        ]
+      },
+      "text-faint": {
+        "role": "neutral",
+        "displayName": "Faint Slate",
+        "canonical": "#5f6875",
+        "tonalRamp": [
+          "oklch(15% 0.002 257.5)",
+          "oklch(25% 0.010 257.5)",
+          "oklch(35% 0.018 257.5)",
+          "oklch(45% 0.022 257.5)",
+          "oklch(55% 0.023 257.5)",
+          "oklch(65% 0.022 257.5)",
+          "oklch(80% 0.014 257.5)",
+          "oklch(95% 0.002 257.5)"
+        ]
+      },
+      "success": {
+        "role": "state",
+        "displayName": "Confirm Green",
+        "canonical": "#047857",
+        "tonalRamp": [
+          "oklch(15% 0.010 165.6)",
+          "oklch(25% 0.046 165.6)",
+          "oklch(35% 0.079 165.6)",
+          "oklch(45% 0.098 165.6)",
+          "oklch(55% 0.105 165.6)",
+          "oklch(65% 0.098 165.6)",
+          "oklch(80% 0.064 165.6)",
+          "oklch(95% 0.010 165.6)"
+        ]
+      },
+      "success-soft": {
+        "role": "state",
+        "displayName": "Confirm Wash",
+        "canonical": "#e8f7f0",
+        "tonalRamp": [
+          "oklch(15% 0.002 166.4)",
+          "oklch(25% 0.008 166.4)",
+          "oklch(35% 0.014 166.4)",
+          "oklch(45% 0.017 166.4)",
+          "oklch(55% 0.018 166.4)",
+          "oklch(65% 0.017 166.4)",
+          "oklch(80% 0.011 166.4)",
+          "oklch(95% 0.002 166.4)"
+        ]
+      },
+      "warning": {
+        "role": "state",
+        "displayName": "Caution Amber",
+        "canonical": "#a14d07",
+        "tonalRamp": [
+          "oklch(15% 0.013 51.2)",
+          "oklch(25% 0.057 51.2)",
+          "oklch(35% 0.099 51.2)",
+          "oklch(45% 0.123 51.2)",
+          "oklch(55% 0.131 51.2)",
+          "oklch(65% 0.123 51.2)",
+          "oklch(80% 0.080 51.2)",
+          "oklch(95% 0.013 51.2)"
+        ]
+      },
+      "warning-soft": {
+        "role": "state",
+        "displayName": "Caution Wash",
+        "canonical": "#fff6e5",
+        "tonalRamp": [
+          "oklch(15% 0.002 83.4)",
+          "oklch(25% 0.011 83.4)",
+          "oklch(35% 0.018 83.4)",
+          "oklch(45% 0.023 83.4)",
+          "oklch(55% 0.024 83.4)",
+          "oklch(65% 0.023 83.4)",
+          "oklch(80% 0.015 83.4)",
+          "oklch(95% 0.002 83.4)"
+        ]
+      },
+      "danger": {
+        "role": "state",
+        "displayName": "Error Red",
+        "canonical": "#b91c1c",
+        "tonalRamp": [
+          "oklch(15% 0.019 27.5)",
+          "oklch(25% 0.083 27.5)",
+          "oklch(35% 0.143 27.5)",
+          "oklch(45% 0.179 27.5)",
+          "oklch(55% 0.190 27.5)",
+          "oklch(65% 0.179 27.5)",
+          "oklch(80% 0.116 27.5)",
+          "oklch(95% 0.019 27.5)"
+        ]
+      },
+      "danger-soft": {
+        "role": "state",
+        "displayName": "Error Wash",
+        "canonical": "#fdeeee",
+        "tonalRamp": [
+          "oklch(15% 0.002 17.4)",
+          "oklch(25% 0.007 17.4)",
+          "oklch(35% 0.012 17.4)",
+          "oklch(45% 0.015 17.4)",
+          "oklch(55% 0.016 17.4)",
+          "oklch(65% 0.015 17.4)",
+          "oklch(80% 0.010 17.4)",
+          "oklch(95% 0.002 17.4)"
+        ]
+      },
+      "dark-bg-app": {
+        "role": "neutral",
+        "displayName": "Night Ground",
+        "canonical": "#0b1120",
+        "tonalRamp": [
+          "oklch(15% 0.003 266.6)",
+          "oklch(25% 0.014 266.6)",
+          "oklch(35% 0.024 266.6)",
+          "oklch(45% 0.030 266.6)",
+          "oklch(55% 0.032 266.6)",
+          "oklch(65% 0.030 266.6)",
+          "oklch(80% 0.020 266.6)",
+          "oklch(95% 0.003 266.6)"
+        ]
+      },
+      "dark-bg-panel": {
+        "role": "neutral",
+        "displayName": "Night Panel",
+        "canonical": "#131b2c",
+        "tonalRamp": [
+          "oklch(15% 0.004 264.5)",
+          "oklch(25% 0.016 264.5)",
+          "oklch(35% 0.027 264.5)",
+          "oklch(45% 0.033 264.5)",
+          "oklch(55% 0.035 264.5)",
+          "oklch(65% 0.033 264.5)",
+          "oklch(80% 0.022 264.5)",
+          "oklch(95% 0.004 264.5)"
+        ]
+      },
+      "dark-bg-sunken": {
+        "role": "neutral",
+        "displayName": "Night Stage",
+        "canonical": "#1c2537",
+        "tonalRamp": [
+          "oklch(15% 0.004 263.7)",
+          "oklch(25% 0.016 263.7)",
+          "oklch(35% 0.027 263.7)",
+          "oklch(45% 0.034 263.7)",
+          "oklch(55% 0.036 263.7)",
+          "oklch(65% 0.034 263.7)",
+          "oklch(80% 0.022 263.7)",
+          "oklch(95% 0.004 263.7)"
+        ]
+      },
+      "dark-border": {
+        "role": "neutral",
+        "displayName": "Night Hairline",
+        "canonical": "#2a3548",
+        "tonalRamp": [
+          "oklch(15% 0.004 261.2)",
+          "oklch(25% 0.016 261.2)",
+          "oklch(35% 0.028 261.2)",
+          "oklch(45% 0.035 261.2)",
+          "oklch(55% 0.037 261.2)",
+          "oklch(65% 0.035 261.2)",
+          "oklch(80% 0.023 261.2)",
+          "oklch(95% 0.004 261.2)"
+        ]
+      },
+      "dark-border-strong": {
+        "role": "neutral",
+        "displayName": "Night Field Stroke",
+        "canonical": "#46536a",
+        "tonalRamp": [
+          "oklch(15% 0.004 261.7)",
+          "oklch(25% 0.018 261.7)",
+          "oklch(35% 0.031 261.7)",
+          "oklch(45% 0.039 261.7)",
+          "oklch(55% 0.042 261.7)",
+          "oklch(65% 0.039 261.7)",
+          "oklch(80% 0.025 261.7)",
+          "oklch(95% 0.004 261.7)"
+        ]
+      },
+      "dark-text-main": {
+        "role": "neutral",
+        "displayName": "Night Ink",
+        "canonical": "#f1f4f8",
+        "tonalRamp": [
+          "oklch(15% 0.001 255.5)",
+          "oklch(25% 0.003 255.5)",
+          "oklch(35% 0.005 255.5)",
+          "oklch(45% 0.006 255.5)",
+          "oklch(55% 0.006 255.5)",
+          "oklch(65% 0.006 255.5)",
+          "oklch(80% 0.004 255.5)",
+          "oklch(95% 0.001 255.5)"
+        ]
+      },
+      "dark-text-muted": {
+        "role": "neutral",
+        "displayName": "Night Muted",
+        "canonical": "#c1c8d3",
+        "tonalRamp": [
+          "oklch(15% 0.002 259.4)",
+          "oklch(25% 0.008 259.4)",
+          "oklch(35% 0.013 259.4)",
+          "oklch(45% 0.016 259.4)",
+          "oklch(55% 0.017 259.4)",
+          "oklch(65% 0.016 259.4)",
+          "oklch(80% 0.010 259.4)",
+          "oklch(95% 0.002 259.4)"
+        ]
+      },
+      "dark-text-faint": {
+        "role": "neutral",
+        "displayName": "Night Faint",
+        "canonical": "#9aa4b3",
+        "tonalRamp": [
+          "oklch(15% 0.002 258.4)",
+          "oklch(25% 0.011 258.4)",
+          "oklch(35% 0.018 258.4)",
+          "oklch(45% 0.023 258.4)",
+          "oklch(55% 0.025 258.4)",
+          "oklch(65% 0.023 258.4)",
+          "oklch(80% 0.015 258.4)",
+          "oklch(95% 0.002 258.4)"
+        ]
+      },
+      "dark-primary-hover": {
+        "role": "primary",
+        "displayName": "Action Blue, Night Hover",
+        "canonical": "#3b74f0",
+        "tonalRamp": [
+          "oklch(15% 0.020 263.1)",
+          "oklch(25% 0.086 263.1)",
+          "oklch(35% 0.147 263.1)",
+          "oklch(45% 0.184 263.1)",
+          "oklch(55% 0.196 263.1)",
+          "oklch(65% 0.184 263.1)",
+          "oklch(80% 0.120 263.1)",
+          "oklch(95% 0.020 263.1)"
+        ]
+      },
+      "dark-primary-pressed": {
+        "role": "primary",
+        "displayName": "Action Blue, Night Pressed",
+        "canonical": "#1d4ed8",
+        "tonalRamp": [
+          "oklch(15% 0.020 264.4)",
+          "oklch(25% 0.087 264.4)",
+          "oklch(35% 0.150 264.4)",
+          "oklch(45% 0.188 264.4)",
+          "oklch(55% 0.200 264.4)",
+          "oklch(65% 0.188 264.4)",
+          "oklch(80% 0.122 264.4)",
+          "oklch(95% 0.020 264.4)"
+        ]
+      },
+      "dark-primary-soft": {
+        "role": "primary",
+        "displayName": "Night Selection Wash",
+        "canonical": "rgba(59, 130, 246, 0.16)",
+        "tonalRamp": [
+          "oklch(15% 0.019 259.8)",
+          "oklch(25% 0.082 259.8)",
+          "oklch(35% 0.141 259.8)",
+          "oklch(45% 0.176 259.8)",
+          "oklch(55% 0.188 259.8)",
+          "oklch(65% 0.176 259.8)",
+          "oklch(80% 0.115 259.8)",
+          "oklch(95% 0.019 259.8)"
+        ]
+      },
+      "dark-primary-text": {
+        "role": "primary",
+        "displayName": "Night Blue Text",
+        "canonical": "#8db4ff",
+        "tonalRamp": [
+          "oklch(15% 0.012 262.9)",
+          "oklch(25% 0.051 262.9)",
+          "oklch(35% 0.087 262.9)",
+          "oklch(45% 0.109 262.9)",
+          "oklch(55% 0.116 262.9)",
+          "oklch(65% 0.109 262.9)",
+          "oklch(80% 0.071 262.9)",
+          "oklch(95% 0.012 262.9)"
+        ]
+      },
+      "dark-success": {
+        "role": "state",
+        "displayName": "Night Confirm Green",
+        "canonical": "#4ade80",
+        "tonalRamp": [
+          "oklch(15% 0.018 151.7)",
+          "oklch(25% 0.080 151.7)",
+          "oklch(35% 0.137 151.7)",
+          "oklch(45% 0.171 151.7)",
+          "oklch(55% 0.182 151.7)",
+          "oklch(65% 0.171 151.7)",
+          "oklch(80% 0.111 151.7)",
+          "oklch(95% 0.018 151.7)"
+        ]
+      },
+      "dark-success-soft": {
+        "role": "state",
+        "displayName": "Night Confirm Wash",
+        "canonical": "rgba(74, 222, 128, 0.12)",
+        "tonalRamp": [
+          "oklch(15% 0.018 151.7)",
+          "oklch(25% 0.080 151.7)",
+          "oklch(35% 0.137 151.7)",
+          "oklch(45% 0.171 151.7)",
+          "oklch(55% 0.182 151.7)",
+          "oklch(65% 0.171 151.7)",
+          "oklch(80% 0.111 151.7)",
+          "oklch(95% 0.018 151.7)"
+        ]
+      },
+      "dark-warning": {
+        "role": "state",
+        "displayName": "Night Caution Amber",
+        "canonical": "#fbbf24",
+        "tonalRamp": [
+          "oklch(15% 0.016 84.4)",
+          "oklch(25% 0.072 84.4)",
+          "oklch(35% 0.123 84.4)",
+          "oklch(45% 0.154 84.4)",
+          "oklch(55% 0.164 84.4)",
+          "oklch(65% 0.154 84.4)",
+          "oklch(80% 0.100 84.4)",
+          "oklch(95% 0.016 84.4)"
+        ]
+      },
+      "dark-warning-soft": {
+        "role": "state",
+        "displayName": "Night Caution Wash",
+        "canonical": "rgba(251, 191, 36, 0.12)",
+        "tonalRamp": [
+          "oklch(15% 0.016 84.4)",
+          "oklch(25% 0.072 84.4)",
+          "oklch(35% 0.123 84.4)",
+          "oklch(45% 0.154 84.4)",
+          "oklch(55% 0.164 84.4)",
+          "oklch(65% 0.154 84.4)",
+          "oklch(80% 0.100 84.4)",
+          "oklch(95% 0.016 84.4)"
+        ]
+      },
+      "dark-danger": {
+        "role": "state",
+        "displayName": "Night Error Red",
+        "canonical": "#f87171",
+        "tonalRamp": [
+          "oklch(15% 0.017 22.2)",
+          "oklch(25% 0.073 22.2)",
+          "oklch(35% 0.125 22.2)",
+          "oklch(45% 0.156 22.2)",
+          "oklch(55% 0.166 22.2)",
+          "oklch(65% 0.156 22.2)",
+          "oklch(80% 0.101 22.2)",
+          "oklch(95% 0.017 22.2)"
+        ]
+      },
+      "dark-danger-soft": {
+        "role": "state",
+        "displayName": "Night Error Wash",
+        "canonical": "rgba(248, 113, 113, 0.12)",
+        "tonalRamp": [
+          "oklch(15% 0.017 22.2)",
+          "oklch(25% 0.073 22.2)",
+          "oklch(35% 0.125 22.2)",
+          "oklch(45% 0.156 22.2)",
+          "oklch(55% 0.166 22.2)",
+          "oklch(65% 0.156 22.2)",
+          "oklch(80% 0.101 22.2)",
+          "oklch(95% 0.017 22.2)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The single page h1; 2rem from 960px, 1.75rem below, 1.25rem at 480px and below."
+      },
+      "title-lg": {
+        "displayName": "Title Large",
+        "purpose": "Drawer heading and scan-result heading."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Panel section titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base text, intro line, every input and select."
+      },
+      "body-sm": {
+        "displayName": "Body Small",
+        "purpose": "Checkbox labels, toast, scanned text, history rows, scanner copy."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Every button label; the large download label steps up to 1rem."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, segmented options, footer, alerts."
+      },
+      "hint": {
+        "displayName": "Hint",
+        "purpose": "Help text under fields, meta lines, template names."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Segmented sub-hints, NF-e table labels, count badge."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Data read character by character: hex, access keys, CNPJ, scanned text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 2px rgba(17, 24, 39, 0.06)",
+        "dark": "0 1px 2px rgba(0, 0, 0, 0.4)",
+        "purpose": "Hairline lift: panels and the mode-switch track at rest."
+      },
+      {
+        "name": "shadow",
+        "value": "0 2px 6px rgba(17, 24, 39, 0.08), 0 1px 2px rgba(17, 24, 39, 0.06)",
+        "dark": "0 2px 6px rgba(0, 0, 0, 0.45)",
+        "purpose": "Label lift: the rendered QR canvas and barcode SVG on the preview stage."
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 12px 32px rgba(17, 24, 39, 0.14), 0 2px 6px rgba(17, 24, 39, 0.08)",
+        "dark": "0 16px 40px rgba(0, 0, 0, 0.55)",
+        "purpose": "Float: colour popover, history drawer, toast."
+      },
+      {
+        "name": "segment-selected",
+        "value": "0 1px 3px rgba(17, 24, 39, 0.12), 0 0 0 1px var(--border)",
+        "purpose": "The white selected option inside a segmented track."
+      },
+      {
+        "name": "focus-ring",
+        "value": "0 0 0 3px rgba(37, 99, 235, 0.35)",
+        "dark": "0 0 0 3px rgba(96, 150, 255, 0.45)",
+        "purpose": "Focused fields and the open colour field, with an Action Blue border. Other elements focus with a 2px Action Blue outline at 2px offset."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+        "purpose": "The only easing; decelerating, no overshoot."
+      },
+      {
+        "name": "state",
+        "value": "150ms",
+        "purpose": "Colour, border and shadow changes on hover, press, focus and selection."
+      },
+      {
+        "name": "popover-in",
+        "value": "160ms fade + 4px drop",
+        "purpose": "Colour picker popover entry."
+      },
+      {
+        "name": "toast-in",
+        "value": "200ms fade + 8px rise",
+        "purpose": "Toast entry."
+      },
+      {
+        "name": "drawer-in",
+        "value": "220ms fade + 24px slide from the right",
+        "purpose": "History drawer entry."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "prefers-reduced-motion collapses every animation and transition."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "480px",
+        "purpose": "max-width: compact gutters, hidden secondary copy and icons, stacked rows."
+      },
+      {
+        "name": "desktop",
+        "value": "960px",
+        "purpose": "min-width: two-column generator with sticky preview; scanner side by side."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary-lg",
+      "description": "The one blue action of a view (Baixar, Usar a câmera); 48px when it is the main action.",
+      "html": "<button class=\"ds-btn-primary\"><svg viewBox=\"0 0 1024 1024\" width=\"18\" height=\"18\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M505.7 661a8 8 0 0 0 12.6 0l112-141.7c4.1-5.2.4-12.9-6.3-12.9h-74.1V168c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v338.3H400c-6.7 0-10.4 7.7-6.3 12.9l112 141.8zM878 626h-60c-4.4 0-8 3.6-8 8v154H214V634c0-4.4-3.6-8-8-8h-60c-4.4 0-8 3.6-8 8v198c0 17.7 14.3 32 32 32h684c17.7 0 32-14.3 32-32V634c0-4.4-3.6-8-8-8z\"/></svg>Baixar PNG</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:44px;padding:0.625rem 1rem;border-radius:var(--radius);border:1px solid transparent;font-family:var(--font-main);font-size:0.9375rem;font-weight:600;line-height:1.2;white-space:nowrap;cursor:pointer;transition:background-color 150ms var(--ease-out),border-color 150ms var(--ease-out),color 150ms var(--ease-out);min-height:48px;font-size:1rem;background:var(--primary);color:var(--on-primary);} .ds-btn-primary:hover{background:var(--primary-hover);} .ds-btn-primary:active{background:var(--primary-pressed);} .ds-btn-primary:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Neutral companion actions: Copiar, Escolher imagem, Enviar imagem.",
+      "html": "<button class=\"ds-btn-secondary\">Copiar</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:44px;padding:0.625rem 1rem;border-radius:var(--radius);border:1px solid transparent;font-family:var(--font-main);font-size:0.9375rem;font-weight:600;line-height:1.2;white-space:nowrap;cursor:pointer;transition:background-color 150ms var(--ease-out),border-color 150ms var(--ease-out),color 150ms var(--ease-out);background:var(--bg-panel);border-color:var(--border-strong);color:var(--text-main);} .ds-btn-secondary:hover{background:var(--bg-sunken);} .ds-btn-secondary:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}"
+    },
+    {
+      "name": "Link Button",
+      "kind": "button",
+      "refersTo": "button-link",
+      "description": "The quietest action: share row and scan-result shortcuts. Never blue.",
+      "html": "<div class=\"ds-link-row\"><button class=\"ds-btn-link\">Copiar texto</button><button class=\"ds-btn-link\">WhatsApp</button><button class=\"ds-btn-link\">Facebook</button></div>",
+      "css": ".ds-link-row{display:flex;gap:0.25rem;} .ds-btn-link{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;min-height:44px;padding:0.625rem 1rem;border-radius:var(--radius);border:1px solid transparent;font-family:var(--font-main);font-size:0.9375rem;font-weight:600;line-height:1.2;white-space:nowrap;cursor:pointer;transition:background-color 150ms var(--ease-out),border-color 150ms var(--ease-out),color 150ms var(--ease-out);padding:0.375rem 0.5rem;background:transparent;color:var(--text-muted);font-weight:500;} .ds-btn-link:hover{background:var(--bg-sunken);color:var(--text-main);} .ds-btn-link:focus-visible{outline:2px solid var(--primary);outline-offset:2px;}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label, 44px field with Field Stroke border, blue border plus 3px ring on focus, faint hint.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Conteúdo</span><textarea class=\"ds-input\" placeholder=\"Cole um link ou digite um texto, e-mail ou telefone\"></textarea><span class=\"ds-field-hint\">O QR Code muda enquanto você digita.</span></label>",
+      "css": ".ds-field{display:block;font-family:var(--font-main);} .ds-field-label{display:block;font-size:0.875rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;} .ds-input{display:block;width:100%;box-sizing:border-box;min-height:5.5rem;padding:0.625rem 0.75rem;background:var(--bg-panel);border:1px solid var(--border-strong);border-radius:var(--radius);font:inherit;font-size:1rem;line-height:1.4;color:var(--text-main);resize:vertical;transition:border-color 150ms var(--ease-out),box-shadow 150ms var(--ease-out);} .ds-input::placeholder{color:var(--text-faint);opacity:1;} .ds-input:hover{border-color:var(--text-faint);} .ds-input:focus{outline:none;border-color:var(--primary);box-shadow:var(--focus-ring);} .ds-field-hint{display:block;font-size:0.8125rem;color:var(--text-faint);margin-top:0.375rem;}"
+    },
+    {
+      "name": "Segmented Control",
+      "kind": "chip",
+      "refersTo": "segmented-option-selected",
+      "description": "Native radios in a sunken track; the selected option is a white pill. Replaces chips and toggles.",
+      "html": "<fieldset class=\"ds-seg\"><legend class=\"ds-seg-legend\">Correção de erro</legend><div class=\"ds-seg-track\"><label class=\"ds-seg-opt\"><input type=\"radio\" name=\"ds-ec\">L<small>7%</small></label><label class=\"ds-seg-opt\"><input type=\"radio\" name=\"ds-ec\">M<small>15%</small></label><label class=\"ds-seg-opt\"><input type=\"radio\" name=\"ds-ec\">Q<small>25%</small></label><label class=\"ds-seg-opt is-on\"><input type=\"radio\" name=\"ds-ec\" checked>H<small>30%</small></label></div></fieldset>",
+      "css": ".ds-seg{margin:0;padding:0;border:0;min-width:0;font-family:var(--font-main);} .ds-seg-legend{font-size:0.875rem;font-weight:500;color:var(--text-muted);margin-bottom:0.375rem;padding:0;} .ds-seg-track{display:flex;gap:4px;padding:4px;background:var(--bg-sunken);border-radius:var(--radius);} .ds-seg-opt{position:relative;flex:1 1 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:40px;padding:0.375rem 0.5rem;border-radius:var(--radius-sm);color:var(--text-muted);font-size:0.875rem;font-weight:500;line-height:1.2;cursor:pointer;transition:background-color 150ms var(--ease-out),color 150ms var(--ease-out),box-shadow 150ms var(--ease-out);} .ds-seg-opt input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;} .ds-seg-opt small{font-size:0.75rem;font-weight:400;color:var(--text-faint);font-variant-numeric:tabular-nums;} .ds-seg-opt:hover{color:var(--text-main);} .ds-seg-opt.is-on{background:var(--bg-panel);color:var(--text-main);font-weight:600;box-shadow:0 1px 3px rgba(17,24,39,0.12),0 0 0 1px var(--border);} .ds-seg-opt:has(input:focus-visible){outline:2px solid var(--primary);outline-offset:1px;}"
+    },
+    {
+      "name": "Mode Switch",
+      "kind": "nav",
+      "refersTo": "mode-switch-selected",
+      "description": "Primary navigation between the three modes; the large segmented control with a blue-washed selection.",
+      "html": "<div class=\"ds-mode\" role=\"radiogroup\" aria-label=\"Modo\"><label class=\"ds-mode-opt is-on\"><input type=\"radio\" name=\"ds-mode\" checked>QR Code</label><label class=\"ds-mode-opt\"><input type=\"radio\" name=\"ds-mode\">Código de barras</label><label class=\"ds-mode-opt\"><input type=\"radio\" name=\"ds-mode\">Ler código</label></div>",
+      "css": ".ds-mode{display:flex;gap:4px;max-width:600px;padding:5px;background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);font-family:var(--font-main);} .ds-mode-opt{position:relative;flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:0.5rem;min-height:48px;padding:0.5rem 1rem;border-radius:var(--radius);color:var(--text-muted);font-size:0.9375rem;font-weight:500;white-space:nowrap;cursor:pointer;transition:background-color 150ms var(--ease-out),color 150ms var(--ease-out);} .ds-mode-opt input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;} .ds-mode-opt:hover{color:var(--text-main);} .ds-mode-opt.is-on{background:var(--primary-soft);color:var(--primary-text);font-weight:600;} .ds-mode-opt:has(input:focus-visible){outline:2px solid var(--primary);outline-offset:1px;}"
+    },
+    {
+      "name": "Panel with Sections",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "White 12px panel with a hairline border; sections inside divide with a hairline rule, never a nested card.",
+      "html": "<section class=\"ds-panel\"><div class=\"ds-panel-section\"><h3 class=\"ds-section-title\">Cores</h3><p class=\"ds-muted\">Cor do código e cor do fundo.</p></div><div class=\"ds-panel-section\"><h3 class=\"ds-section-title\">Estilo</h3><p class=\"ds-muted\">Módulos, cantos e correção de erro.</p></div></section>",
+      "css": ".ds-panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);font-family:var(--font-main);color:var(--text-main);} .ds-panel-section{padding:1.25rem 1.5rem;} .ds-panel-section + .ds-panel-section{border-top:1px solid var(--border);} .ds-section-title{margin:0 0 1rem;font-size:1rem;font-weight:600;line-height:1.4;} .ds-muted{margin:0;font-size:0.875rem;color:var(--text-muted);}"
+    },
+    {
+      "name": "Preview Stage",
+      "kind": "custom",
+      "refersTo": "preview-stage",
+      "description": "Signature: the code centred on a neutral sunken stage with a label-like lift, meta line beneath.",
+      "html": "<div class=\"ds-stage-wrap\"><div class=\"ds-stage\"><svg class=\"ds-code\" viewBox=\"0 0 21 21\" width=\"168\" height=\"168\" aria-hidden=\"true\"><rect width=\"21\" height=\"21\" fill=\"#fff\"/><g fill=\"#000\"><path d=\"M0 0h7v7H0zM14 0h7v7h-7zM0 14h7v7H0z\"/></g><g fill=\"#fff\"><path d=\"M1 1h5v5H1zM15 1h5v5h-5zM1 15h5v5H1z\"/></g><g fill=\"#000\"><path d=\"M2 2h3v3H2zM16 2h3v3h-3zM2 16h3v3H2zM9 1h1v2H9zM11 3h2v1h-2zM8 8h3v1H8zM12 9h2v2h-2zM9 11h1v3H9zM15 12h3v1h-3zM11 15h2v2h-2zM16 16h3v3h-3zM14 18h1v2h-1zM9 17h1v3H9zM18 9h2v1h-2z\"/></g></svg></div><p class=\"ds-stage-meta\">QR Code · 280 px</p></div>",
+      "css": ".ds-stage-wrap{display:flex;flex-direction:column;gap:0.75rem;font-family:var(--font-main);} .ds-stage{display:grid;place-items:center;min-height:240px;padding:1.25rem;background:var(--bg-sunken);border-radius:var(--radius);} .ds-code{display:block;border-radius:2px;box-shadow:var(--shadow);} .ds-stage-meta{margin:0;text-align:center;font-size:0.875rem;color:var(--text-muted);font-variant-numeric:tabular-nums;}"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "badge-ok",
+      "description": "Pill on a state wash; valid NF-e key in green, failed check digit in amber.",
+      "html": "<span class=\"ds-badge ds-badge-ok\">Chave válida</span> <span class=\"ds-badge ds-badge-warn\">Dígito não confere</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:0.375rem;padding:0.25rem 0.625rem;border-radius:999px;font-family:var(--font-main);font-size:0.8125rem;font-weight:600;} .ds-badge-ok{background:var(--success-soft);color:var(--success);} .ds-badge-warn{background:var(--warning-soft);color:var(--warning);}"
+    },
+    {
+      "name": "Alert",
+      "kind": "custom",
+      "refersTo": "alert-danger",
+      "description": "8px wash block with matching text for validation errors and warnings; no red borders on fields.",
+      "html": "<div class=\"ds-alert ds-alert-danger\" role=\"alert\"><div><strong>EAN-13 precisa de 12 ou 13 dígitos.</strong><p>Exemplo: 789123456789</p></div></div>",
+      "css": ".ds-alert{display:flex;gap:0.625rem;align-items:flex-start;padding:0.75rem 0.875rem;border-radius:var(--radius);font-family:var(--font-main);font-size:0.875rem;line-height:1.45;} .ds-alert strong{font-weight:600;} .ds-alert p{margin:0.25rem 0 0;} .ds-alert-danger{background:var(--danger-soft);color:var(--danger);} .ds-alert-warning{background:var(--warning-soft);color:var(--warning);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Tool You Already Know",
+    "overview": "QR & Barcode Studio looks like the category leaders on purpose. Cool grey ground, white panels drawn with 1px hairlines, slate ink and one blue: a visitor who has used QRCode Monkey or QR Code Generator recognises every control before reading a label. Familiarity is the design decision, not a fallback; the craft goes into finish (exact alignment, honest states, AA contrast, 44px targets) rather than into novelty.\n\nThe density is operational. One short task per visit, so the code is the hero and the chrome stays quiet: the live preview sits on a neutral grey stage beside the settings and stays in view while they change, and one blue button downloads it. Controls feel native because they are: segmented choices are real radio buttons, long lists are native selects, the colour field opens a real picker, sliders and checkboxes are platform inputs tinted blue. The dark theme mirrors the same structure on slate, keeping the action blue unchanged.\n\nThis world replaced the previous look and rejects it explicitly: no indigo-to-violet gradients, no emoji headings, no cards nested in cards, no bouncy motion.",
+    "keyCharacteristics": [
+      "One accent: Action Blue for the primary action, selection and focus; everything else is grey and slate.",
+      "Flat white panels on a cool grey ground, separated by 1px hairlines with a barely-there shadow.",
+      "Inter at a fixed rem ramp (0.75rem to 2rem); weight carries most of the hierarchy.",
+      "Monospace with tabular numerals only for data: hex values, access keys, CNPJ, scanned text.",
+      "Native-feeling controls at 44px minimum; the primary action and mode switch at 48px.",
+      "Quiet functional motion: 150ms ease-out state changes, short entries for floating layers, nothing loops or overshoots."
+    ],
+    "rules": [
+      {
+        "name": "The One Blue Rule",
+        "body": "Action Blue fills exactly one button per view, the primary action. Selection and focus may use blue; secondary actions (Copiar, Copiar texto, WhatsApp, Facebook, Enviar imagem) stay neutral grey.",
+        "section": "colors"
+      },
+      {
+        "name": "The Code Is Content Rule",
+        "body": "The colours a person picks for their QR Code or barcode, and the template presets that set them, belong to the code, not to the palette. The stage around the code stays neutral grey so any user colour reads true, and the system never tints, overlays or decorates the code itself.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fixed Ramp Rule",
+        "body": "Sizes are fixed rem steps between 0.75rem and 2rem, never fluid clamps; hierarchy comes from weight (400 / 500 / 600 / 700) and ink (Slate, Muted, Faint) before size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Mono Means Data Rule",
+        "body": "The monospace stack with tabular numerals is reserved for values a person reads character by character: hex colours, NF-e access keys, CNPJ, series and numbers, scanned text. Counts and percentages in proportional text use tabular numerals without switching face.",
+        "section": "typography"
+      },
+      {
+        "name": "The Preview Stays in View Rule",
+        "body": "In the generator modes the code is always visible while settings change: sticky beside the settings from 960px, and placed directly after Conteúdo on phones with its download button under it.",
+        "section": "layout"
+      },
+      {
+        "name": "The Hairline First Rule",
+        "body": "A surface earns a border before it earns a shadow; only the rendered code and floating layers get more than the hairline lift.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Nesting Radius Rule",
+        "body": "An element's radius is never larger than its container's: 12 outside, 8 inside, 6 inside that.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do reserve Action Blue (#2563eb) for one filled primary button per view, selected states and focus.",
+      "Do keep secondary actions neutral: the Panel White secondary button with a Field Stroke border, or the Muted Slate ghost and link buttons with a Sunken Stage hover.",
+      "Do divide a panel into sections with a 1px Hairline rule and 1.25rem 1.5rem padding instead of adding an inner card.",
+      "Do build choices on the Segmented control over native radios, use native selects for long lists and native checkbox and range inputs tinted with accent-color.",
+      "Do keep every interactive target at least 44px tall, and the main action of a view at 48px.",
+      "Do set hex values, access keys, CNPJ and scanned text in the mono stack with tabular numerals.",
+      "Do keep the rendered code on the neutral Sunken Stage with the Label lift, at its own colours.",
+      "Do define every new colour token in both the light `:root` block and the `.dark` block of App.css.",
+      "Do animate only colour, border and shadow on state changes (150ms, cubic-bezier(0.22, 1, 0.36, 1)), and short fades or slides for floating layers, all collapsed under prefers-reduced-motion."
+    ],
+    "donts": [
+      "Don't use gradients on any surface, button, text or icon.",
+      "Don't use emoji in headings, labels or buttons; icons are the Ant Design outline set or SVGs drawn to match it.",
+      "Don't nest a bordered, shadowed card inside a panel; bordered tiles inside a panel are only for selectable controls like the template tiles.",
+      "Don't use bouncy or overshooting easing, or any looping or decorative animation.",
+      "Don't colour secondary or text actions blue; blue belongs to the one primary action.",
+      "Don't tint, overlay or decorate the code inside the preview stage; scan reliability comes before decoration.",
+      "Don't use the legacy alias variables (--text-primary, --text-secondary, --bg-primary, --bg-secondary, --secondary, --border-color) in new CSS; use the base names (--text-main, --text-muted, --bg-panel, --bg-sunken, --border)."
+    ]
+  }
+}
