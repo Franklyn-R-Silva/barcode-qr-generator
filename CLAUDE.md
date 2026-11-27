@@ -4,19 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-React (Create React App) single-page app for generating **and scanning** QR Codes and 1D barcodes (25+ formats) entirely in the browser. No backend. Deployed to **Cloudflare** under the custom domain `qrcode.devfrs.com`: `npm run build` produces `build/`, published as Workers static assets via `wrangler.jsonc` (`npx wrangler deploy`), Node 20 pinned via `.nvmrc` (Wrangler 4 needs Node ≥ 20). The UI is in Portuguese (pt-BR) and English, with a toggle in the header (see "UI text (i18n)" below). Project documentation (README, ARCHITECTURE, CHANGELOG, this file) is in English.
+React 18 + Vite single-page app for generating **and scanning** QR Codes and 1D barcodes (25+ formats) entirely in the browser. No backend. Deployed to **Cloudflare** under the custom domain `qrcode.devfrs.com`: `npm run build` produces `build/`, published as Workers static assets via `wrangler.jsonc` (`npx wrangler deploy`), Node 20 pinned via `.nvmrc` (Wrangler 4 needs Node ≥ 20). The UI is in Portuguese (pt-BR) and English, with a toggle in the header (see "UI text (i18n)" below). Project documentation (README, ARCHITECTURE, CHANGELOG, this file) is in English.
 
 ## Commands
 
 ```bash
-npm start          # Dev server at http://localhost:3000
-npm run build      # Production build to build/
-npm test           # Jest + React Testing Library (watch mode)
-npm test -- --watchAll=false   # Single run (CI-style)
-npm test -- <pattern>          # Run tests matching a filename/name pattern
+npm start          # Vite dev server at http://localhost:3000
+npm run build      # Production build to build/ (vite.config.mjs sets outDir)
+npm run preview    # Serve the production build locally
+npm test           # Vitest, single run (what CI runs)
+npm run test:watch # Vitest in watch mode
+npm test -- <pattern>          # Run tests whose file matches the pattern
 ```
 
-Use Node 20 (`.nvmrc`; the build itself also runs on 18, `engines` says `>=18`). There is no lint script; CRA's ESLint runs during `npm run build`, and with `CI=true` its warnings fail the build (that is how CI runs it). Tests live next to the utils (`src/utils/*.test.js`).
+Use Node 22 (`.nvmrc`, `engines` `>=22.12`; Vitest 5 needs it). The entry is `index.html` at the repo root, which loads `src/index.jsx`; files with JSX must use the `.jsx` extension. There is no lint step (CodeQL runs on every PR). Tests (Vitest, globals on, Node environment) live next to the code (`src/**/*.test.js`).
 
 ## Architecture
 
@@ -40,7 +41,7 @@ src/
 
 ## UI text (i18n)
 
-The code is in English, including every user-facing string. Write it in English and wrap it in `t()` from `useT()` (`src/i18n.js`): `t("Download {format}", { format })`. In `App.jsx` (which provides `LangContext`) use `translate(lang, text, vars)`. Add the Portuguese to `src/locales/pt.js` as `"English text": "Texto em português"`; a missing entry falls back to English. Utils and constants return English (validator messages, Pix errors, `CONTENT_TYPES`, `BARCODE_CATEGORIES`, NF-e model names; contrast warnings are `{ message, ratio }`), and the component translates them where they are shown. `src/i18n.test.js` scans the code for `t("…")` calls and these util strings and fails when a text has no Portuguese entry, when an entry is no longer used, or when placeholders differ. The language is `localStorage` `"lang"` (`"pt"`/`"en"`), else `navigator.language`; `App.jsx` keeps `<html lang>` in sync. `public/index.html` (SEO metadata) stays in Portuguese.
+The code is in English, including every user-facing string. Write it in English and wrap it in `t()` from `useT()` (`src/i18n.js`): `t("Download {format}", { format })`. In `App.jsx` (which provides `LangContext`) use `translate(lang, text, vars)`. Add the Portuguese to `src/locales/pt.js` as `"English text": "Texto em português"`; a missing entry falls back to English. Utils and constants return English (validator messages, Pix errors, `CONTENT_TYPES`, `BARCODE_CATEGORIES`, NF-e model names; contrast warnings are `{ message, ratio }`), and the component translates them where they are shown. `src/i18n.test.js` scans the code for `t("…")` calls and these util strings and fails when a text has no Portuguese entry, when an entry is no longer used, or when placeholders differ. The language is `localStorage` `"lang"` (`"pt"`/`"en"`), else `navigator.language`; `App.jsx` keeps `<html lang>` in sync. `index.html` (SEO metadata) stays in Portuguese.
 
 ## Scanner & NF-e (`components/scanner/ScannerPanel.jsx`, `utils/nfeParser.js`)
 
@@ -73,7 +74,7 @@ These two paths are asymmetric and export logic branches on `isBarcode`:
 
 ## Styling & theming
 
-Plain CSS co-located per component; tokens and shared primitives (`.panel`, `.btn*`, `.input`, `.select`, `.check`, `.alert`) live in `App.css`. Theme is a `dark` class on `<html>` (set before paint by an inline script in `public/index.html`, then kept in sync and saved by `App.jsx`), driving CSS custom properties in `App.css` (`:root` for light, `.dark` for dark). `App.css` still defines the older alias names (`--text-primary`, `--text-secondary`, `--bg-secondary`, …) mapped to the base tokens (`--text-main`, `--text-muted`, `--bg-sunken`); new code should use the base names.
+Plain CSS co-located per component; tokens and shared primitives (`.panel`, `.btn*`, `.input`, `.select`, `.check`, `.alert`) live in `App.css`. Theme is a `dark` class on `<html>` (set before paint by an inline script in `index.html`, then kept in sync and saved by `App.jsx`), driving CSS custom properties in `App.css` (`:root` for light, `.dark` for dark). `App.css` still defines the older alias names (`--text-primary`, `--text-secondary`, `--bg-secondary`, …) mapped to the base tokens (`--text-main`, `--text-muted`, `--bg-sunken`); new code should use the base names.
 
 ## Design (impeccable)
 

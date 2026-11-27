@@ -33,12 +33,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
 
       - name: test
-        run: npm test -- --watchAll=false
-        env:
-          CI: true
+        run: npm test
 
-      # CI=true makes CRA fail the build on any lint warning.
       - name: build
         run: npm run build
-        env:
-          CI: true
