@@ -1,5 +1,5 @@
-/* Reset Universal de Box-Sizing 
-   (Ajuda no cálculo de largura/altura dos elementos) */
+/* Universal box-sizing reset
+   (helps with the width/height of elements) */
 *,
 *::before,
 *::after {

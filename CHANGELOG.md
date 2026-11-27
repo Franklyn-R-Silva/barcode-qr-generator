@@ -7,6 +7,12 @@ All notable changes to this project are documented here. The format is based on
 
 ### Added
 
+- **English interface**: a PT / EN button next to the theme toggle switches
+  the language, remembered in `localStorage` (first visit follows the browser
+  language). The code is now English throughout, strings included; Portuguese
+  lives in `src/locales/pt.js` and `src/i18n.test.js` keeps both in sync. The
+  Portuguese UI is unchanged. NF-e fields were renamed to English (`model`,
+  `series`, `number`, `emissionType`, …). (#16)
 - **Photo inside the modules**: the uploaded photo can fill the dark modules
   (clipped to their shapes, darkened so it scans) instead of sitting behind
   the code.

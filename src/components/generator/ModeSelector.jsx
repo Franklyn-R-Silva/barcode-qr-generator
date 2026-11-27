@@ -11,19 +11,21 @@ import {
   DEFAULT_BARCODE_FORMAT,
 } from "../../constants/barcodeTypes";
 import { encodeContent } from "../../utils/qrContent";
+import { useT } from "../../i18n";
 import "./ModeSelector.css";
 
 /**
- * Seletor de modo (QR Code / Código de barras / Ler código).
- * Sempre visível no topo, para alternar entre gerar e ler a qualquer momento.
+ * Mode selector (QR Code / Barcode / Scan code).
+ * Always visible at the top, to switch between generating and reading at any time.
  */
 const ModeSelector = ({ config, updateConfig }) => {
+  const t = useT();
   const selectBarcode = () => {
     updateConfig("generatorType", GENERATOR_TYPES.BARCODE);
     const format = config.barcodeFormat || DEFAULT_BARCODE_FORMAT;
     if (!config.barcodeFormat) updateConfig("barcodeFormat", format);
     if (!config.text || config.text === "https://seusite.com") {
-      updateConfig("text", BARCODE_EXAMPLES[format]);
+      updateConfig("text", t(BARCODE_EXAMPLES[format]));
     }
   };
 
@@ -40,7 +42,7 @@ const ModeSelector = ({ config, updateConfig }) => {
     <div className="mode-selector mode-area">
       <Segmented
         size="lg"
-        legend="O que você quer fazer?"
+        legend={t("What do you want to do?")}
         hideLegend
         name="mode"
         value={config.generatorType}
@@ -53,12 +55,12 @@ const ModeSelector = ({ config, updateConfig }) => {
           },
           {
             value: GENERATOR_TYPES.BARCODE,
-            label: "Código de barras",
+            label: t("Barcode"),
             icon: <AiOutlineBarcode aria-hidden="true" />,
           },
           {
             value: GENERATOR_TYPES.SCANNER,
-            label: "Ler código",
+            label: t("Scan code"),
             icon: <AiOutlineScan aria-hidden="true" />,
           },
         ]}

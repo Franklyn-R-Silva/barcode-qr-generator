@@ -10,7 +10,7 @@ test("contrast ratio matches WCAG reference values", () => {
 test("scanWarning flags inverted and low-contrast pairs only", () => {
   expect(scanWarning("#000000", "#ffffff")).toBeNull();
   expect(scanWarning("#128C7E", "#E5FFFC")).toBeNull();
-  expect(scanWarning("#E0E0E0", "#1E1E1E")).toMatch(/claro sobre fundo escuro/);
-  expect(scanWarning("#9ca3af", "#ffffff")).toMatch(/Contraste baixo/);
+  expect(scanWarning("#E0E0E0", "#1E1E1E").message).toMatch(/Light code on a dark background/);
+  expect(scanWarning("#9ca3af", "#ffffff")).toEqual({ message: expect.stringMatching(/^Low contrast \(\{ratio\}:1\)/), ratio: "2.5" });
   expect(scanWarning("#12", "#ffffff")).toBeNull();
 });

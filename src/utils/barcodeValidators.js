@@ -11,6 +11,7 @@ import { extractAccessKey } from "./nfeParser";
  * (e.g. a UPC-E expanded to its 12-digit UPC-A equivalent).
  *
  * Validators are keyed by the format `id` defined in constants/barcodeTypes.js.
+ * Messages are English; the UI translates them where they are shown.
  */
 
 const onlyDigits = (value) => value.replace(/[^0-9]/g, "");
@@ -83,7 +84,7 @@ export const validateUPCA = (value) => {
   if (cleaned.length !== 12) {
     return {
       valid: false,
-      message: "UPC-A deve ter exatamente 12 dígitos",
+      message: "UPC-A must have exactly 12 digits",
       suggestion: "123456789012",
     };
   }
@@ -98,7 +99,7 @@ export const validateUPCE = (value) => {
   if (cleaned.length < 6 || cleaned.length > 8) {
     return {
       valid: false,
-      message: "UPC-E deve ter entre 6 e 8 dígitos",
+      message: "UPC-E must have between 6 and 8 digits",
       suggestion: "01234565",
     };
   }
@@ -106,7 +107,7 @@ export const validateUPCE = (value) => {
   if (!normalized) {
     return {
       valid: false,
-      message: "Não foi possível converter o UPC-E",
+      message: "Could not convert the UPC-E",
       suggestion: "01234565",
     };
   }
@@ -121,7 +122,7 @@ export const validateEAN13 = (value) => {
   if (cleaned.length !== 13) {
     return {
       valid: false,
-      message: "EAN-13 deve ter exatamente 13 dígitos",
+      message: "EAN-13 must have exactly 13 digits",
       suggestion: "5901234123457",
     };
   }
@@ -136,7 +137,7 @@ export const validateEAN8 = (value) => {
   if (cleaned.length !== 8) {
     return {
       valid: false,
-      message: "EAN-8 deve ter exatamente 8 dígitos",
+      message: "EAN-8 must have exactly 8 digits",
       suggestion: "96385074",
     };
   }
@@ -151,7 +152,7 @@ export const validateEAN5 = (value) => {
   if (cleaned.length !== 5) {
     return {
       valid: false,
-      message: "EAN-5 deve ter exatamente 5 dígitos",
+      message: "EAN-5 must have exactly 5 digits",
       suggestion: "12345",
     };
   }
@@ -166,7 +167,7 @@ export const validateEAN2 = (value) => {
   if (cleaned.length !== 2) {
     return {
       valid: false,
-      message: "EAN-2 deve ter exatamente 2 dígitos",
+      message: "EAN-2 must have exactly 2 digits",
       suggestion: "12",
     };
   }
@@ -181,7 +182,7 @@ export const validateISBN = (value) => {
   if (cleaned.length !== 10 && cleaned.length !== 13) {
     return {
       valid: false,
-      message: "ISBN deve ter 10 ou 13 dígitos",
+      message: "ISBN must have 10 or 13 digits",
       suggestion: "9781234567897",
     };
   }
@@ -189,7 +190,7 @@ export const validateISBN = (value) => {
   if (cleaned.length !== 13) {
     return {
       valid: false,
-      message: "Use o ISBN-13 (13 dígitos) para gerar o código de barras",
+      message: "Use the ISBN-13 (13 digits) to generate the barcode",
       suggestion: "9781234567897",
     };
   }
@@ -204,14 +205,14 @@ export const validateITF = (value) => {
   if (cleaned.length < 2) {
     return {
       valid: false,
-      message: "ITF deve ter pelo menos 2 dígitos",
+      message: "ITF must have at least 2 digits",
       suggestion: "1234567890",
     };
   }
   if (cleaned.length % 2 !== 0) {
     return {
       valid: false,
-      message: "ITF deve ter número par de dígitos",
+      message: "ITF must have an even number of digits",
       suggestion: "1234567890",
     };
   }
@@ -226,7 +227,7 @@ export const validateITF14 = (value) => {
   if (cleaned.length !== 14) {
     return {
       valid: false,
-      message: "ITF-14 deve ter exatamente 14 dígitos",
+      message: "ITF-14 must have exactly 14 digits",
       suggestion: "12345678901231",
     };
   }
@@ -241,8 +242,8 @@ export const validateCODE39 = (value) => {
   if (!valid || value.length === 0) {
     return {
       valid: false,
-      message: "CODE39 aceita apenas números, letras maiúsculas e -. $/+%",
-      suggestion: "EXEMPLO123",
+      message: "CODE39 only accepts numbers, uppercase letters and -. $/+%",
+      suggestion: "EXAMPLE123",
     };
   }
   return { valid: true };
@@ -255,8 +256,8 @@ export const validateCODE128 = (value) => {
   if (value.length === 0) {
     return {
       valid: false,
-      message: "Digite um valor para o código",
-      suggestion: "Exemplo 1234",
+      message: "Type a value for the code",
+      suggestion: "Example 1234",
     };
   }
   return { valid: true };
@@ -270,8 +271,8 @@ export const validateCODE128A = (value) => {
   if (!valid || value.length === 0) {
     return {
       valid: false,
-      message: "CODE128A aceita apenas letras maiúsculas, números e espaços",
-      suggestion: "EXEMPLO 123",
+      message: "CODE128A only accepts uppercase letters, numbers and spaces",
+      suggestion: "EXAMPLE 123",
     };
   }
   return { valid: true };
@@ -285,7 +286,7 @@ export const validateCODE128C = (value) => {
   if (cleaned.length === 0 || cleaned.length % 2 !== 0) {
     return {
       valid: false,
-      message: "CODE128C aceita apenas números (quantidade par de dígitos)",
+      message: "CODE128C only accepts numbers (an even number of digits)",
       suggestion: "12345678",
     };
   }
@@ -300,7 +301,7 @@ export const validateMSI = (value) => {
   if (cleaned.length === 0) {
     return {
       valid: false,
-      message: "MSI deve conter apenas números",
+      message: "MSI must contain numbers only",
       suggestion: "1234567890",
     };
   }
@@ -315,7 +316,7 @@ export const validatePharmacode = (value) => {
   if (cleaned.length === 0 || cleaned.length > 6) {
     return {
       valid: false,
-      message: "Pharmacode deve ter entre 1 e 6 dígitos",
+      message: "Pharmacode must have between 1 and 6 digits",
       suggestion: "1234",
     };
   }
@@ -323,7 +324,7 @@ export const validatePharmacode = (value) => {
   if (num < 3 || num > 131070) {
     return {
       valid: false,
-      message: "Pharmacode deve estar entre 3 e 131070",
+      message: "Pharmacode must be between 3 and 131070",
       suggestion: "1234",
     };
   }
@@ -338,7 +339,7 @@ export const validateCodabar = (value) => {
   if (!valid) {
     return {
       valid: false,
-      message: "Codabar deve começar e terminar com A, B, C ou D",
+      message: "Codabar must start and end with A, B, C or D",
       suggestion: "A1234567890B",
     };
   }
@@ -346,81 +347,81 @@ export const validateCodabar = (value) => {
 };
 
 /**
- * Converte a linha digitável de um boleto bancário (47 dígitos) no código de
- * barras de 44 dígitos que é efetivamente codificado (ITF).
+ * Converts the typeable line of a bank boleto (47 digits) into the 44-digit
+ * barcode that is actually encoded (ITF).
  */
-function bankLinhaToBarcode(l) {
-  const banco = l.slice(0, 3);
-  const moeda = l.slice(3, 4);
-  const campoLivreA = l.slice(4, 9); // 5
-  const campoLivreB = l.slice(10, 20); // 10
-  const campoLivreC = l.slice(21, 31); // 10
-  const dvGeral = l.slice(32, 33);
-  const fatorValor = l.slice(33, 47); // fator(4) + valor(10)
-  return banco + moeda + dvGeral + fatorValor + campoLivreA + campoLivreB + campoLivreC;
+function bankLineToBarcode(l) {
+  const bank = l.slice(0, 3);
+  const currency = l.slice(3, 4);
+  const freeFieldA = l.slice(4, 9); // 5
+  const freeFieldB = l.slice(10, 20); // 10
+  const freeFieldC = l.slice(21, 31); // 10
+  const checkDigit = l.slice(32, 33);
+  const dueFactorAmount = l.slice(33, 47); // due factor(4) + amount(10)
+  return bank + currency + checkDigit + dueFactorAmount + freeFieldA + freeFieldB + freeFieldC;
 }
 
 /**
- * Converte a linha digitável de um boleto de arrecadação (48 dígitos, 4 blocos
- * de 11 dígitos + DV) no código de barras de 44 dígitos.
+ * Converts the typeable line of a collection boleto (48 digits, 4 blocks of
+ * 11 digits + check digit) into the 44-digit barcode.
  */
-function arrecadacaoLinhaToBarcode(l) {
+function collectionLineToBarcode(l) {
   return l.slice(0, 11) + l.slice(12, 23) + l.slice(24, 35) + l.slice(36, 47);
 }
 
 /**
- * Boleto bancário: aceita o código de barras (44 dígitos) ou a linha digitável
- * (47 dígitos), convertendo esta última para os 44 dígitos codificados (ITF).
+ * Bank boleto: accepts the barcode (44 digits) or the typeable line
+ * (47 digits), converting the latter into the 44 encoded digits (ITF).
  */
 export const validateBoleto = (value) => {
   const d = onlyDigits(value);
   if (d.length === 44) return { valid: true };
-  if (d.length === 47) return { valid: true, normalized: bankLinhaToBarcode(d) };
+  if (d.length === 47) return { valid: true, normalized: bankLineToBarcode(d) };
   return {
     valid: false,
     message:
-      "Boleto bancário: informe a linha digitável (47 dígitos) ou o código de barras (44 dígitos)",
+      "Bank boleto: enter the typeable line (47 digits) or the barcode (44 digits)",
     suggestion: BARCODE_EXAMPLES.BOLETO,
   };
 };
 
 /**
- * Boleto de arrecadação / tributos: código de barras (44 dígitos, começando com
- * 8) ou linha digitável (48 dígitos), convertida para os 44 dígitos.
+ * Collection / tax boleto: barcode (44 digits, starting with 8) or typeable
+ * line (48 digits), converted into the 44 digits.
  */
-export const validateBoletoArrecadacao = (value) => {
+export const validateCollectionBoleto = (value) => {
   const d = onlyDigits(value);
   if (d.length === 44) {
     if (d[0] !== "8") {
       return {
         valid: false,
-        message: "Boleto de arrecadação: o código de barras deve começar com 8",
+        message: "Collection boleto: the barcode must start with 8",
         suggestion: BARCODE_EXAMPLES.BOLETO_ARRECADACAO,
       };
     }
     return { valid: true };
   }
   if (d.length === 48) {
-    return { valid: true, normalized: arrecadacaoLinhaToBarcode(d) };
+    return { valid: true, normalized: collectionLineToBarcode(d) };
   }
   return {
     valid: false,
     message:
-      "Arrecadação: informe a linha digitável (48 dígitos) ou o código de barras (44 dígitos)",
+      "Collection: enter the typeable line (48 digits) or the barcode (44 digits)",
     suggestion: BARCODE_EXAMPLES.BOLETO_ARRECADACAO,
   };
 };
 
 /**
- * NF-e / DANFE: extrai a chave de acesso de 44 dígitos (de uma chave pura, de
- * uma URL da SEFAZ ou de um texto) e a codifica em Code-128C.
+ * NF-e / DANFE: extracts the 44-digit access key (from a bare key, a SEFAZ
+ * URL or any text) and encodes it as Code-128C.
  */
 export const validateNFe = (value) => {
   const key = extractAccessKey(value) || onlyDigits(value);
   if (key.length !== 44) {
     return {
       valid: false,
-      message: "NF-e / DANFE: a chave de acesso deve ter 44 dígitos",
+      message: "NF-e / DANFE: the access key must have 44 digits",
       suggestion: BARCODE_EXAMPLES.NFE,
     };
   }
@@ -434,7 +435,7 @@ export const validateGS1_128 = (value) => {
   if (value.length < 2) {
     return {
       valid: false,
-      message: "GS1-128 deve ter pelo menos 2 caracteres",
+      message: "GS1-128 must have at least 2 characters",
       suggestion: "00123456789012345675",
     };
   }
@@ -469,7 +470,7 @@ export const BARCODE_VALIDATORS = {
   PHARMACODE: validatePharmacode,
   CODABAR: validateCodabar,
   BOLETO: validateBoleto,
-  BOLETO_ARRECADACAO: validateBoletoArrecadacao,
+  BOLETO_ARRECADACAO: validateCollectionBoleto,
   NFE: validateNFe,
 };
 
@@ -480,7 +481,7 @@ export const validateBarcodeValue = (formatId, value) => {
   if (!value || value.trim().length === 0) {
     return {
       valid: false,
-      message: "Digite um valor para gerar o código de barras",
+      message: "Type a value to generate the barcode",
       suggestion: "",
     };
   }

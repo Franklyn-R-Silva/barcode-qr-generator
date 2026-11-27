@@ -28,7 +28,7 @@
   box-shadow: var(--shadow);
 }
 
-/* "Fundo transparente": show the real result on a checkerboard. */
+/* "Transparent background": show the real result on a checkerboard. */
 .preview-stage.is-transparent {
   background-color: #ffffff;
   background-image: conic-gradient(#e5e7eb 25%, transparent 0 50%, #e5e7eb 0 75%, transparent 0);

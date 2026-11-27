@@ -26,8 +26,10 @@ In scanner mode, `App.jsx` renders `ScannerPanel` instead of the preview/control
 src/
 ├── App.jsx / App.css          # Root component + global styles and theme variables
 ├── index.js                   # Entry point
+├── i18n.js                    # LangContext, useT(), translate(): English text in code
+├── locales/pt.js              # Portuguese text keyed by the English source
 ├── components/
-│   ├── layout/                # Header (theme toggle), Footer
+│   ├── layout/                # Header (theme and language toggles), Footer
 │   ├── common/                # Toast, Segmented (radio-based segmented control)
 │   ├── generator/
 │   │   ├── QRCodePreview.jsx      # QR preview: <img> of the SVG from utils/qrSvg.js
@@ -53,6 +55,10 @@ src/
     ├── readQr.js              # Read QR from a file/SVG (read test, import)
     └── image.js               # Downscale uploaded images to data URLs
 ```
+
+## UI language
+
+The UI is in Portuguese and English. Every user-facing string is written in English and goes through `t()` (`useT()` from `i18n.js`); `locales/pt.js` maps the English text to Portuguese, and a missing entry falls back to English. Utils return English text (or a template plus values) and components translate it where it is shown. `App.jsx` picks the language (`localStorage` `"lang"`, else `navigator.language`), keeps `<html lang>` in sync and provides `LangContext`; the header button switches it. `i18n.test.js` checks that every string has a Portuguese entry and that no entry is unused.
 
 ## QR vs barcode: two rendering paths
 

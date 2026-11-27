@@ -40,21 +40,22 @@ export const JSBARCODE_FORMAT = {
   MSI1110: "MSI1110",
   PHARMACODE: "pharmacode",
   CODABAR: "codabar",
-  // Documentos brasileiros (a chave de 44 dígitos é o que é codificado):
-  BOLETO: "ITF", // boleto bancário — Interleaved 2 of 5
-  BOLETO_ARRECADACAO: "ITF", // arrecadação/tributos — Interleaved 2 of 5
+  // Brazilian documents (the 44-digit key is what gets encoded):
+  BOLETO: "ITF", // bank boleto — Interleaved 2 of 5
+  BOLETO_ARRECADACAO: "ITF", // collection/tax boleto — Interleaved 2 of 5
   NFE: "CODE128C", // NF-e / DANFE — Code-128C
 };
 
 /**
  * Barcode formats grouped by category for the UI selector.
+ * Names and labels are English; the UI translates them where they are shown.
  */
 export const BARCODE_CATEGORIES = [
   {
-    name: "Boletos & Notas Fiscais (Brasil)",
+    name: "Boletos & Invoices (Brazil)",
     formats: [
-      { id: "BOLETO", label: "Boleto Bancário (ITF)" },
-      { id: "BOLETO_ARRECADACAO", label: "Boleto de Arrecadação / Tributos (ITF)" },
+      { id: "BOLETO", label: "Bank Boleto (ITF)" },
+      { id: "BOLETO_ARRECADACAO", label: "Collection / Tax Boleto (ITF)" },
       { id: "NFE", label: "NF-e / DANFE (Code-128C)" },
     ],
   },
@@ -95,7 +96,7 @@ export const BARCODE_CATEGORIES = [
     ],
   },
   {
-    name: "Outros",
+    name: "Others",
     formats: [
       { id: "MSI", label: "MSI" },
       { id: "MSI10", label: "MSI10" },
@@ -122,14 +123,15 @@ export const BARCODE_DEFAULTS = {
 };
 
 /**
- * A valid example value for each format id.
+ * A valid example value for each format id. The ones with words are
+ * translated where they are used, like any other UI text.
  */
 export const BARCODE_EXAMPLES = {
-  CODE39: "EXEMPLO123",
-  CODE93: "EXEMPLO123",
-  CODE128: "Exemplo 1234",
-  CODE128A: "EXEMPLO 123",
-  CODE128B: "Exemplo123",
+  CODE39: "EXAMPLE123",
+  CODE93: "EXAMPLE123",
+  CODE128: "Example 1234",
+  CODE128A: "EXAMPLE 123",
+  CODE128B: "Example123",
   CODE128C: "12345678",
   GS1_128: "00123456789012345675",
   ITF: "1234567890",
@@ -148,8 +150,8 @@ export const BARCODE_EXAMPLES = {
   MSI1110: "1234567890",
   PHARMACODE: "1234",
   CODABAR: "A1234567890B",
-  // Código de barras (44 dígitos). Os validadores também aceitam a
-  // linha digitável (47 díg. bancário / 48 díg. arrecadação) e convertem.
+  // Barcode (44 digits). The validators also accept the typeable line
+  // (47 digits for bank / 48 for collection boletos) and convert it.
   BOLETO: "23791234567890123456789012345678901234567890",
   BOLETO_ARRECADACAO: "81234567890123456789012345678901234567890123",
   NFE: "35240114200166000187650010000001231000001230",

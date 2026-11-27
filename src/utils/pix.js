@@ -24,26 +24,26 @@ export const crc16 = (s) => {
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
-/** Normalised Pix key, or throws an Error with a pt-BR message. */
+/** Normalised Pix key, or throws an Error with an English message (translated by the UI). */
 export const normalizePixKey = (keyType, raw) => {
   const key = String(raw || "").trim();
   const digits = key.replace(/\D/g, "");
   switch (keyType) {
     case "cpf":
-      if (digits.length !== 11 && digits.length !== 14) throw new Error("CPF tem 11 dígitos e CNPJ tem 14.");
+      if (digits.length !== 11 && digits.length !== 14) throw new Error("A CPF has 11 digits and a CNPJ has 14.");
       return digits;
     case "phone":
       if (digits.length === 10 || digits.length === 11) return `+55${digits}`;
       if (/^55\d{10,11}$/.test(digits)) return `+${digits}`;
-      throw new Error("Celular: informe DDD + número, por exemplo (11) 91234-5678.");
+      throw new Error("Mobile: enter area code + number, for example (11) 91234-5678.");
     case "email":
-      if (!EMAIL.test(key) || key.length > 77) throw new Error("E-mail inválido.");
+      if (!EMAIL.test(key) || key.length > 77) throw new Error("Invalid email.");
       return key.toLowerCase();
     case "random":
-      if (!UUID.test(key.toLowerCase())) throw new Error("Chave aleatória inválida: são 32 letras e números com hífens.");
+      if (!UUID.test(key.toLowerCase())) throw new Error("Invalid random key: it is 32 letters and numbers with hyphens.");
       return key.toLowerCase();
     default:
-      throw new Error("Escolha o tipo da chave Pix.");
+      throw new Error("Choose the Pix key type.");
   }
 };
 
@@ -53,22 +53,22 @@ export const pixAmount = (raw) => {
   if (!s) return "";
   const normalised = s.includes(",") ? s.replace(/\./g, "").replace(",", ".") : s;
   const value = Number(normalised);
-  if (!Number.isFinite(value) || value <= 0) throw new Error("Valor inválido.");
+  if (!Number.isFinite(value) || value <= 0) throw new Error("Invalid amount.");
   const fixed = value.toFixed(2);
-  if (fixed.length > 13) throw new Error("Valor alto demais.");
+  if (fixed.length > 13) throw new Error("Amount too high.");
   return fixed;
 };
 
 /**
  * Builds the "Pix copia e cola" payload for a static QR Code.
- * Throws an Error with a pt-BR message when a field is invalid.
+ * Throws an Error with an English message when a field is invalid.
  */
 export const pixPayload = ({ keyType, key, name, city, amount, description, txid }) => {
   const pixKey = normalizePixKey(keyType, key);
   const merchant = ascii(name).slice(0, 25);
   const place = ascii(city).slice(0, 15);
-  if (!merchant) throw new Error("Informe o nome de quem recebe.");
-  if (!place) throw new Error("Informe a cidade de quem recebe.");
+  if (!merchant) throw new Error("Enter the name of the recipient.");
+  if (!place) throw new Error("Enter the city of the recipient.");
 
   const gui = field("00", "br.gov.bcb.pix") + field("01", pixKey);
   // Merchant Account Information is capped at 99 characters in total.

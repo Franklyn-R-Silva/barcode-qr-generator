@@ -87,7 +87,10 @@ Write the summary in the imperative mood and keep it under ~72 characters.
   rather than hard-coding colors, so light/dark mode keeps working. Shared
   building blocks (`.panel`, `.btn`, `.input`, `.select`, `Segmented`) already
   exist; use them before adding new styles. `DESIGN.md` documents the system.
-- User-facing strings are in **Portuguese (pt-BR)**; keep new UI copy consistent.
+- User-facing strings are written in **English** in the code and wrapped in
+  `t()` (`useT()` from `src/i18n.js`); add the Portuguese (pt-BR) text to
+  `src/locales/pt.js`. `src/i18n.test.js` fails when a string has no
+  Portuguese entry or an entry is no longer used.
 
 ## Adding a new barcode format
 

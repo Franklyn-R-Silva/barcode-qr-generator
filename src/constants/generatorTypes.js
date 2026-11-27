@@ -1,8 +1,8 @@
 // src/constants/generatorTypes.js
 
 /**
- * Tipos de modos disponíveis na aplicação.
- * QRCODE e BARCODE geram códigos; SCANNER lê códigos pela câmera/imagem.
+ * Modes available in the app.
+ * QRCODE and BARCODE generate codes; SCANNER reads codes from the camera/an image.
  */
 export const GENERATOR_TYPES = {
   QRCODE: "qrcode",
@@ -11,10 +11,10 @@ export const GENERATOR_TYPES = {
 };
 
 /**
- * Labels amigáveis para cada modo.
+ * Friendly label for each mode.
  */
 export const GENERATOR_LABELS = {
   [GENERATOR_TYPES.QRCODE]: "QR Code",
-  [GENERATOR_TYPES.BARCODE]: "Código de Barras",
-  [GENERATOR_TYPES.SCANNER]: "Escanear",
+  [GENERATOR_TYPES.BARCODE]: "Barcode",
+  [GENERATOR_TYPES.SCANNER]: "Scan",
 };

@@ -1,8 +1,10 @@
 // src/components/generator/HistoryButton.jsx
 import React, { useState, useEffect } from "react";
 import { AiOutlineHistory } from "react-icons/ai";
+import { useT } from "../../i18n";
 
 const HistoryButton = () => {
+  const t = useT();
   const [historyCount, setHistoryCount] = useState(0);
 
   useEffect(() => {
@@ -20,10 +22,14 @@ const HistoryButton = () => {
       type="button"
       onClick={() => window.openHistoryPanel?.()}
       className="btn btn-ghost btn-history"
-      aria-label={`Histórico, ${historyCount} ${historyCount === 1 ? "item" : "itens"}`}
+      aria-label={
+        historyCount === 1
+          ? t("History, {n} item", { n: historyCount })
+          : t("History, {n} items", { n: historyCount })
+      }
     >
       <AiOutlineHistory aria-hidden="true" />
-      <span className="btn-history-label">Histórico</span>
+      <span className="btn-history-label">{t("History")}</span>
       {historyCount > 0 && <span className="history-badge" aria-hidden="true">{historyCount}</span>}
     </button>
   );

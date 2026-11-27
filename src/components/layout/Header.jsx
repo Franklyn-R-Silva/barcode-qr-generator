@@ -1,7 +1,8 @@
 import React from "react";
+import { useT } from "../../i18n";
 import "./Header.css";
 
-// Marca: um módulo de QR simplificado (três olhos + dados).
+// Brand: a simplified QR module (three eyes + data).
 const BrandMark = () => (
   <svg className="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
     <rect width="32" height="32" rx="8" fill="var(--primary)" />
@@ -18,7 +19,7 @@ const BrandMark = () => (
   </svg>
 );
 
-// Lua e sol no mesmo traço dos ícones Ant usados no resto da interface.
+// Moon and sun in the same stroke as the Ant icons used in the rest of the UI.
 const ThemeIcon = ({ dark }) => (
   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
     strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -33,12 +34,15 @@ const ThemeIcon = ({ dark }) => (
   </svg>
 );
 
-const Header = ({ theme, toggleTheme, children }) => {
+const Header = ({ theme, toggleTheme, lang, toggleLang, children }) => {
+  const t = useT();
   const isDark = theme === "dark";
+  // Named in the language it switches to.
+  const langLabel = lang === "pt" ? "Switch to English" : "Mudar para português";
   return (
     <header className="main-header">
       <div className="header-inner">
-        <a className="brand" href="/" aria-label="QR & Barcode Studio, página inicial">
+        <a className="brand" href="/" aria-label={t("QR & Barcode Studio, home page")}>
           <BrandMark />
           <span className="brand-name">QR &amp; Barcode Studio</span>
         </a>
@@ -47,10 +51,20 @@ const Header = ({ theme, toggleTheme, children }) => {
           {children}
           <button
             type="button"
+            onClick={toggleLang}
+            className="icon-btn"
+            lang={lang === "pt" ? "en" : "pt-BR"}
+            aria-label={langLabel}
+            title={langLabel}
+          >
+            {lang === "pt" ? "EN" : "PT"}
+          </button>
+          <button
+            type="button"
             onClick={toggleTheme}
             className="icon-btn"
-            aria-label={isDark ? "Usar tema claro" : "Usar tema escuro"}
-            title={isDark ? "Tema claro" : "Tema escuro"}
+            aria-label={isDark ? t("Use light theme") : t("Use dark theme")}
+            title={isDark ? t("Light theme") : t("Dark theme")}
           >
             <ThemeIcon dark={isDark} />
           </button>
