@@ -10,6 +10,7 @@ A free, fully client-side web app to **generate**, **customize**, and **scan** Q
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![Deploy: Cloudflare Workers](https://img.shields.io/badge/deploy-Cloudflare%20Workers-F38020?logo=cloudflare&logoColor=white)](https://qrcode.devfrs.com)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![Good first issues](https://img.shields.io/github/issues/Franklyn-R-Silva/barcode-qr-generator/good%20first%20issue?label=good%20first%20issues)](https://github.com/Franklyn-R-Silva/barcode-qr-generator/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
 
 **[🌐 Live App — qrcode.devfrs.com](https://qrcode.devfrs.com)**
 
@@ -29,6 +30,7 @@ A free, fully client-side web app to **generate**, **customize**, and **scan** Q
 - [Design](#design)
 - [Tech Stack](#tech-stack)
 - [Contributing](#contributing)
+- [Quality and security](#quality-and-security)
 - [Security](#security)
 - [License](#license)
 
@@ -177,10 +179,30 @@ the impeccable skill and its design hook are already set up in `.claude/`.
 
 ## Contributing
 
-Contributions are welcome! Please read **[CONTRIBUTING.md](./CONTRIBUTING.md)**
-for the development setup, branch/commit conventions, and code style. In short:
-fork → branch from `main` → make a focused change → verify `npm run build` →
-open a PR using [Conventional Commits](https://www.conventionalcommits.org/).
+**Anyone can contribute**, and first-time contributors are very welcome. You can
+report a bug, suggest an idea, improve the docs, or pick up an issue — no need
+to know the whole codebase first.
+
+1. Look at the [good first issues](https://github.com/Franklyn-R-Silva/barcode-qr-generator/issues?q=is%3Aissue%20is%3Aopen%20label%3A%22good%20first%20issue%22)
+   or [open an issue](https://github.com/Franklyn-R-Silva/barcode-qr-generator/issues/new/choose) describing what you want to change.
+2. Fork, then `npm ci` and `npm start`.
+3. Make the change, add a test when it changes behaviour, and run `npm test`.
+4. Open a pull request with `Closes #<issue>`. CI runs the tests and the build.
+
+[CONTRIBUTING.md](./CONTRIBUTING.md) has the details, and the
+[Code of Conduct](./CODE_OF_CONDUCT.md) applies to everyone. Issues and pull
+requests can be written in Portuguese or English.
+
+## Quality and security
+
+- **[OpenSSF Best Practices](https://www.bestpractices.dev/projects/17194)**:
+  the project follows the Open Source Security Foundation checklist for open
+  source projects (licence, contribution process, tests, vulnerability
+  reporting, secure delivery). The badge at the top shows the current level.
+- **CI** runs the tests and a production build on every pull request.
+- **CodeQL** scans the JavaScript and the workflows; **Dependabot** keeps
+  dependencies up to date in grouped monthly pull requests.
+- **Secret scanning** with push protection is on.
 
 ## Security
 
