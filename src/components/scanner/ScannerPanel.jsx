@@ -1,16 +1,17 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import { motion } from "framer-motion";
 import {
   AiOutlineCamera,
   AiOutlineStop,
   AiOutlineCopy,
   AiOutlineLink,
-  AiOutlineReload,
   AiOutlinePicture,
   AiOutlineQrcode,
   AiOutlineBarcode,
   AiOutlineFileText,
+  AiOutlineCheckCircle,
+  AiOutlineWarning,
+  AiOutlineCloseCircle,
 } from "react-icons/ai";
 import { parseNFe, isUrl, NFE_CONSULTA_URL } from "../../utils/nfeParser";
 import "./ScannerPanel.css";
@@ -72,7 +73,7 @@ const ScannerPanel = ({ showToast, onGenerate }) => {
       const nfe = parseNFe(decodedText);
       setResult({ text: decodedText, nfe });
       setError(null);
-      if (showToast) showToast("✅ Código lido com sucesso!");
+      if (showToast) showToast("Código lido.");
     },
     [showToast]
   );
@@ -152,163 +153,156 @@ const ScannerPanel = ({ showToast, onGenerate }) => {
   const handleCopy = () => {
     if (result?.text) {
       navigator.clipboard.writeText(result.text);
-      if (showToast) showToast("Conteúdo copiado!");
+      if (showToast) showToast("Conteúdo copiado.");
     }
   };
 
   const nfe = result?.nfe;
 
+  const scanAnother = () => {
+    setResult(null);
+    setError(null);
+    startCamera();
+  };
+
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="scanner-section"
-      aria-label="Leitor de QR Code e código de barras"
-    >
-      <div className="scanner-card">
-        {/* Região da câmera (o html5-qrcode injeta o vídeo aqui) */}
-        <div
-          id={READER_ID}
-          className={`scanner-reader ${scanning ? "active" : ""}`}
-        />
+    <section className="scanner-area scanner" aria-label="Ler QR Code ou código de barras">
+      <div className="panel scanner-capture">
+        <div className="scanner-stage">
+          {/* O html5-qrcode injeta o vídeo da câmera aqui. */}
+          <div id={READER_ID} className={`scanner-reader ${scanning ? "active" : ""}`} />
 
-        {!scanning && !result && (
-          <div className="scanner-placeholder">
-            <AiOutlineQrcode className="scanner-placeholder-icon" aria-hidden="true" />
-            <p className="scanner-placeholder-title">Escaneie um código</p>
-            <p className="scanner-placeholder-text">
-              QR Code, código de barras ou a chave de acesso de uma NF-e / NFC-e.
-              Use a câmera ou envie uma imagem.
-            </p>
-          </div>
-        )}
-
-        {error && (
-          <div className="scanner-error" role="alert">
-            <AiOutlineFileText aria-hidden="true" /> {error}
-          </div>
-        )}
-      </div>
-
-      {/* Controles do leitor */}
-      <div className="scanner-actions">
-        {!scanning ? (
-          <button
-            className="btn btn-primary"
-            onClick={startCamera}
-            disabled={starting}
-          >
-            <AiOutlineCamera aria-hidden="true" />{" "}
-            {starting ? "Abrindo câmera..." : "Escanear com a câmera"}
-          </button>
-        ) : (
-          <button className="btn btn-secondary" onClick={stopCamera}>
-            <AiOutlineStop aria-hidden="true" /> Parar câmera
-          </button>
-        )}
-
-        <label className="btn btn-secondary scanner-file-btn">
-          <AiOutlinePicture aria-hidden="true" /> Enviar imagem
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFile}
-            hidden
-          />
-        </label>
-      </div>
-
-      {/* Resultado da leitura */}
-      {result && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="scan-result"
-        >
-          <div className="scan-result-header">
-            <span>{nfe ? "📄 Documento Fiscal detectado" : "🔎 Resultado da leitura"}</span>
-          </div>
-
-          {nfe ? (
-            <div className="nfe-details">
-              <div className="nfe-badge">
-                <strong>{nfe.modelo}</strong>
-                <span className={`nfe-dv ${nfe.valid ? "ok" : "warn"}`}>
-                  {nfe.valid ? "Dígito verificador válido" : "Dígito verificador inválido"}
-                </span>
-              </div>
-              <dl className="nfe-grid">
-                <div><dt>Chave de acesso</dt><dd className="mono">{nfe.keyFormatted}</dd></div>
-                <div><dt>Estado (UF)</dt><dd>{nfe.uf}</dd></div>
-                <div><dt>Emissão</dt><dd>{nfe.emission}</dd></div>
-                <div><dt>CNPJ do emitente</dt><dd className="mono">{nfe.cnpj}</dd></div>
-                <div><dt>Série</dt><dd>{nfe.serie}</dd></div>
-                <div><dt>Número</dt><dd>{nfe.numero}</dd></div>
-                <div><dt>Forma de emissão</dt><dd>{nfe.tipoEmissao}</dd></div>
-              </dl>
+          {!scanning && (
+            <div className="scanner-placeholder">
+              <svg className="scanner-frame" viewBox="0 0 64 64" aria-hidden="true">
+                <path
+                  d="M4 18V8a4 4 0 0 1 4-4h10M46 4h10a4 4 0 0 1 4 4v10M60 46v10a4 4 0 0 1-4 4H46M18 60H8a4 4 0 0 1-4-4V46"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+                <path d="M14 32h36" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity=".45" />
+              </svg>
+              <p className="scanner-placeholder-title">
+                {result ? "Leitura concluída" : "Aponte para um código"}
+              </p>
+              <p className="scanner-placeholder-text">
+                QR Code, código de barras ou a chave de uma NF-e / NFC-e.
+                Sem câmera? Envie uma foto.
+              </p>
             </div>
+          )}
+        </div>
+
+        <div className="scanner-actions">
+          {!scanning ? (
+            <button type="button" className="btn btn-primary" onClick={result ? scanAnother : startCamera} disabled={starting}>
+              <AiOutlineCamera aria-hidden="true" />
+              {starting ? "Abrindo a câmera…" : result ? "Ler outro código" : "Usar a câmera"}
+            </button>
           ) : (
-            <p className="scan-result-text mono">{result.text}</p>
+            <button type="button" className="btn btn-secondary" onClick={stopCamera}>
+              <AiOutlineStop aria-hidden="true" /> Parar câmera
+            </button>
           )}
 
-          <div className="scan-result-actions">
-            <button className="btn-icon" onClick={handleCopy}>
-              <AiOutlineCopy aria-hidden="true" /> Copiar
-            </button>
+          <label className="btn btn-secondary scanner-file-btn">
+            <AiOutlinePicture aria-hidden="true" /> Enviar imagem
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFile}
+              className="visually-hidden"
+            />
+          </label>
+        </div>
 
-            {isUrl(result.text) && (
-              <a
-                className="btn-icon"
-                href={result.text}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <AiOutlineLink aria-hidden="true" /> Abrir link
-              </a>
-            )}
+        {error && (
+          <p className="alert alert-danger scanner-error" role="alert">
+            <AiOutlineCloseCircle aria-hidden="true" />
+            <span>{error}</span>
+          </p>
+        )}
+      </div>
 
-            {nfe && (
-              <a
-                className="btn-icon"
-                href={NFE_CONSULTA_URL}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <AiOutlineFileText aria-hidden="true" /> Consultar no portal
-              </a>
-            )}
-
-            <button
-              className="btn-icon"
-              onClick={() => onGenerate && onGenerate("qrcode", result.text)}
-            >
-              <AiOutlineQrcode aria-hidden="true" /> Gerar QR
-            </button>
-            <button
-              className="btn-icon"
-              onClick={() =>
-                onGenerate && onGenerate("barcode", nfe ? nfe.key : result.text)
-              }
-            >
-              <AiOutlineBarcode aria-hidden="true" /> Gerar código
-            </button>
-
-            <button
-              className="btn-icon"
-              onClick={() => {
-                setResult(null);
-                setError(null);
-                startCamera();
-              }}
-            >
-              <AiOutlineReload aria-hidden="true" /> Escanear outro
-            </button>
+      <div className="panel scan-result" aria-live="polite">
+        {!result ? (
+          <div className="scan-result-empty">
+            <h2 className="section-title">O que aparece aqui</h2>
+            <ul>
+              <li>O texto ou link lido, pronto para copiar ou abrir.</li>
+              <li>
+                Em notas fiscais (NF-e, NFC-e, CT-e, MDF-e): estado, mês de
+                emissão, CNPJ do emitente, série, número e a conferência do
+                dígito verificador.
+              </li>
+              <li>Um atalho para gerar um QR Code ou código de barras com o mesmo valor.</li>
+            </ul>
+            <p className="field-hint">A leitura acontece no seu aparelho; nada é enviado.</p>
           </div>
-        </motion.div>
-      )}
-    </motion.section>
+        ) : (
+          <>
+            <div className="scan-result-header">
+              <h2 className="section-title">{nfe ? nfe.modelo : "Conteúdo lido"}</h2>
+              {nfe && (
+                <span className={`badge ${nfe.valid ? "badge-ok" : "badge-warn"}`}>
+                  {nfe.valid ? <AiOutlineCheckCircle aria-hidden="true" /> : <AiOutlineWarning aria-hidden="true" />}
+                  {nfe.valid ? "Dígito verificador válido" : "Dígito verificador inválido"}
+                </span>
+              )}
+            </div>
+
+            {nfe ? (
+              <dl className="nfe-grid">
+                <div className="nfe-key">
+                  <dt>Chave de acesso</dt>
+                  <dd className="mono">{nfe.keyFormatted}</dd>
+                </div>
+                <div><dt>Estado (UF)</dt><dd>{nfe.uf}</dd></div>
+                <div><dt>Emissão</dt><dd className="mono">{nfe.emission}</dd></div>
+                <div><dt>CNPJ do emitente</dt><dd className="mono">{nfe.cnpj}</dd></div>
+                <div><dt>Série</dt><dd className="mono">{nfe.serie}</dd></div>
+                <div><dt>Número</dt><dd className="mono">{nfe.numero}</dd></div>
+                <div><dt>Forma de emissão</dt><dd>{nfe.tipoEmissao}</dd></div>
+              </dl>
+            ) : (
+              <p className="scan-result-text mono">{result.text}</p>
+            )}
+
+            <div className="scan-result-actions">
+              <button type="button" className="btn btn-secondary" onClick={handleCopy}>
+                <AiOutlineCopy aria-hidden="true" /> Copiar
+              </button>
+              {isUrl(result.text) && (
+                <a className="btn btn-secondary" href={result.text} target="_blank" rel="noreferrer">
+                  <AiOutlineLink aria-hidden="true" /> Abrir link
+                </a>
+              )}
+              {nfe && (
+                <a className="btn btn-secondary" href={NFE_CONSULTA_URL} target="_blank" rel="noreferrer">
+                  <AiOutlineFileText aria-hidden="true" /> Consultar no portal da NF-e
+                </a>
+              )}
+            </div>
+            <div className="scan-result-actions scan-result-generate">
+              <span>Gerar com este valor:</span>
+              <button type="button" className="btn btn-link" onClick={() => onGenerate && onGenerate("qrcode", result.text)}>
+                <AiOutlineQrcode aria-hidden="true" /> QR Code
+              </button>
+              <button
+                type="button"
+                className="btn btn-link"
+                onClick={() => onGenerate && onGenerate("barcode", nfe ? nfe.key : result.text)}
+              >
+                <AiOutlineBarcode aria-hidden="true" /> Código de barras
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </section>
   );
 };
 

@@ -1,167 +1,88 @@
-import React from "react";
+import React, { useId } from "react";
 import {
   AiOutlineCopy,
+  AiOutlineWhatsApp,
   AiOutlineShareAlt,
-  AiOutlineSetting,
-  AiOutlineBgColors,
-  AiOutlinePicture,
-  AiOutlineLink,
-  AiOutlineSafety,
-  AiOutlineBarcode,
+  AiOutlineUpload,
+  AiOutlineDelete,
+  AiOutlineWarning,
 } from "react-icons/ai";
 import { GENERATOR_TYPES } from "../../constants/generatorTypes";
 import {
   BARCODE_CATEGORIES,
   BARCODE_EXAMPLES,
 } from "../../constants/barcodeTypes";
+import { scanWarning } from "../../utils/contrast";
+import Segmented from "../common/Segmented";
 import ColorPickerAdvanced from "./ColorPickerAdvanced";
 import "./Controls.css";
 
-const Controls = ({
+const TEMPLATES = [
+  { name: "Padrão", fg: "#000000", bg: "#ffffff", style: "squares", eye: "square" },
+  { name: "WhatsApp", fg: "#128C7E", bg: "#E5FFFC", style: "dots", eye: "circle" },
+  { name: "Dark", fg: "#E0E0E0", bg: "#1E1E1E", style: "squares", eye: "square" },
+  { name: "Azul Tech", fg: "#2563EB", bg: "#EFF6FF", style: "dots", eye: "square" },
+];
+
+// Cores escuras para o código e claras para o fundo: as combinações que leem bem.
+const FG_PRESETS = ["#000000", "#1f2937", "#1d4ed8", "#047857", "#b91c1c", "#6d28d9", "#9a3412", "#0f766e"];
+const BG_PRESETS = ["#ffffff", "#f9fafb", "#eff6ff", "#ecfdf5", "#fef2f2", "#f5f3ff", "#fff7ed", "#f0fdfa"];
+
+const RangeField = ({ label, value, unit, min, max, step, onChange }) => {
+  const id = useId();
+  return (
+  <div className="range-field">
+    <div className="range-head">
+      <label className="field-label" htmlFor={id}>{label}</label>
+      <span className="range-value">
+        {value}
+        {unit}
+      </span>
+    </div>
+    <input
+      id={id}
+      type="range"
+      min={min}
+      max={max}
+      step={step}
+      value={value}
+      onChange={(e) => onChange(Number(e.target.value))}
+    />
+  </div>
+  );
+};
+
+/**
+ * O que vai no código: formato (barcode) e conteúdo. Fica separado dos
+ * ajustes para vir antes da pré-visualização no celular.
+ */
+export const ContentInput = ({
   config,
   updateConfig,
-  handleLogoUpload,
   socialLinks,
   handleCopyText,
 }) => {
-  const templates = [
-    {
-      name: "Padrão",
-      fg: "#000000",
-      bg: "#ffffff",
-      style: "squares",
-      eye: "square",
-    },
-    {
-      name: "WhatsApp",
-      fg: "#128C7E",
-      bg: "#E5FFFC",
-      style: "dots",
-      eye: "circle",
-    },
-    {
-      name: "Dark",
-      fg: "#E0E0E0",
-      bg: "#1E1E1E",
-      style: "squares",
-      eye: "square",
-    },
-    {
-      name: "Azul Tech",
-      fg: "#2563EB",
-      bg: "#EFF6FF",
-      style: "dots",
-      eye: "square",
-    },
-  ];
-
   const isQRCode = config.generatorType === GENERATOR_TYPES.QRCODE;
-  const isBarcode = config.generatorType === GENERATOR_TYPES.BARCODE;
 
-  // Preencher com exemplo quando trocar de formato.
-  // Ignora a opção placeholder ("Selecione...") para não gerar um
-  // código de barras com formato vazio.
+  // Preenche com o exemplo do formato escolhido.
   const handleFormatChange = (format) => {
     if (!format) return;
     updateConfig("barcodeFormat", format);
-    if (BARCODE_EXAMPLES[format]) {
-      updateConfig("text", BARCODE_EXAMPLES[format]);
-    }
+    if (BARCODE_EXAMPLES[format]) updateConfig("text", BARCODE_EXAMPLES[format]);
   };
 
   return (
-    <section className="controls-section">
-      {/* Modelos Prontos - APENAS para QR Code */}
-      {isQRCode && (
-        <div className="control-group">
-          <div className="group-header">
-            <span>✨ Modelos Prontos</span>
-          </div>
-          <div className="templates-grid">
-            {templates.map((t) => (
-              <button
-                key={t.name}
-                className="template-btn"
-                style={{
-                  background: t.bg,
-                  color: t.fg,
-                  border: `1px solid ${t.fg}`,
-                }}
-                onClick={() => {
-                  updateConfig("fgColor", t.fg);
-                  updateConfig("bgColor", t.bg);
-                  updateConfig("qrStyle", t.style);
-                  updateConfig("eyeStyle", t.eye);
-                }}
-                title={`Aplicar tema ${t.name}`}
-              >
-                {t.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-      {/* 1. Grupo de Conteúdo (Texto/URL) */}
-      <div className="control-group">
-        <div className="group-header">
-          <AiOutlineLink /> <span>Conteúdo</span>
-        </div>
-        <div className="input-wrapper">
-          <textarea
-            className="input-text"
-            rows={3}
-            placeholder={
-              isQRCode
-                ? "Digite URL, texto ou email..."
-                : "Digite o valor do código de barras..."
-            }
-            value={config.text}
-            onChange={(e) => updateConfig("text", e.target.value)}
-          />
-        </div>
-
-        <div className="share-row">
-          <button
-            onClick={handleCopyText}
-            className="btn-icon"
-            title="Copiar Texto"
-          >
-            <AiOutlineCopy /> Copiar
-          </button>
-          {isQRCode && (
-            <>
-              <a
-                href={socialLinks.whatsapp}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-icon whatsapp"
-              >
-                <AiOutlineShareAlt /> WhatsApp
-              </a>
-              <a
-                href={socialLinks.facebook}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-icon facebook"
-              >
-                <AiOutlineShareAlt /> Facebook
-              </a>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* NOVO: Seletor de Formato para Código de Barras */}
-      {isBarcode && (
-        <div className="control-group">
-          <div className="group-header">
-            <AiOutlineBarcode /> <span>Formato do Código de Barras</span>
-          </div>
+    <section className="panel content-area" aria-label="Conteúdo do código">
+      {!isQRCode && (
+        <div className="panel-section">
+          <label className="field-label" htmlFor="barcode-format">
+            Formato
+          </label>
           <select
+            id="barcode-format"
+            className="select"
             value={config.barcodeFormat}
             onChange={(e) => handleFormatChange(e.target.value)}
-            className="barcode-format-select"
-            aria-label="Formato do código de barras"
           >
             {BARCODE_CATEGORIES.map((category) => (
               <optgroup key={category.name} label={category.name}>
@@ -176,269 +97,303 @@ const Controls = ({
         </div>
       )}
 
-      {/* 2. Grupo de Aparência */}
-      <div className="control-group">
-        <div className="group-header">
-          <AiOutlineSetting /> <span>Aparência</span>
-        </div>
+      <div className="panel-section">
+        <label className="field-label" htmlFor="code-text">
+          {isQRCode ? "Conteúdo" : "Valor do código"}
+        </label>
+        <textarea
+          id="code-text"
+          className="input"
+          rows={3}
+          spellCheck={false}
+          placeholder={
+            isQRCode
+              ? "Cole um link ou digite um texto, e-mail ou telefone"
+              : "Digite os números ou o texto do código"
+          }
+          value={config.text}
+          onChange={(e) => updateConfig("text", e.target.value)}
+        />
+        <p className={`field-hint ${isQRCode ? "live-hint" : ""}`}>
+          {isQRCode
+            ? "O QR Code muda enquanto você digita."
+            : `Exemplo válido: ${BARCODE_EXAMPLES[config.barcodeFormat] ?? "—"}`}
+        </p>
 
-        {/* Tamanho - Diferente para QR Code e Barcode */}
-        <div className="control-row">
-          <div className="control-item full-width">
-            <label>
-              {isQRCode
-                ? `Tamanho: ${config.size}px`
-                : `Altura: ${config.barcodeHeight || 100}px`}
-            </label>
-            <input
-              type="range"
-              min={isQRCode ? "150" : "50"}
-              max={isQRCode ? "450" : "200"}
-              step="10"
-              value={isQRCode ? config.size : config.barcodeHeight || 100}
-              onChange={(e) =>
-                updateConfig(
-                  isQRCode ? "size" : "barcodeHeight",
-                  Number(e.target.value)
-                )
-              }
-            />
-          </div>
-        </div>
-
-        {/* Opções específicas para BARCODE */}
-        {isBarcode && (
-          <>
-            <div className="control-row">
-              <div className="control-item full-width">
-                <label>Largura da Barra: {config.barcodeWidth || 2}px</label>
-                <input
-                  type="range"
-                  min="1"
-                  max="5"
-                  step="0.5"
-                  value={config.barcodeWidth || 2}
-                  onChange={(e) =>
-                    updateConfig("barcodeWidth", Number(e.target.value))
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="control-row">
-              <div className="control-item full-width">
-                <label>
-                  Tamanho da Fonte: {config.barcodeFontSize || 20}px
-                </label>
-                <input
-                  type="range"
-                  min="10"
-                  max="40"
-                  step="2"
-                  value={config.barcodeFontSize || 20}
-                  onChange={(e) =>
-                    updateConfig("barcodeFontSize", Number(e.target.value))
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="control-row">
-              <div className="control-item full-width">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={config.barcodeDisplayValue !== false}
-                    onChange={(e) =>
-                      updateConfig("barcodeDisplayValue", e.target.checked)
-                    }
-                  />
-                  Exibir valor abaixo do código
-                </label>
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Estilos - APENAS para QR Code */}
-        {isQRCode && (
-          <>
-            <div className="control-row">
-              <div className="control-item">
-                <label>Módulos</label>
-                <select
-                  value={config.qrStyle}
-                  onChange={(e) => updateConfig("qrStyle", e.target.value)}
-                >
-                  <option value="squares">Quadrados</option>
-                  <option value="dots">Pontos</option>
-                </select>
-              </div>
-              <div className="control-item">
-                <label>Olhos</label>
-                <select
-                  value={config.eyeStyle}
-                  onChange={(e) => updateConfig("eyeStyle", e.target.value)}
-                >
-                  <option value="square">Quadrados</option>
-                  <option value="circle">Redondos</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Nível de Correção de Erro - APENAS para QR Code */}
-            <div className="control-row">
-              <div className="control-item full-width">
-                <label title="Aumente para garantir leitura com logos grandes">
-                  <AiOutlineSafety style={{ marginRight: 4 }} />
-                  Margem de Erro
-                </label>
-                <select
-                  value={config.ecLevel}
-                  onChange={(e) => updateConfig("ecLevel", e.target.value)}
-                >
-                  <option value="L">
-                    Baixa (L) - Melhor para dados longos
-                  </option>
-                  <option value="M">Média (M)</option>
-                  <option value="Q">Alta (Q)</option>
-                  <option value="H">Máxima (H) - Melhor para Logos</option>
-                </select>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* 3. Grupo de Cores */}
-      <div className="control-group">
-        <div className="group-header">
-          <AiOutlineBgColors /> <span>Cores</span>
-        </div>
-        <div className="color-pickers-advanced">
-          <ColorPickerAdvanced
-            label="Cor da Frente"
-            color={config.fgColor}
-            onChange={(color) => updateConfig("fgColor", color)}
-          />
-          <ColorPickerAdvanced
-            label="Cor de Fundo"
-            color={config.bgColor}
-            onChange={(color) => updateConfig("bgColor", color)}
-          />
-        </div>
-      </div>
-
-      {/* 4. Grupo de Logo - APENAS para QR Code */}
-      {isQRCode && (
-        <div className="control-group">
-          <div className="group-header">
-            <AiOutlinePicture /> <span>Logo</span>
-          </div>
-
-          <label className="file-upload">
-            <span>
-              {config.logoImage ? "Alterar Logo" : "Carregar Logo (Opcional)"}
-            </span>
-            <input type="file" accept="image/*" onChange={handleLogoUpload} />
-          </label>
-
-          {config.logoImage && (
-            <div className="logo-settings fade-in">
-              {/* Modo de Tamanho */}
-              <div className="control-item full-width">
-                <label>Modo de Tamanho</label>
-                <select
-                  value={config.logoSizeMode || "auto"}
-                  onChange={(e) => updateConfig("logoSizeMode", e.target.value)}
-                >
-                  <option value="auto">Automático (Proporcional ao QR)</option>
-                  <option value="original">Tamanho Original da Imagem</option>
-                  <option value="custom">Personalizado (Ajustável)</option>
-                </select>
-              </div>
-
-              {/* Tamanho Personalizado */}
-              {config.logoSizeMode === "custom" && (
-                <div className="control-item full-width">
-                  <label>Tamanho: {config.logoSize || 25}%</label>
-                  <input
-                    type="range"
-                    min="10"
-                    max="50"
-                    step="1"
-                    value={config.logoSize || 25}
-                    onChange={(e) =>
-                      updateConfig("logoSize", Number(e.target.value))
-                    }
-                  />
-                  <small
-                    style={{
-                      color: "var(--text-secondary)",
-                      fontSize: "0.8rem",
-                      marginTop: "0.25rem",
-                    }}
-                  >
-                    Ajusta o tamanho da logo em relação ao QR Code
-                  </small>
-                </div>
-              )}
-
-              {/* Opacidade */}
-              <div className="control-item full-width">
-                <label>
-                  Opacidade: {(config.logoOpacity * 100).toFixed(0)}%
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={config.logoOpacity}
-                  onChange={(e) =>
-                    updateConfig("logoOpacity", Number(e.target.value))
-                  }
-                />
-              </div>
-
-              {/* Remover fundo */}
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={config.removeQrCodeBehindLogo}
-                  onChange={(e) =>
-                    updateConfig("removeQrCodeBehindLogo", e.target.checked)
-                  }
-                />
-                Remover padrão do QR atrás da logo
-              </label>
-
-              {/* Informação sobre posicionamento */}
-              <div
-                style={{
-                  marginTop: "0.75rem",
-                  padding: "0.75rem",
-                  background: "var(--bg-secondary)",
-                  borderRadius: "8px",
-                  border: "1px solid var(--border)",
-                }}
-              >
-                <small
-                  style={{
-                    color: "var(--text-secondary)",
-                    fontSize: "0.85rem",
-                    lineHeight: "1.5",
-                  }}
-                >
-                  💡 <strong>Dica:</strong> A logo é sempre centralizada no QR
-                  Code. Use o modo "Original" para manter proporções da imagem
-                  ou "Personalizado" para ajustar livremente.
-                </small>
-              </div>
-            </div>
+        <div className="share-row">
+          <button type="button" onClick={handleCopyText} className="btn btn-link">
+            <AiOutlineCopy aria-hidden="true" /> Copiar texto
+          </button>
+          {isQRCode && (
+            <>
+              <a href={socialLinks.whatsapp} target="_blank" rel="noreferrer" className="btn btn-link" aria-label="Enviar no WhatsApp">
+                <AiOutlineWhatsApp aria-hidden="true" /> WhatsApp
+              </a>
+              <a href={socialLinks.facebook} target="_blank" rel="noreferrer" className="btn btn-link" aria-label="Compartilhar no Facebook">
+                <AiOutlineShareAlt aria-hidden="true" /> Facebook
+              </a>
+            </>
           )}
         </div>
+      </div>
+    </section>
+  );
+};
+
+/** Ajustes de aparência do QR Code ou do código de barras. */
+const Controls = ({ config, updateConfig, handleLogoUpload }) => {
+  const isQRCode = config.generatorType === GENERATOR_TYPES.QRCODE;
+  const warning = scanWarning(config.fgColor, config.bgColor);
+
+  const applyTemplate = (t) => {
+    updateConfig("fgColor", t.fg);
+    updateConfig("bgColor", t.bg);
+    updateConfig("qrStyle", t.style);
+    updateConfig("eyeStyle", t.eye);
+  };
+
+  const isTemplateOn = (t) =>
+    config.fgColor.toLowerCase() === t.fg.toLowerCase() &&
+    config.bgColor.toLowerCase() === t.bg.toLowerCase() &&
+    config.qrStyle === t.style &&
+    config.eyeStyle === t.eye;
+
+  const colors = (
+    <div className="panel-section">
+      <h2 className="section-title">Cores</h2>
+      <div className="two-col">
+        <ColorPickerAdvanced
+          label={isQRCode ? "Cor do código" : "Cor das barras"}
+          color={config.fgColor}
+          presets={FG_PRESETS}
+          onChange={(color) => updateConfig("fgColor", color)}
+        />
+        <ColorPickerAdvanced
+          label="Cor do fundo"
+          color={config.bgColor}
+          presets={BG_PRESETS}
+          onChange={(color) => updateConfig("bgColor", color)}
+        />
+      </div>
+      {warning && (
+        <p className="alert alert-warning controls-alert" role="status">
+          <AiOutlineWarning aria-hidden="true" />
+          <span>{warning}</span>
+        </p>
       )}
+    </div>
+  );
+
+  if (!isQRCode) {
+    return (
+      <section className="panel settings-area" aria-label="Aparência do código de barras">
+        <div className="panel-section">
+          <h2 className="section-title">Dimensões</h2>
+          <div className="stack">
+            <RangeField
+              label="Altura"
+              value={config.barcodeHeight || 100}
+              unit=" px"
+              min={50}
+              max={200}
+              step={10}
+              onChange={(v) => updateConfig("barcodeHeight", v)}
+            />
+            <RangeField
+              label="Largura da barra"
+              value={config.barcodeWidth || 2}
+              unit=" px"
+              min={1}
+              max={5}
+              step={0.5}
+              onChange={(v) => updateConfig("barcodeWidth", v)}
+            />
+            <RangeField
+              label="Tamanho do texto"
+              value={config.barcodeFontSize || 20}
+              unit=" px"
+              min={10}
+              max={40}
+              step={2}
+              onChange={(v) => updateConfig("barcodeFontSize", v)}
+            />
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={config.barcodeDisplayValue !== false}
+                onChange={(e) => updateConfig("barcodeDisplayValue", e.target.checked)}
+              />
+              Mostrar o valor embaixo das barras
+            </label>
+          </div>
+        </div>
+        {colors}
+      </section>
+    );
+  }
+
+  return (
+    <section className="panel settings-area" aria-label="Aparência do QR Code">
+      <div className="panel-section">
+        <h2 className="section-title">Modelos prontos</h2>
+        <div className="templates">
+          {TEMPLATES.map((t) => (
+            <button
+              key={t.name}
+              type="button"
+              className="template-btn"
+              aria-pressed={isTemplateOn(t)}
+              onClick={() => applyTemplate(t)}
+            >
+              <span className="template-swatch" style={{ background: t.bg, color: t.fg }} aria-hidden="true">
+                <svg viewBox="0 0 12 12">
+                  <path
+                    d="M1 1h4v4H1zM7 1h4v4H7zM1 7h4v4H1zM7 7h2v2H7zM9 9h2v2H9z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+              <span>{t.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {colors}
+
+      <div className="panel-section">
+        <h2 className="section-title">Estilo</h2>
+        <div className="two-col">
+          <Segmented
+            legend="Módulos"
+            name="qr-style"
+            value={config.qrStyle}
+            onChange={(v) => updateConfig("qrStyle", v)}
+            options={[
+              { value: "squares", label: "Quadrados" },
+              { value: "dots", label: "Pontos" },
+            ]}
+          />
+          <Segmented
+            legend="Cantos (olhos)"
+            name="eye-style"
+            value={config.eyeStyle}
+            onChange={(v) => updateConfig("eyeStyle", v)}
+            options={[
+              { value: "square", label: "Retos" },
+              { value: "circle", label: "Redondos" },
+            ]}
+          />
+        </div>
+        <div className="stack stack-top">
+          <Segmented
+            legend="Correção de erro"
+            name="ec-level"
+            value={config.ecLevel}
+            onChange={(v) => updateConfig("ecLevel", v)}
+            options={[
+              { value: "L", label: "L", hint: "7%" },
+              { value: "M", label: "M", hint: "15%" },
+              { value: "Q", label: "Q", hint: "25%" },
+              { value: "H", label: "H", hint: "30%" },
+            ]}
+          />
+          <p className="field-hint">
+            Quanto maior, mais o código aguenta sujeira, dobras ou uma logo no
+            meio. Use H com logo; L deixa textos longos menos densos.
+          </p>
+          <RangeField
+            label="Tamanho"
+            value={config.size}
+            unit=" px"
+            min={150}
+            max={450}
+            step={10}
+            onChange={(v) => updateConfig("size", v)}
+          />
+        </div>
+      </div>
+
+      <div className="panel-section">
+        <h2 className="section-title">Logo no centro</h2>
+        <div className="logo-row">
+          <label className="btn btn-secondary file-btn">
+            <AiOutlineUpload aria-hidden="true" />
+            {config.logoImage ? "Trocar imagem" : "Escolher imagem"}
+            <input type="file" accept="image/*" className="visually-hidden" onChange={handleLogoUpload} />
+          </label>
+          {config.logoImage && (
+            <>
+              <img className="logo-thumb" src={config.logoImage} alt="Logo atual" />
+              <button
+                type="button"
+                className="icon-btn danger"
+                aria-label="Remover logo"
+                title="Remover logo"
+                onClick={() => updateConfig("logoImage", "")}
+              >
+                <AiOutlineDelete aria-hidden="true" />
+              </button>
+            </>
+          )}
+        </div>
+        {!config.logoImage && (
+          <p className="field-hint">PNG, JPG ou SVG. A imagem fica só no seu aparelho.</p>
+        )}
+
+        {config.logoImage && (
+          <div className="stack stack-top">
+            <Segmented
+              legend="Tamanho da logo"
+              name="logo-size-mode"
+              value={config.logoSizeMode || "auto"}
+              onChange={(v) => updateConfig("logoSizeMode", v)}
+              options={[
+                { value: "auto", label: "Automático" },
+                { value: "original", label: "Grande" },
+                { value: "custom", label: "Ajustar" },
+              ]}
+            />
+            {config.logoSizeMode === "custom" && (
+              <RangeField
+                label="Tamanho em relação ao código"
+                value={config.logoSize || 25}
+                unit="%"
+                min={10}
+                max={50}
+                step={1}
+                onChange={(v) => updateConfig("logoSize", v)}
+              />
+            )}
+            <RangeField
+              label="Opacidade"
+              value={Math.round(config.logoOpacity * 100)}
+              unit="%"
+              min={0}
+              max={100}
+              step={10}
+              onChange={(v) => updateConfig("logoOpacity", v / 100)}
+            />
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={config.removeQrCodeBehindLogo}
+                onChange={(e) => updateConfig("removeQrCodeBehindLogo", e.target.checked)}
+              />
+              Limpar os módulos atrás da logo
+            </label>
+            {config.ecLevel !== "H" && (
+              <p className="alert alert-warning" role="status">
+                <AiOutlineWarning aria-hidden="true" />
+                <span>
+                  Com logo, use a correção de erro <strong>H</strong> para o
+                  código continuar legível.
+                </span>
+              </p>
+            )}
+          </div>
+        )}
+      </div>
     </section>
   );
 };

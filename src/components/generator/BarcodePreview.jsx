@@ -1,13 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
 import Barcode from "react-barcode";
-import { AiOutlineCopy, AiOutlineReload } from "react-icons/ai";
-import { motion } from "framer-motion";
+import { AiOutlineCopy, AiOutlineReload, AiOutlineCloseCircle } from "react-icons/ai";
 import ExportOptions from "./ExportOptions";
 import {
   validateBarcodeValue,
   getBarcodeExample,
 } from "../../utils/barcodeValidators";
-import { JSBARCODE_FORMAT } from "../../constants/barcodeTypes";
+import { JSBARCODE_FORMAT, BARCODE_CATEGORIES } from "../../constants/barcodeTypes";
 import "./GeneratorArea.css";
 
 const BarcodePreview = ({ config, showToast }) => {
@@ -44,7 +43,7 @@ const BarcodePreview = ({ config, showToast }) => {
     );
     setError(null);
     setValidationError(null);
-    if (showToast) showToast("✅ Valor resetado para exemplo válido");
+    if (showToast) showToast("Valor trocado pelo exemplo.");
   };
 
   /**
@@ -91,104 +90,78 @@ const BarcodePreview = ({ config, showToast }) => {
       const blob = await (await fetch(dataUrl)).blob();
       const clipboardItem = new ClipboardItem({ "image/png": blob });
       await navigator.clipboard.write([clipboardItem]);
-      if (showToast) showToast("Código de barras copiado para o clipboard!");
+      if (showToast) showToast("Imagem do código de barras copiada.");
     } catch (err) {
       console.error(err);
-      if (showToast) showToast("Erro ao copiar. Tente baixar.");
+      if (showToast) showToast("Erro ao copiar a imagem. Use o botão Baixar.");
     }
   };
 
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="preview-section"
-      aria-label="Pré-visualização do código de barras"
-    >
-      <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-        className="preview-card barcode-card"
-        ref={barcodeRef}
-        role="img"
-        aria-label="Código de barras gerado"
-        whileHover={{ scale: 1.02 }}
-      >
-        {error ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="error-message"
-            role="alert"
-          >
-            <p>❌ Erro ao gerar código de barras</p>
-            <small>{error}</small>
-            {validationError?.suggestion && (
-              <div className="error-suggestion">
-                <p>
-                  <strong>Sugestão:</strong> {validationError.suggestion}
-                </p>
-                <button
-                  onClick={handleReset}
-                  className="btn btn-small btn-primary"
-                  style={{ marginTop: "10px" }}
-                >
-                  <AiOutlineReload /> Usar Exemplo
-                </button>
-              </div>
-            )}
-          </motion.div>
-        ) : (
-          <Barcode
-            value={normalizedValue || config.text || "123456789"}
-            format={JSBARCODE_FORMAT[config.barcodeFormat] || config.barcodeFormat}
-            width={config.barcodeWidth || 2}
-            height={config.barcodeHeight || 100}
-            displayValue={config.barcodeDisplayValue !== false}
-            background={config.bgColor || "#ffffff"}
-            lineColor={config.fgColor || "#000000"}
-            fontSize={config.barcodeFontSize || 20}
-            margin={config.barcodeMargin || 10}
-            valid={(valid) => {
-              if (!valid) {
-                setError(
-                  "Valor inválido para este formato. Verifique o tipo de código e tente novamente."
-                );
-              }
-            }}
-          />
-        )}
-      </motion.div>
+  const formatLabel =
+    BARCODE_CATEGORIES.flatMap((c) => c.formats).find((f) => f.id === config.barcodeFormat)
+      ?.label || config.barcodeFormat;
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="action-buttons-grid"
-        role="group"
-        aria-label="Ações do código de barras"
-      >
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+  return (
+    <section className="panel preview-area preview-panel" aria-label="Pré-visualização do código de barras">
+      <div className="preview-stage">
+        <div
+          className="preview-code barcode-code"
+          ref={barcodeRef}
+          role={error ? undefined : "img"}
+          aria-label={error ? undefined : `Código de barras ${formatLabel}: ${normalizedValue || config.text}`}
+        >
+          {error ? (
+            <div className="alert alert-danger barcode-error" role="alert">
+              <AiOutlineCloseCircle aria-hidden="true" />
+              <div>
+                <p>
+                  <strong>Não deu para gerar este código.</strong>
+                </p>
+                <p>{error}</p>
+                {validationError?.suggestion && (
+                  <button type="button" onClick={handleReset} className="btn btn-secondary barcode-reset">
+                    <AiOutlineReload aria-hidden="true" /> Usar o exemplo
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <Barcode
+              value={normalizedValue || config.text || "123456789"}
+              format={JSBARCODE_FORMAT[config.barcodeFormat] || config.barcodeFormat}
+              width={config.barcodeWidth || 2}
+              height={config.barcodeHeight || 100}
+              displayValue={config.barcodeDisplayValue !== false}
+              background={config.bgColor || "#ffffff"}
+              lineColor={config.fgColor || "#000000"}
+              fontSize={config.barcodeFontSize || 20}
+              margin={config.barcodeMargin || 10}
+              valid={(valid) => {
+                if (!valid) {
+                  setError(
+                    "Valor inválido para este formato. Confira o formato escolhido e o valor digitado."
+                  );
+                }
+              }}
+            />
+          )}
+        </div>
+      </div>
+
+      <p className="preview-meta">{formatLabel}</p>
+
+      <ExportOptions getSVG={getSVG} config={config} isBarcode={true} showToast={showToast} disabled={!!error}>
+        <button
+          type="button"
           onClick={handleCopyBarcode}
           className="btn btn-secondary"
           disabled={!!error}
-          aria-label="Copiar código de barras para área de transferência"
+          aria-label="Copiar imagem do código de barras"
         >
-          <AiOutlineCopy aria-hidden="true" /> Copiar Imagem
-        </motion.button>
-
-        <ExportOptions
-          getSVG={getSVG}
-          config={config}
-          isBarcode={true}
-          showToast={showToast}
-        />
-      </motion.div>
-    </motion.section>
+          <AiOutlineCopy aria-hidden="true" /> Copiar
+        </button>
+      </ExportOptions>
+    </section>
   );
 };
 

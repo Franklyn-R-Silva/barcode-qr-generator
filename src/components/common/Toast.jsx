@@ -7,29 +7,26 @@ import {
 import "./Toast.css";
 
 const Toast = ({ message, onClose, duration = 3000 }) => {
-  // Fecha automaticamente após 'duration' (padrão 3 segundos)
+  // Fecha sozinho depois de `duration` ms.
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onClose();
-    }, duration);
-
-    return () => clearTimeout(timer); // Limpa o timer se o componente desmontar
+    const timer = setTimeout(onClose, duration);
+    return () => clearTimeout(timer);
   }, [onClose, duration]);
 
-  // Detecta mensagens de erro para não mostrar um "✓" verde em falhas.
-  const isError = /❌|⚠️|erro|falha|inválid|não foi poss/i.test(String(message));
+  // Mensagens de falha não ganham o ícone de sucesso.
+  const isError = /erro|falha|inválid|não foi poss|nada para/i.test(String(message));
 
   return (
-    <div className="toast-container">
+    <div className="toast-container" role={isError ? "alert" : "status"}>
       <div className={`toast-content ${isError ? "error" : ""}`}>
         {isError ? (
-          <AiOutlineCloseCircle size={22} className="toast-icon" />
+          <AiOutlineCloseCircle className="toast-icon" aria-hidden="true" />
         ) : (
-          <AiOutlineCheckCircle size={22} className="toast-icon" />
+          <AiOutlineCheckCircle className="toast-icon" aria-hidden="true" />
         )}
         <span className="toast-message">{message}</span>
-        <button onClick={onClose} className="toast-close-btn" aria-label="Fechar">
-          <AiOutlineClose size={16} />
+        <button type="button" onClick={onClose} className="toast-close" aria-label="Fechar aviso">
+          <AiOutlineClose aria-hidden="true" />
         </button>
       </div>
     </div>

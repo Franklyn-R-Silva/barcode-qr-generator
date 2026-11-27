@@ -4,20 +4,19 @@ import {
   AiOutlineBarcode,
   AiOutlineScan,
 } from "react-icons/ai";
+import Segmented from "../common/Segmented";
 import { GENERATOR_TYPES } from "../../constants/generatorTypes";
 import {
   BARCODE_EXAMPLES,
   DEFAULT_BARCODE_FORMAT,
 } from "../../constants/barcodeTypes";
+import "./ModeSelector.css";
 
 /**
- * Barra de seleção de modo (QR Code / Código de Barras / Escanear).
- * Sempre visível no topo, de modo que o usuário possa alternar entre
- * gerar e escanear a qualquer momento.
+ * Seletor de modo (QR Code / Código de barras / Ler código).
+ * Sempre visível no topo, para alternar entre gerar e ler a qualquer momento.
  */
 const ModeSelector = ({ config, updateConfig }) => {
-  const active = config.generatorType;
-
   const selectBarcode = () => {
     updateConfig("generatorType", GENERATOR_TYPES.BARCODE);
     const format = config.barcodeFormat || DEFAULT_BARCODE_FORMAT;
@@ -27,50 +26,38 @@ const ModeSelector = ({ config, updateConfig }) => {
     }
   };
 
-  const modes = [
-    {
-      id: GENERATOR_TYPES.QRCODE,
-      label: "QR Code",
-      icon: <AiOutlineQrcode size={24} aria-hidden="true" />,
-      onClick: () => updateConfig("generatorType", GENERATOR_TYPES.QRCODE),
-    },
-    {
-      id: GENERATOR_TYPES.BARCODE,
-      label: "Código de Barras",
-      icon: <AiOutlineBarcode size={24} aria-hidden="true" />,
-      onClick: selectBarcode,
-    },
-    {
-      id: GENERATOR_TYPES.SCANNER,
-      label: "Escanear",
-      icon: <AiOutlineScan size={24} aria-hidden="true" />,
-      onClick: () => updateConfig("generatorType", GENERATOR_TYPES.SCANNER),
-    },
-  ];
+  const handleChange = (mode) => {
+    if (mode === GENERATOR_TYPES.BARCODE) selectBarcode();
+    else updateConfig("generatorType", mode);
+  };
 
   return (
-    <div
-      className="mode-selector control-group type-selector"
-      role="tablist"
-      aria-label="Modo de operação"
-    >
-      <div className="group-header">
-        <span>🎯 O que você quer fazer?</span>
-      </div>
-      <div className="type-buttons">
-        {modes.map((mode) => (
-          <button
-            key={mode.id}
-            role="tab"
-            aria-selected={active === mode.id}
-            className={`type-btn ${active === mode.id ? "active" : ""}`}
-            onClick={mode.onClick}
-          >
-            {mode.icon}
-            <span>{mode.label}</span>
-          </button>
-        ))}
-      </div>
+    <div className="mode-selector mode-area">
+      <Segmented
+        size="lg"
+        legend="O que você quer fazer?"
+        hideLegend
+        name="mode"
+        value={config.generatorType}
+        onChange={handleChange}
+        options={[
+          {
+            value: GENERATOR_TYPES.QRCODE,
+            label: "QR Code",
+            icon: <AiOutlineQrcode aria-hidden="true" />,
+          },
+          {
+            value: GENERATOR_TYPES.BARCODE,
+            label: "Código de barras",
+            icon: <AiOutlineBarcode aria-hidden="true" />,
+          },
+          {
+            value: GENERATOR_TYPES.SCANNER,
+            label: "Ler código",
+            icon: <AiOutlineScan aria-hidden="true" />,
+          },
+        ]}
+      />
     </div>
   );
 };

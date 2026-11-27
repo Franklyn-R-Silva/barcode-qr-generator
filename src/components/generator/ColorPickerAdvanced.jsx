@@ -1,96 +1,79 @@
 // src/components/generator/ColorPickerAdvanced.jsx
-import React, { useState } from "react";
-import { HexColorPicker } from "react-colorful";
-import { AiOutlineBgColors, AiOutlineClose } from "react-icons/ai";
+import React, { useEffect, useId, useRef, useState } from "react";
+import { HexColorPicker, HexColorInput } from "react-colorful";
 import "./ColorPickerAdvanced.css";
 
 const ColorPickerAdvanced = ({ label, color, onChange, presets = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const rootRef = useRef(null);
+  const id = useId();
 
-  const defaultPresets = [
-    "#000000",
-    "#ffffff",
-    "#ff0000",
-    "#00ff00",
-    "#0000ff",
-    "#ffff00",
-    "#ff00ff",
-    "#00ffff",
-    "#ff6b6b",
-    "#4ecdc4",
-    "#45b7d1",
-    "#96ceb4",
-    "#ffeaa7",
-    "#dfe6e9",
-    "#a29bfe",
-  ];
-
-  const colorPresets = presets.length > 0 ? presets : defaultPresets;
+  // Fecha ao clicar fora ou apertar Esc.
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onPointer = (e) => {
+      if (!rootRef.current?.contains(e.target)) setIsOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen]);
 
   return (
-    <div className="color-picker-advanced">
-      <label className="color-label">{label}</label>
-
-      <div className="color-preview-container">
-        <button
-          className="color-preview-button"
-          style={{ backgroundColor: color }}
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label={`Selecionar ${label}`}
-        >
-          <span className="color-value">{color}</span>
-        </button>
-      </div>
+    <div className="color-field" ref={rootRef}>
+      <span className="field-label" id={`${id}-label`}>
+        {label}
+      </span>
+      <button
+        type="button"
+        className="color-trigger"
+        aria-labelledby={`${id}-label`}
+        aria-describedby={`${id}-value`}
+        aria-expanded={isOpen}
+        aria-controls={`${id}-pop`}
+        onClick={() => setIsOpen((v) => !v)}
+      >
+        <span className="color-chip" style={{ backgroundColor: color }} aria-hidden="true" />
+        <span className="color-hex mono" id={`${id}-value`}>
+          {color.toUpperCase()}
+        </span>
+      </button>
 
       {isOpen && (
-        <>
-          <div
-            className="color-picker-overlay"
-            onClick={() => setIsOpen(false)}
-          />
-          <div className="color-picker-popover">
-            <div className="color-picker-header">
-              <AiOutlineBgColors />
-              <span>{label}</span>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="color-picker-close"
-                aria-label="Fechar"
-              >
-                <AiOutlineClose />
-              </button>
-            </div>
-
-            <div className="color-picker-content">
-              <HexColorPicker color={color} onChange={onChange} />
-
-              <div className="color-input-group">
-                <input
-                  type="text"
-                  value={color}
-                  onChange={(e) => onChange(e.target.value)}
-                  placeholder="#000000"
-                  className="color-hex-input"
+        <div className="color-popover" id={`${id}-pop`} role="dialog" aria-label={label}>
+          <HexColorPicker color={color} onChange={onChange} />
+          <label className="color-hex-row">
+            <span>Hex</span>
+            <HexColorInput
+              className="input mono"
+              color={color}
+              onChange={onChange}
+              prefixed
+              aria-label={`${label} em hexadecimal`}
+            />
+          </label>
+          {presets.length > 0 && (
+            <div className="color-presets" role="group" aria-label="Cores sugeridas">
+              {presets.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  className="color-preset"
+                  style={{ backgroundColor: preset }}
+                  aria-label={preset}
+                  aria-pressed={preset.toLowerCase() === color.toLowerCase()}
+                  onClick={() => onChange(preset)}
                 />
-              </div>
-
-              <div className="color-presets">
-                <span className="presets-label">Pré-definidas:</span>
-                <div className="presets-grid">
-                  {colorPresets.map((preset) => (
-                    <button
-                      key={preset}
-                      className="preset-button"
-                      style={{ backgroundColor: preset }}
-                      onClick={() => onChange(preset)}
-                      title={preset}
-                    />
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
-          </div>
-        </>
+          )}
+        </div>
       )}
     </div>
   );
