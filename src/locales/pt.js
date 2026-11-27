@@ -210,7 +210,7 @@ const pt = {
   "Invalid check digit": "Dígito verificador inválido",
   "Access key": "Chave de acesso",
   "State (UF)": "Estado (UF)",
-  Issued: "Emissão",
+  "Issue month": "Emissão",
   "Issuer CNPJ": "CNPJ do emitente",
   Series: "Série",
   Number: "Número",

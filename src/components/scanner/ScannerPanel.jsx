@@ -261,7 +261,7 @@ const ScannerPanel = ({ showToast, onGenerate }) => {
                   <dd className="mono">{nfe.keyFormatted}</dd>
                 </div>
                 <div><dt>{t("State (UF)")}</dt><dd>{nfe.uf}</dd></div>
-                <div><dt>{t("Issued")}</dt><dd className="mono">{nfe.emission}</dd></div>
+                <div><dt>{t("Issue month")}</dt><dd className="mono">{nfe.emission}</dd></div>
                 <div><dt>{t("Issuer CNPJ")}</dt><dd className="mono">{nfe.cnpj}</dd></div>
                 <div><dt>{t("Series")}</dt><dd className="mono">{nfe.series}</dd></div>
                 <div><dt>{t("Number")}</dt><dd className="mono">{nfe.number}</dd></div>
